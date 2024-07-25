@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { Box, Text, SimpleGrid, MantineProvider } from '@mantine/core';
+import { Box, Text, SimpleGrid, MantineProvider, Paper, Group, } from '@mantine/core';
 import {
   turn, inspiration, population, infrastructure, military,
   incPopulation, incInfrastructure, incMilitary, science, food, material, wealth,
@@ -10,32 +10,89 @@ import {
   innovation, prosperity, efficiency, superiority, incInnovation, incProsperity, incEfficiency, incSuperiority,
   corruption, incCorruption, unrest, incUnrest, devastation, incDevastation, empire, incEmpire
 } from 'components/Gamedata/Gamedata';
+import {
+  IconHourglass,
+  IconUser,
+  IconHexagon,
+  IconSword,
+  IconCarrot,
+  IconSchool,
+  IconPackages,
+  IconCoin,
+  IconFlask,
+  IconCandle,
+  IconHammer,
+  IconStar,
+  IconBulb,
+  IconPeace,
+  IconSettings,
+  IconCrown,
+  IconVirus,
+  IconFlame,
+  IconSkull,
+  IconBuildingCastle,
+  IconArrowUpRight,
+  IconArrowDownRight
+} from '@tabler/icons-react';
+
+
+
+const icons = {
+  "Inspiration": IconHourglass,
+  "Population": IconUser,
+  "Infrastructure": IconHexagon,
+  "Military": IconSword,
+  "Science": IconSchool,
+  "Food": IconCarrot,
+  "Material": IconPackages,
+  "Wealth": IconCoin,
+  "Progress": IconFlask,
+  "Tradition": IconCandle,
+  "Production": IconHammer,
+  "Influence": IconStar,
+  "Innovation": IconBulb,
+  "Prosperity": IconPeace,
+  "Efficiency": IconSettings,
+  "Superiority": IconCrown,
+  "Corruption": IconVirus,
+  "Unrest": IconFlame,
+  "Devastation": IconSkull,
+  "Empire": IconBuildingCastle,
+};
+
 
 const ResourceDisplay = ({ name, value, maxValue, income }) => {
-  let color = 'black';
-  if (maxValue && value >= maxValue) {
-    color = 'green';
-  } else if (value <= 0 || (income && value + income < 0)) {
-    color = 'red';
-  } else if (maxValue && value + income >= maxValue) {
-    color = 'yellow';
-  }
+  const Icon = icons[name];
+  const DiffIcon = income > 0 ? IconArrowUpRight : IconArrowDownRight;
 
   return (
-    <Box style={{ display: 'flex', alignItems: 'center' }}>
-      <Text style={{ flex: 1 }}>{name}</Text>
-      <Text style={{ flex: 1 }} c={color}>
-        {value}{maxValue !== undefined ? `/${maxValue}` : ''}
-        {income !== undefined && (
-          <Text span c={income > 0 ? 'green' : 'red'}>{` (${income > 0 ? '+' : ''}${income})`}</Text>
-        )}
-      </Text>
-    </Box>
+    <Paper withBorder p="xs" radius="md" key={name}>
+      <Group justify="space-between">
+        <Group justify='space-between'>
+          <Box w={100}>
+            <Text size="md" c="dimmed" >
+              {name}
+            </Text>
+          </Box>
+          
+          <Text >
+            {value}
+            {maxValue != undefined ? `/${maxValue}` : ''}
+          </Text>
+          <Text c={income > 0 ? 'teal' : 'red'} fz="sm" fw={500}>
+            <span>{income != undefined ? `${income}` : ''}</span>
+            <DiffIcon size="1rem" stroke={1.5} />
+          </Text>
+        </Group>
+        
+        <Icon size="1.4rem" stroke={1.5} color="gray"/>
+      </Group>
+    </Paper>
   );
 };
 const ResourceGrid = () => {
   const resourceAtoms = [
-    { name: 'Inspiration', value: useAtom(inspiration)[0], income: useAtom(incInfrastructure)[0] },
+    { name: 'Inspiration', value: useAtom(inspiration)[0]},
     { name: 'Population', value: useAtom(population)[0], income: useAtom(incPopulation)[0] },
     { name: 'Infrastructure', value: useAtom(infrastructure)[0], income: useAtom(incInfrastructure)[0] },
     { name: 'Military', value: useAtom(military)[0], income: useAtom(incMilitary)[0] },
@@ -56,26 +113,25 @@ const ResourceGrid = () => {
     { name: 'Devastation', value: useAtom(devastation)[0], income: useAtom(incDevastation)[0] },
     { name: 'Empire', value: useAtom(empire)[0], income: useAtom(incEmpire)[0] }
   ];
-  const columns = [[], [], [], [], []];
+  const rows = 4;
+  const cols = 5;
+  const grid = Array.from({ length: rows }, () => []);
+
   resourceAtoms.forEach((resource, index) => {
-    const columnIndex = index % 4;
-    columns[columnIndex].push(resource);
+    const rowIndex = index % rows;
+    grid[rowIndex].push(resource);
   });
 
   return (
-    <SimpleGrid cols={5} spacing="sm">
-      {columns.map((column, colIndex) => (
-        <Box key={colIndex}>
-          {column.map((resource, rowIndex) => (
-            <ResourceDisplay
-              key={rowIndex}
-              name={resource.name}
-              value={resource.value}
-              maxValue={resource.maxValue}
-              income={resource.income}
-            />
-          ))}
-        </Box>
+    <SimpleGrid cols={cols} spacing={5}>
+      {grid.flat().map((resource, index) => (
+        <ResourceDisplay
+          key={index}
+          name={resource.name}
+          value={resource.value}
+          maxValue={resource.maxValue}
+          income={resource.income}
+        />
       ))}
     </SimpleGrid>
   );

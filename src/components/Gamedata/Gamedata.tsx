@@ -59,5 +59,5 @@ export const unrest = persistentAtom("unrest", 0);
 export const incUnrest = persistentAtom("incUnrest", 0);
 export const devastation = persistentAtom("devastation", 0);
 export const incDevastation = persistentAtom("incDevastation", 0);
-export const empire = persistentAtom("empire", 0);
+export const empire = persistentAtom("empire", 100);
 export const incEmpire = persistentAtom("incEmpire", 0);

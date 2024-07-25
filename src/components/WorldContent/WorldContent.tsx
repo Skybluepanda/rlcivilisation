@@ -4,7 +4,7 @@ import { MantineProvider } from '@mantine/core';
 import { population } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
 
-export default function App() {
+export default function WorldContent() {
   const [count, setCount] = useAtom(population)
 
   return (
