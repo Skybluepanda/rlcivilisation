@@ -1,8 +1,5 @@
-import { useState } from 'react';
+
 import '@mantine/core/styles.css';
-import { MantineProvider } from '@mantine/core';
-import { atom } from 'jotai';
-import { loadavg } from 'os';
 import { persistentAtom } from 'hooks/persistentAtom';
 
 export const turn = persistentAtom("turn", 0);

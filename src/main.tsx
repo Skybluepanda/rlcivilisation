@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 // import App from './components/App/App';
-import App from 'components/App/App';
 import MainGame from 'components/MainGame/MainGame';
 import ResourceGrid from 'components/ResourceDisplay/ResourceDisplay';
 import { createTheme, MantineProvider, Box } from '@mantine/core';
