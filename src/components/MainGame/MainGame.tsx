@@ -12,6 +12,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { population } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
+import WorldContent from 'components/WorldContent/WorldContent';
 // import classes from './MainGame.module.css';
 
 const tabs = [
@@ -60,7 +61,7 @@ export default function MainGame() {
                     >
                         <Tabs.List>{items}</Tabs.List>
                         <Tabs.Panel value="World">
-                            Gallery tab content
+                            <WorldContent />
                         </Tabs.Panel>
 
                         <Tabs.Panel value="Diplomacy">
