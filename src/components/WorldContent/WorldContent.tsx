@@ -1,9 +1,9 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import '@mantine/core/styles.css'
 import { MantineProvider, Button, Box, SimpleGrid, Group } from '@mantine/core';
-import { population } from 'components/Gamedata/Gamedata';
-import { useAtom } from 'jotai';
-import { createTerritoryGrid, printWorldGrid, Territory } from 'shared/worldgen';
+// import { population } from 'components/Gamedata/Gamedata';
+// import { useAtom } from 'jotai';
+import { createTerritoryGrid } from 'shared/worldgen';
 
 const gridSize = 16;
 const territoryGrid = createTerritoryGrid(gridSize);
@@ -24,7 +24,7 @@ export default function WorldContent() {
                 fontSize: '0.75rem',  // Adjust font size for smaller buttons
                 padding: 0,  // Remove default padding
               }}>
-                {territory.fire}
+                {territory.water}
               </Button>
             ))}
           </SimpleGrid>

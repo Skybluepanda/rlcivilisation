@@ -35,7 +35,7 @@ function createTerritoryGrid(size: number): Territory[][] {
         for (let y = 0; y < size; y++) {
             const coordinates: Coordinates = [x, y];
             const earth = 0;
-            const fire = 0;
+            const fire = 1;
             const water = 0;
             const nature = 0;
             row.push(new Territory(coordinates, earth, fire, water, nature));
@@ -54,7 +54,6 @@ function createTerritoryGrid(size: number): Territory[][] {
     for (let c = 0; c < 7; c++) {
         const lavaGrid = createZeroArray(16)
         for (let x = 0; x < size; x++) {
-            const row: number[] = [];
             for (let y = 0; y < size; y++) {
                 
                 if (grid[x][y].earth > 2) {
@@ -95,26 +94,93 @@ function createTerritoryGrid(size: number): Territory[][] {
 
     //Fire
     //Edge is 0, 1 away is 90% 0,
-    for (let k = 0; k < 4; k++) {
+    for (let i = 0; i < size; i++) {
+        grid[0][i].fire = 0;
+        grid[1][i].fire = 0
+        grid[size-1][i].fire = 0
+        grid[size-2][i].fire = 0
+    }
+    for (let k = 0; k < 3; k++) {
         for (let j = 0; j < size; j++) {
             for (let i = 1; i < size/2; i++) {
                 if (Math.random() < (i / (size))) {
-                    grid[i][j].fire += 1;
+                    if (grid[i][j].fire < 4) {
+                        grid[i][j].fire += 1;
+                    }
+                    
                 }
             }
             for (let i = size/2; i < size-1; i++) {
                 if (Math.random() < ((size-i) / (size))) {
-                    grid[i][j].fire += 1;
+                    if (grid[i][j].fire < 4) {
+                        grid[i][j].fire += 1;
+                    }
                 }
             }
         }
     }
+    const coastalGrid = createZeroArray(16)
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            if (grid[x][y].earth == 0) {
+                for (let i = -1; i < 2; i++) {
+                    for (let j = -1; j < 2; j++) {
+                        if (
+                            x + i >= 0 &&
+                            x + i < size &&
+                            y + j >= 0 &&
+                            y + j < size
+                        ) {
+                            coastalGrid[x + i][y + j] += 1;
+                        }
+                    }
+                }
+            }
+            
+        }
+    }
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            if (grid[x][y].earth > 0) {
+                grid[x][y].water += 0.5;
+            }
+            if (coastalGrid[x][y] > 0) {
+                grid[x][y].water += 0.5;
+            }
+        }
+    }
     
-
-
+    for (let i = 7; i > 0; i--) {
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                if (grid[x][y].earth == i) {
+                    for (let k = -1; k < 2; k++) {
+                        for (let j = -1; j < 2; j++) {
+                            if (
+                                x + k >= 0 &&
+                                x + k < size &&
+                                y + k >= 0 &&
+                                y + k < size
+                            ) {
+                                if (grid[x + k][y + j].earth < i) {
+                                    grid[x + k][y + j].water += grid[x][y].water/2
+                                }
+                            }
+                        }
+                    }                    
+                }
+            }
+        }
+    }
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            grid[x][y].water = Math.floor(grid[x][y].water)
+            if (grid[x][y].earth == 0) {
+                grid[x][y].water = 0
+            }
+        }
+    }
     return grid;
-
-    
 }
 
 const gridSize = 16;
