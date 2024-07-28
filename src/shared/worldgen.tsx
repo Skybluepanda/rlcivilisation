@@ -150,24 +150,25 @@ function createTerritoryGrid(size: number): Territory[][] {
         }
     }
     
-    for (let i = 7; i > 0; i--) {
+    for (let c = 7; c > 0; c--) {
         for (let x = 0; x < size; x++) {
             for (let y = 0; y < size; y++) {
-                if (grid[x][y].earth == i) {
-                    for (let k = -1; k < 2; k++) {
+                if (grid[x][y].earth == c) {
+                    for (let i = -1; i < 2; i++) {
                         for (let j = -1; j < 2; j++) {
                             if (
-                                x + k >= 0 &&
-                                x + k < size &&
-                                y + k >= 0 &&
-                                y + k < size
+                                x + i >= 0 &&
+                                x + i < size &&
+                                y + j >= 0 &&
+                                y + j < size
                             ) {
-                                if (grid[x + k][y + j].earth < i) {
-                                    grid[x + k][y + j].water += grid[x][y].water/2
+                                if (grid[x+i][y+j].earth < c) {
+                                    grid[x + i][y + j].water += grid[x][y].water/2;
                                 }
+                                
                             }
                         }
-                    }                    
+                    }               
                 }
             }
         }
@@ -180,11 +181,62 @@ function createTerritoryGrid(size: number): Territory[][] {
             }
         }
     }
+
+
+    //Nature
+    //Evolution!
+    //Coast gets an advantage. High water and heat get an advantage.
+    //Spill over from high nature areas.
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            if (grid[x][y].earth > 0) {
+                if (Math.random() < 0.5) {
+                    grid[x][y].nature = 0;
+                } else {
+                    grid[x][y].nature = 1;
+                }
+                if (grid[x][y].water > 0) {
+                    if (Math.random() > 1/grid[x][y].water) {
+                        grid[x][y].nature += 1;
+                    }
+                }
+                if (grid[x][y].fire > 0) {
+                    if (Math.random() > 1/grid[x][y].fire) {
+                        grid[x][y].nature += 1;
+                    }
+                }
+                let coast = 0
+                for (let i = -1; i < 2; i++) {
+                    for (let j = -1; j < 2; j++) {
+                        if (
+                            x + i >= 0 &&
+                            x + i < size &&
+                            y + j >= 0 &&
+                            y + j < size
+                        ) {
+                            if (grid[x+i][y+j].earth == 0) {
+                                coast += 1
+                                
+                            }
+                        }
+                    }
+                }
+                if (coast) {
+                    if (Math.random() > 1/coast) {
+                        grid[x][y].nature += 1;
+                    }
+                }
+            }
+
+        }
+    }
+
+
+
     return grid;
 }
 
 const gridSize = 16;
-const territoryGrid = createTerritoryGrid(gridSize);
 
 function printWorldGrid(grid: Territory[][]): void {
     for (let x = 0; x < grid.length; x++) {
@@ -196,4 +248,4 @@ function printWorldGrid(grid: Territory[][]): void {
     }
 }
 
-export { territoryGrid, printWorldGrid, createTerritoryGrid, Territory}
+export { printWorldGrid, createTerritoryGrid, Territory}
