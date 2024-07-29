@@ -1,4 +1,5 @@
 type Coordinates = [number, number];
+type Resources = {}
 
 class Territory {
     coordinates: Coordinates;
@@ -6,6 +7,12 @@ class Territory {
     fire: number;
     water: number;
     nature: number;
+    explore: number;
+    expand: number;
+    exploit: number;
+    exterminate: number;
+    resources: {};
+    structures: {};
 
     constructor(
         coordinates: Coordinates,
@@ -13,12 +20,24 @@ class Territory {
         fire: number,
         water: number,
         nature: number,
+        explore: number,
+        expand: number,
+        exploit: number,
+        exterminate: number,
+        resources: {},
+        structures: {}
     ) {
         this.coordinates = coordinates;
         this.earth = earth;
         this.fire = fire;
         this.water = water;
         this.nature = nature;
+        this.explore = explore;
+        this.expand = expand;
+        this.exploit = exploit;
+        this.exterminate = exterminate;
+        this.resources = resources;
+        this.structures = structures;
     }
 }
 
@@ -38,7 +57,13 @@ function createTerritoryGrid(size: number): Territory[][] {
             const fire = 1;
             const water = 0;
             const nature = 0;
-            row.push(new Territory(coordinates, earth, fire, water, nature));
+            const explore = 0;
+            const expand = 0;
+            const exploit = 0;
+            const exterminate = 0;
+            const resources = {};
+            const structures = {};
+            row.push(new Territory(coordinates, earth, fire, water, nature, explore, expand, exploit, exterminate, resources, structures));
         }
         grid.push(row);
     }
@@ -227,10 +252,26 @@ function createTerritoryGrid(size: number): Territory[][] {
                     }
                 }
             }
-
         }
     }
-
+    //Pick a random suitable territory for player starting point.
+    const potential = []
+    for (let x = (size/2)-3; x < (size/2)+3; x++) {
+        for (let y = (size/2)-3; y < (size/2)+3; y++) {
+            if (grid[x][y].earth > 1 && grid[x][y].nature > 1 && grid[x][y].water > 1 && grid[x][y].fire > 1) {
+                potential.push([x,y])
+            }
+        }
+    }
+    let potentials = potential.length;
+    if (potential.length > 0) {
+        const index = Math.floor(Math.random() * potentials);
+        const [x, y] = potential[index];
+        grid[x][y].expand = 100;
+        grid[x][y].explore = 1;
+    } else {
+        return createTerritoryGrid(size);
+    }
 
 
     return grid;
@@ -248,4 +289,4 @@ function printWorldGrid(grid: Territory[][]): void {
     }
 }
 
-export { printWorldGrid, createTerritoryGrid, Territory}
+export { createTerritoryGrid}

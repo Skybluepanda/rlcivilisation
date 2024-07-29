@@ -15,5 +15,5 @@
       "@App/*" : ["components/App/*"],
     }
   },
-  "include": ["src", "src/hooks"]
+  "include": ["src", "src/hooks", "src/shared"]
 }

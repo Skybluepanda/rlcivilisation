@@ -4,8 +4,9 @@ import { persistentAtom } from 'hooks/persistentAtom';
 
 export const turn = persistentAtom("turn", 0);
 
+
 export const inspiration = persistentAtom("inspiration", 0);
-export const population = persistentAtom("population", 0);
+export const population = persistentAtom("population", 16);
 export const infrastructure = persistentAtom("infrastructure", 0);
 export const military = persistentAtom("military", 0);
 

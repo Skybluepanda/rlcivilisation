@@ -1,22 +1,23 @@
 import { useState } from 'react'
 import '@mantine/core/styles.css'
-import { MantineProvider } from '@mantine/core';
 import { population } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
+import MainGame from 'components/MainGame/MainGame';
+import ResourceGrid from 'components/ResourceDisplay/ResourceDisplay';
+import { createTheme, MantineProvider, Box } from '@mantine/core';
+import ColorSchemeContext from 'shared/ColorSchemeContext';
 
 export default function App() {
-  const [count, setCount] = useAtom(population)
+  const [colorScheme, setColorScheme] = useState('light');
 
   return (
-    <MantineProvider>
-      <div>
-        <p>
-          Hello World {count}
-        </p>
-        <button onClick={() => setCount((count) => count + 1)} > +1 Pop </button>
-      </div>
-    </MantineProvider>
+    <ColorSchemeContext.Provider value={{ colorScheme, onChange: setColorScheme }}>
+      <MantineProvider defaultColorScheme="dark">
+          <Box p={"md"}>
+          <ResourceGrid />
+          <MainGame />
+          </Box>
+      </MantineProvider>
+    </ColorSchemeContext.Provider>
   )
 }
-
-

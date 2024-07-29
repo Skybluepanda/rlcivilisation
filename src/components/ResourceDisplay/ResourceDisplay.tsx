@@ -1,7 +1,8 @@
 import React from 'react';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { Box, Text, SimpleGrid, MantineProvider, Paper, Group, } from '@mantine/core';
+import { Box, Text, SimpleGrid, MantineProvider, Paper, Group, Button, } from '@mantine/core';
+import { persistentAtom } from 'hooks/persistentAtom';
 import {
   turn, inspiration, population, infrastructure, military,
   incPopulation, incInfrastructure, incMilitary, science, food, material, wealth,
@@ -60,34 +61,41 @@ const icons = {
   "Empire": IconBuildingCastle,
 };
 
-
+export const selectedResourcesAtom = persistentAtom("selectedResources", []);
 const ResourceDisplay = ({ name, value, maxValue, income }) => {
   const Icon = icons[name];
   const DiffIcon = income > 0 ? IconArrowUpRight : IconArrowDownRight;
+  const [selectedResources, setSelectedResources] = useAtom(selectedResourcesAtom);
+
+  const toggleSelection = (name: string) => {
+    if (selectedResources.includes(name)) {
+      setSelectedResources(selectedResources.filter(resource => resource !== name));
+    } else {
+      setSelectedResources([...selectedResources, name]);
+    }
+  };
+
+  
 
   return (
-    <Paper withBorder p="xs" radius="md" key={name}>
-      <Group justify="space-between">
-        <Group justify='space-between'>
-          <Box w={100}>
-            <Text size="md" c="dimmed" >
-              {name}
-            </Text>
-          </Box>
-          
-          <Text >
-            {value}
-            {maxValue != undefined ? `/${maxValue}` : ''}
-          </Text>
-          <Text c={income > 0 ? 'teal' : 'red'} fz="sm" fw={500}>
-            <span>{income != undefined ? `${income}` : ''}</span>
-            <DiffIcon size="1rem" stroke={1.5} />
-          </Text>
-        </Group>
-        
-        <Icon size="1.4rem" stroke={1.5} color="gray"/>
-      </Group>
-    </Paper>
+    <Button variant="default" justify='space-between' leftSection={<Group justify='space-between'>
+      <Box w={100}>
+        <Text size="md" c={selectedResources.includes(name) ? 'default' : 'dimmed'}>
+          {name}
+        </Text>
+      </Box>
+      
+      <Text >
+        {value}
+        {maxValue != undefined ? `/${maxValue}` : ''}
+      </Text>
+      <Text c={income > 0 ? 'teal' : 'red'} fz="sm" fw={500}>
+        <span>{income != undefined ? `${income}` : ''}</span>
+        <DiffIcon size="1rem" stroke={1.5} />
+      </Text>
+    </Group>} 
+    rightSection={<Icon size="1.4rem" stroke={1.5} color="gray"/>} onClick={() => toggleSelection(name)}>
+    </Button>
   );
 };
 const ResourceGrid = () => {

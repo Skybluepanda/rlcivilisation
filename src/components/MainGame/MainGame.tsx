@@ -8,12 +8,16 @@ import {
     Text,
     rem,
     Group,
+    createTheme,
+    Paper
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { population } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
 import WorldContent from 'components/WorldContent/WorldContent';
 // import classes from './MainGame.module.css';
+import Settings from 'components/Settings/Settings';
+import JobContent from 'components/JobsContent/JobsContent';
 
 const tabs = [
     'World',
@@ -25,6 +29,7 @@ const tabs = [
     'Technology',
     'Tradition',
     'Authority',
+    'Settings'
 ];
 
 const colors = {
@@ -37,6 +42,7 @@ const colors = {
     'Technology': 'red',
     'Tradition': 'pink',
     'Authority': 'grape',
+    'Settings': 'black',
 };
 
 export default function MainGame() {
@@ -51,29 +57,60 @@ export default function MainGame() {
     ));
 
     return (
-        <MantineProvider>
-            <div >
-                <Container size="md">
-                    <Tabs
-                        defaultValue="World"
-                        variant="default"
-                        visibleFrom="sm"
-                    >
-                        <Tabs.List>{items}</Tabs.List>
-                        <Tabs.Panel value="World">
-                            <WorldContent />
-                        </Tabs.Panel>
+        <MantineProvider >
+            <Paper shadow="sm" p="md" withBorder h="80vh">
+                <Container fluid={true}>
+                    <Container size="xl">
+                        <Tabs
+                            defaultValue="World"
+                            variant="default"
+                            visibleFrom="sm"
+                        >
+                            <Tabs.List>{items}</Tabs.List>
+                            <Tabs.Panel value="World">
+                                <Paper shadow="sm" p="md" withBorder>
+                                <WorldContent />
+                                </Paper>
+                            </Tabs.Panel>
 
-                        <Tabs.Panel value="Diplomacy">
-                            Messages tab content
-                        </Tabs.Panel>
+                            <Tabs.Panel value="Diplomacy">
+                                Diplomacy WIP
+                            </Tabs.Panel>
 
-                        <Tabs.Panel value="Situation">
-                            Settings tab content
-                        </Tabs.Panel>
-                    </Tabs>
+                            <Tabs.Panel value="Situation">
+                                Situation WIP
+                            </Tabs.Panel>
+
+                            <Tabs.Panel value="Jobs">
+                                <JobContent/>
+                            </Tabs.Panel>
+
+                            <Tabs.Panel value="Buildings">
+                                Buildings WIP
+                            </Tabs.Panel>
+
+                            <Tabs.Panel value="Economy">
+                                Economy WIP
+                            </Tabs.Panel>
+
+                            <Tabs.Panel value="Technology">
+                                Technology WIP
+                            </Tabs.Panel>
+
+                            <Tabs.Panel value="Tradition">
+                                Tradition WIP
+                            </Tabs.Panel>
+
+                            <Tabs.Panel value="Authority">
+                                Authority WIP
+                            </Tabs.Panel>
+                            <Tabs.Panel value="Settings">
+                                <Settings/>
+                            </Tabs.Panel>
+                        </Tabs>
+                    </Container>
                 </Container>
-            </div>
+            </Paper>
         </MantineProvider>
     );
 }
