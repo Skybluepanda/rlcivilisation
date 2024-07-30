@@ -113,18 +113,21 @@ export class Building {
     tags: string[];
     tooltip: string;
     current: number;
-    cost: [];
+    cost: cost[];
+    bonuseffect: bonusEffect[];
     input: increment[];
     output: increment[];
     resourcemax: resourceMax[];
     jobmax: jobMax[];
     jobeffect: jobEffect[];
+
     constructor(
         name: string,
         tags: string[],
         tooltip: string,
         current: number,
-        cost: ,
+        cost: cost[],
+        bonuseffect: bonusEffect[],
         input: increment[],
         output: increment[],
         resourcemax: resourceMax[],
@@ -136,6 +139,7 @@ export class Building {
         this.tooltip = tooltip;
         this.current = current;
         this.cost = cost;
+        this.bonuseffect = bonuseffect;
         this.input = input;
         this.output = output;
         this.resourcemax = resourcemax;
@@ -151,7 +155,8 @@ export const house = persistentAtom('house',
         ['infrastructure', 'population'],
         "Provides home to your people.",
         0,
-        [["material", 100],["production", 100]],
+        [new cost("material", 100, 0, 0, 0), new cost("production", 100, 0, 0, 0)],
+        [],
         [],
         [],
         [],
