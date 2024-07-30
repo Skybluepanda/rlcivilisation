@@ -43,22 +43,20 @@ export default function WorldContent() {
   };
 
   return (
-    
-
     <MantineProvider>
       <Group justify="flex-start">
         <Box>
           <SimpleGrid cols={gridSize} spacing="2">
             {territoryGrid.flat().map((territory, index) => (
-              <Button key={index} variant="light" color={territory.explore==0 ? 'gray' : territory.earth > 0 ? 'green' : 'blue'} size="xs" style={{
-                aspectRatio: '1 / 1', 
+              <Button key={index} variant="light" color={territory.explore == 0 ? 'gray' : territory.earth > 0 ? 'green' : 'blue'} size="xs" style={{
+                aspectRatio: '1 / 1',
                 width: '2rem',  // Adjust to desired size
                 height: '2rem', // Same as width to maintain square shape
                 fontSize: '0.75rem',  // Adjust font size for smaller buttons
                 padding: 0,  // Remove default padding
               }}
-              onClick={() => setSelectedTerritory(territory)}>
-                {territory.expand == 100? "X": ""}
+                onClick={() => setSelectedTerritory(territory)}>
+                {territory.expand == 100 ? "X" : ""}
               </Button>
             ))}
           </SimpleGrid>
@@ -66,27 +64,27 @@ export default function WorldContent() {
         <Box>
           {!gameStarted ? (
             <Box>
-              
+
               <Button onClick={handleReroll}>Reroll</Button>
-              <Button onClick={handleStartGame}>Start Game</Button> 
-            </Box>): null
+              <Button onClick={handleStartGame}>Start Game</Button>
+            </Box>) : null
           }
-          
+
           <Text>
             Coordinates: {selectedTerritory.coordinates[0]}, {selectedTerritory.coordinates[1]}
             <br></br>
-            Earth: {selectedTerritory.explore == 0 ? "Unexplored":selectedTerritory.earth}
+            Earth: {selectedTerritory.explore == 0 ? "Unexplored" : selectedTerritory.earth}
             <br></br>
-            Fire: {selectedTerritory.explore == 0 ? "Unexplored":selectedTerritory.fire}
+            Fire: {selectedTerritory.explore == 0 ? "Unexplored" : selectedTerritory.fire}
             <br></br>
-            Water: {selectedTerritory.explore == 0 ? "Unexplored":selectedTerritory.water}
+            Water: {selectedTerritory.explore == 0 ? "Unexplored" : selectedTerritory.water}
             <br></br>
-            Nature: {selectedTerritory.explore == 0 ? "Unexplored":selectedTerritory.nature}
+            Nature: {selectedTerritory.explore == 0 ? "Unexplored" : selectedTerritory.nature}
             <br></br>
           </Text>
         </Box>
       </Group>
-      
+
     </MantineProvider>
   )
 }
