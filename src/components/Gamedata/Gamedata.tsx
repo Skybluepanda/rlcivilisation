@@ -5,9 +5,9 @@ import { persistentAtom } from 'hooks/persistentAtom';
 export const turn = persistentAtom("turn", 0);
 
 
-export const inspiration = persistentAtom("inspiration", 0);
+export const inspiration = persistentAtom("inspiration", 100);
 export const population = persistentAtom("population", 16);
-export const infrastructure = persistentAtom("infrastructure", 0);
+export const infrastructure = persistentAtom("infrastructure", 24);
 export const military = persistentAtom("military", 0);
 
 
@@ -15,18 +15,18 @@ export const incPopulation = persistentAtom("incPopulation", 0);
 export const incInfrastructure = persistentAtom("incInfrastructure", 0);
 export const incMilitary = persistentAtom("incMilitary", 0);
 
-export const science = persistentAtom("science", 0);
+export const knowledge = persistentAtom("knowledge", 0);
 export const food = persistentAtom("food", 0);
 export const material = persistentAtom("material", 0);
 export const wealth = persistentAtom("wealth", 0);
 
 
-export const maxScience = persistentAtom("maxScience", 0);
-export const maxFood = persistentAtom("maxFood", 0);
-export const maxMaterial = persistentAtom("maxMaterial", 0);
-export const maxWealth = persistentAtom("maxWealth", 0);
+export const maxKnowledge = persistentAtom("maxKnowledge", 100);
+export const maxFood = persistentAtom("maxFood", 100);
+export const maxMaterial = persistentAtom("maxMaterial", 100);
+export const maxWealth = persistentAtom("maxWealth", 100);
 
-export const incScience = persistentAtom("incScience", 0);
+export const incKnowledge = persistentAtom("incKnowledge", 0);
 export const incFood = persistentAtom("incFood", 0);
 export const incMaterial = persistentAtom("incMaterial", 0);
 export const incWealth = persistentAtom("incWealth", 0);
@@ -51,11 +51,11 @@ export const incProsperity = persistentAtom("incProsperity", 0);
 export const incEfficiency = persistentAtom("incEfficiency", 0);
 export const incSuperiority = persistentAtom("incSuperiority", 0);
 
-export const corruption = persistentAtom("corruption", 0);
-export const incCorruption = persistentAtom("incCorruption", 0);
-export const unrest = persistentAtom("unrest", 0);
-export const incUnrest = persistentAtom("incUnrest", 0);
-export const devastation = persistentAtom("devastation", 0);
-export const incDevastation = persistentAtom("incDevastation", 0);
-export const empire = persistentAtom("empire", 100);
-export const incEmpire = persistentAtom("incEmpire", 0);
+export const allignment = persistentAtom("allignment", 0);
+export const incAllignment = persistentAtom("incAllignment", 0);
+export const satisfaction = persistentAtom("satisfaction", 0);
+export const incSatisfaction = persistentAtom("incSatisfaction", 0);
+export const stability = persistentAtom("stability", 0);
+export const incStability = persistentAtom("incStability", 0);
+export const authority = persistentAtom("authority", 0);
+export const incAuthority = persistentAtom("incAuthority", 0);

@@ -19,18 +19,16 @@ import WorldContent from 'components/WorldContent/WorldContent';
 // import classes from './MainGame.module.css';
 import Settings from 'components/Settings/Settings';
 import JobContent from 'components/JobsContent/JobsContent';
-import ProcessIncome from 'shared/ProcessIncome';
 
 
 const tabs = [
     'World',
-    'Diplomacy',
-    'Situation',
     'Jobs',
     'Buildings',
-    'Economy',
+    'Situation',
     'Technology',
     'Tradition',
+    'Economy',
     'Authority',
     'Settings'
 ];
@@ -114,7 +112,7 @@ export default function MainGame() {
                     </Container>
                 </Container>
             </Paper>
-            <Button fullWidth h="10vh" onClick={ProcessIncome}>End Turn</Button>
+            <Button fullWidth h="10vh">End Turn</Button>
         </MantineProvider>
     );
 }

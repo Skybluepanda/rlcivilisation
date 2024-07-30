@@ -1,6 +1,6 @@
 // helpers.ts
 import { atom, WritableAtom } from 'jotai';
-import { increment, Job } from 'components/Gamedata/FoodJobData';
+import { increment, Job } from 'components/JobsContent/FoodJobData';
 
 // Calculate total income from job increments
 export const calculateTotalIncome = (increments: increment[], job: Job) => {
