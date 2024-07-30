@@ -66,4 +66,4 @@ export class Job {
 
 export const forager = persistentAtom("forager", new Job("forager", ["food", "material"], 16, 16, [new increment("food", 10, 0, 1, -1, 0)], [new increment("food", 11, 0, 1, 1, 0), new increment("material", 2, 0, 1, 1, 0), new increment("prosperity", 1, 0, 1, 1, 0)], []));
 
-export const hunter = persistentAtom("hunter", new Job("hunter", ["food", "material"], 0, 0, [new increment("food", 25, 0, 1, -1, 0), new increment("prosperity", -1, 0, 1, 1, 0)], [new increment("food", 50, 0, 1, 1, 0), new increment("material", 2, 0, 1, 1, 0)], [new effect(0, "military", 1, 0, 1, 1)]));
+export const hunter = persistentAtom("hunter", new Job("hunter", ["food", "material"], 0, 5, [new increment("food", 25, 0, 1, -1, 0), new increment("prosperity", -1, 0, 1, 1, 0)], [new increment("food", 50, 0, 1, 1, 0), new increment("material", 2, 0, 1, 1, 0)], [new effect(0, "military", 1, 0, 1, 1)]));

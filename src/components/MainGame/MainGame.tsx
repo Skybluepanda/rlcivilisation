@@ -9,7 +9,8 @@ import {
     rem,
     Group,
     createTheme,
-    Paper
+    Paper,
+    Button
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { population } from 'components/Gamedata/Gamedata';
@@ -18,6 +19,8 @@ import WorldContent from 'components/WorldContent/WorldContent';
 // import classes from './MainGame.module.css';
 import Settings from 'components/Settings/Settings';
 import JobContent from 'components/JobsContent/JobsContent';
+import ProcessIncome from 'shared/ProcessIncome';
+
 
 const tabs = [
     'World',
@@ -58,7 +61,7 @@ export default function MainGame() {
 
     return (
         <MantineProvider >
-            <Paper shadow="sm" p="md" withBorder h="80vh">
+            <Paper shadow="sm" p="md" withBorder h="70vh">
                 <Container fluid={true}>
                     <Container size="xl">
                         <Tabs
@@ -111,6 +114,7 @@ export default function MainGame() {
                     </Container>
                 </Container>
             </Paper>
+            <Button fullWidth h="10vh" onClick={ProcessIncome}>End Turn</Button>
         </MantineProvider>
     );
 }

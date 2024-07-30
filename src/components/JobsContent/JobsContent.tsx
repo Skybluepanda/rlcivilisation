@@ -56,7 +56,7 @@ const JobContent = () => {
     return (
         <SimpleGrid cols={4} spacing="5px">
             {jobs.map((jobAtom, index) => (
-                <JobBlock key={index} jobAtom={jobAtom} />
+                <JobBlock key={index} jobAtom={jobAtom} jobsList={jobs} />
             ))}
         </SimpleGrid>
     );
