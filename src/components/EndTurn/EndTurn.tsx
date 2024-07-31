@@ -49,7 +49,7 @@ import {
 } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
 import {
-  villager,
+  jobListAtom,
 } from 'components/JobsContent/FoodJobData';
 
 
@@ -68,7 +68,7 @@ import {
 
 
 export default function EndTurn() {
-  const [villagerAtom, setVillager] = useAtom(villager);
+  // const [villagerAtom, setVillager] = useAtom(villager);
   const [populationAtom, setPopulation] = useAtom(population);
   const [infrastructureAtom, setInfrastructure] = useAtom(infrastructure);
   const [militaryAtom, setMilitary] = useAtom(military);
@@ -137,11 +137,11 @@ export default function EndTurn() {
 
 
 
-
+  
 
   return (
     <MantineProvider>
-      <Button onClick={endTurn} disabled={villagerAtom.current >= 0 ? false:true}fullWidth h="10vh">End Turn</Button>
+      <Button onClick={endTurn} disabled={1 >= 0 ? false:true}fullWidth h="10vh">End Turn</Button>
     </MantineProvider>
   )
 }

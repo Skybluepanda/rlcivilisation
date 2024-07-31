@@ -1,19 +1,17 @@
 import React from 'react';
 import { SimpleGrid, ScrollArea } from '@mantine/core';
 import JobBlock from './JobBlock';
-import { useAtom } from 'jotai';
-import { builder, crafter, villager, hunter,  Job } from 'components/JobsContent/FoodJobData';
-
-
-const jobs = [villager, hunter, crafter, builder];
+import { useAtom, useAtomValue } from 'jotai';
+import { jobListAtom, Job } from 'components/JobsContent/FoodJobData';
 //Later add check to see if their max is greater than 0.
 
 const JobContent = () => {
+    const jobList = useAtomValue(jobListAtom);
     return (
         <ScrollArea>
             <SimpleGrid cols={4} spacing="5px">
-                {jobs.map((jobAtom, index) => (
-                    <JobBlock key={index} jobAtom={jobAtom} jobsList={jobs} />
+                {jobList.map((job, index) => (
+                    <JobBlock key={index} jobName={job.name} />
                 ))}
             </SimpleGrid>
         </ScrollArea>

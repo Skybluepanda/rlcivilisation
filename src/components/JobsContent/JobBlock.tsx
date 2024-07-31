@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Box, Button, Group, Text, Tooltip } from '@mantine/core';
 import {
-    villager,
+    jobListAtom,
     Job,
     increment,
     effect,
@@ -78,6 +78,8 @@ import {
     authority,
     incAuthority,
 } from 'components/Gamedata/Gamedata';
+import { calculateTotal, updateResourceIncome, modifyJobWorkers } from 'components/JobsContent/JobHelpers';
+
 
 const icons = {
     Inspiration: IconHourglass,
@@ -102,57 +104,13 @@ const icons = {
     Authority: IconCrown,
 };
 
-const calculateTotal = (increment: increment) =>
-    (increment.base * increment.multiplier + increment.bonus) *
-    increment.globalMultiplier;
 
-function updateResourceIncome(jobsList: any[]) {
-    console.log(jobsList);
-    const resourceTotals = {
-        population: 0,
-        infrastructure: 0,
-        military: 0,
-        knowledge: 0,
-        food: 0,
-        material: 0,
-        wealth: 0,
-        progress: 0,
-        culture: 0,
-        production: 0,
-        influence: 0,
-        innovation: 0,
-        prosperity: 0,
-        efficiency: 0,
-        superiority: 0,
-        allignment: 0,
-        satisfaction: 0,
-        stability: 0,
-        authority: 0,
-    };
-    jobsList.forEach(jobAtom => {
-        console.log(jobAtom);
-        const jobInputOutput = [...jobAtom.input, ...jobAtom.output];
-
-        jobInputOutput.forEach(inc => {
-            const total =
-                (inc.base * inc.multiplier + inc.bonus) *
-                inc.globalMultiplier *
-                jobAtom.current;
-
-            console.log(total);
-            resourceTotals[inc.resource] += total;
-
-            //Set incResource to total for each resource in gamedata
-        });
-        console.log(resourceTotals);
-    });
-    return resourceTotals;
-}
-
-const JobBlock = ({ jobAtom, jobsList }) => {
-    const [job, setJob] = useAtom<Job>(jobAtom);
-    const [villagerJob, setVillagerJob] = useAtom(villager);
+const JobBlock = ({ jobName }) => {
+    const [jobs, setJobs] = useAtom(jobListAtom);
     const [iPopulation, setIPopulation] = useAtom(incPopulation);
+    const job = jobs.find((j) => j.name === jobName);
+
+    const villagerJob = jobs.find((j) => j.name === 'villager');
     const [iInfrastructure, setIInfrastructure] = useAtom(incInfrastructure);
     const [iMilitary, setIMilitary] = useAtom(incMilitary);
     const [iKnowledge, setIKnowledge] = useAtom(incKnowledge);
@@ -172,25 +130,20 @@ const JobBlock = ({ jobAtom, jobsList }) => {
     const [iStability, setIStability] = useAtom(incStability);
     const [iAuthority, setIAuthority] = useAtom(incAuthority);
 
-    const jobsAtomList = jobsList.map(jobAtom => useAtom<Job>(jobAtom)[0]);
-
     const decreaseWorkers = () => {
-        // console.log(job)
         if (job.current > 0) {
-            setJob({ ...job, current: job.current - 1 });
-            setVillagerJob({ ...villagerJob, current: villagerJob.current + 1 });
+            setJobs(modifyJobWorkers(jobs, jobName, -1));
         }
     };
 
     const increaseWorkers = () => {
         if (villagerJob.current > 0 && job.current < job.max) {
-            setJob({ ...job, current: job.current + 1 });
-            setVillagerJob({ ...villagerJob, current: villagerJob.current - 1 });
+            setJobs(modifyJobWorkers(jobs, jobName, 1));
         }
     };
 
     useEffect(() => {
-        const resourceTotals = updateResourceIncome(jobsAtomList);
+        const resourceTotals = updateResourceIncome(jobs);
 
         setIPopulation(resourceTotals.population);
         setIInfrastructure(resourceTotals.infrastructure);
@@ -211,7 +164,7 @@ const JobBlock = ({ jobAtom, jobsList }) => {
         setISatisfaction(resourceTotals.satisfaction);
         setIStability(resourceTotals.stability);
         setIAuthority(resourceTotals.authority);
-    }, [jobsAtomList]);
+    }, [jobs]);
 
     if (job.max == 0) {
         null;

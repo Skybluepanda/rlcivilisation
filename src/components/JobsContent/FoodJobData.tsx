@@ -86,83 +86,72 @@ export class Job {
     }
 }
 
-export const villager = persistentAtom(
-    'villager',
-    new Job(
-        'villager',
-        ['food', 'material'],
-        "Forages the wilderness for food and materials.",
-        16,
-        16,
-        [new increment('food', 10, 0, 1, -1)],
-        [    
-            new increment('food', 11, 0, 1, 1),
-            new increment('material', 2, 0, 1, 1),
-        ],
-        [],
-    ),
-);
+export const jobListAtom = persistentAtom(
+    'jobListAtom',[
+        new Job(
+            'villager',
+            ['food', 'material'],
+            "Forages the wilderness for food and materials.",
+            16,
+            16,
+            [new increment('food', 10, 0, 1, -1)],
+            [    
+                new increment('food', 11, 0, 1, 1),
+                new increment('material', 2, 0, 1, 1),
+            ],
+            [],
+        ),
+        new Job(
+            'hunter',
+            ['food', 'material'],
+            "Hunts animals for food and materials.",
+            0,
+            5,
+            [
+                new increment('food', 25, 0, 1, -1),
 
-export const hunter = persistentAtom(
-    'hunter',
-    new Job(
-        'hunter',
-        ['food', 'material'],
-        "Hunts animals for food and materials.",
-        0,
-        5,
-        [
-            new increment('food', 25, 0, 1, -1),
+                new increment('material', 5, 0, 1, -1),
 
-            new increment('material', 5, 0, 1, -1),
+                new increment('production', 5, 0, 1, -1),
+                
+            ],
+            [
+                new increment('food', 50, 0, 1, 1),
+            ],
+            [new effect(0, 'military', 1, 0, 1, 1)],
+        ),
+        new Job(
+            'crafter',
+            ['material', 'production'],
+            "Crafts tools and items for other workers.",
+            0,
+            10,
+            [
+                new increment('food', 10, 0, 1, -1),
 
-            new increment('production', 5, 0, 1, -1),
-            
-        ],
-        [
-            new increment('food', 50, 0, 1, 1),
-        ],
-        [new effect(0, 'military', 1, 0, 1, 1)],
-    ),
-);
+                new increment('material', 10, 0, 1, -1),            
+            ],
+            [
+                new increment('science', 1, 0, 1, 1),
+                new increment('production', 3, 0, 1, 1),
+            ],
+            []
+        ),
+        new Job(
+            'builder',
+            ['material', 'production'],
+            "Consumes large amount of material to build structures.",
+            0,
+            5,
+            [
+                new increment('food', 20, 0, 1, -1),
 
-export const crafter = persistentAtom(
-    'crafter',
-    new Job(
-        'crafter',
-        ['material', 'production'],
-        "Crafts tools and items for other workers.",
-        0,
-        10,
-        [
-            new increment('food', 10, 0, 1, -1),
-
-            new increment('material', 10, 0, 1, -1),            
-        ],
-        [
-            new increment('science', 1, 0, 1, 1),
-            new increment('production', 3, 0, 1, 1),
-        ],
-        []
-    ),
-);
-
-export const builder = persistentAtom(
-    'builder',
-    new Job(
-        'builder',
-        ['material', 'production'],
-        "Consumes large amount of material to build structures.",
-        0,
-        5,
-        [
-            new increment('food', 20, 0, 1, -1),
-
-            new increment('material', 25, 0, 1, -1),            
-        ],
-        [
-            new increment('production', 10, 0, 1, 1),
-        ],
-        []
-    ),
+                new increment('material', 25, 0, 1, -1),            
+            ],
+            [
+                new increment('production', 10, 0, 1, 1),
+            ],
+            []
+        ),
+    ],
 );
