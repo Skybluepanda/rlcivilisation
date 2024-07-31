@@ -4,58 +4,44 @@ import { persistentAtom } from 'hooks/persistentAtom';
 
 export const turn = persistentAtom("turn", 0);
 
+export class Resource {
+    name: string;
+    value: number;
+    income: number;
+    max?: number;
+    tooltip: string;
+    constructor(name: string, value: number, income: number, tooltip: string, max?: number) {
+        this.name = name;
+        this.value = value;
+        this.income = income;
+        this.tooltip = tooltip;
+        this.max = max;
+    }
+}
 
-export const inspiration = persistentAtom("inspiration", 100);
-export const population = persistentAtom("population", 16);
-export const infrastructure = persistentAtom("infrastructure", 24);
-export const military = persistentAtom("military", 0);
+export const resourceListAtom = persistentAtom(
+    "resourceList",
+    [
+        new Resource("Inspiration", 100, 0,  "Number of turns you can play."),
+        new Resource("Population", 16, 0,  "Number of people in your empire. Population growth is increased by prosperity."),
+        new Resource("Infrastructure", 8, 0,  "Amount of space in your empire for new buildings. Increased by housing and outposts."),
+        new Resource("Military", 0, 0,  "Military prowess of your empire. Increased by defensive buildings and military jobs."),
+        new Resource("Knowledge", 0, 0,  "Collective resource for providing technology or advanced materials.", 100),
+        new Resource("Food", 0, 0,  "Neccesary resource to sustain your empire's population.", 100),
+        new Resource("Material", 0, 0,  "Collective resource for everything physical.", 100),
+        new Resource("Wealth", 0, 0,  "Collective resource for valuables which can be used to purchase any physical resource.", 100),
+        new Resource("Progress", 0, 0,  "Abstract resource, used for advancement in technology"),
+        new Resource("Culture", 0, 0,  "Abstract resource, used for developement of your empire's traditions."),
+        new Resource("Production", 0, 0,  "Collective resource, used for building and producing anything that requires refinement. Resets to 0 at the end of each turn."),
+        new Resource("Influence", 0, 0,  "Abstract resource, used for government actions"),
+        new Resource("Innovation", 0, 0,  "Measure of your empire's ability to explore and learn."),
+        new Resource("Prosperity", 0, 0,  "Measure of your empire's ability to expand and grow."),
+        new Resource("Efficiency", 0, 0,  "Measure of your empire's ability to exploit and operate."),
+        new Resource("Superiority", 0, 0,  "Measure of your empire's ability to dominate and control."),
+        new Resource("Allignment", 0, 0,  "World's judgement of your empire's actions."),
+        new Resource("Satisfaction", 0, 0,  "Your population's opinion of your actions and the empire."),
+        new Resource("Stability", 0, 0,  "Your empire's balance and maintainability."),
+        new Resource("Authority", 0, 0,  "Your control over your own empire."),
 
-
-export const incPopulation = persistentAtom("incPopulation", 0);
-export const incInfrastructure = persistentAtom("incInfrastructure", 0);
-export const incMilitary = persistentAtom("incMilitary", 0);
-
-export const knowledge = persistentAtom("knowledge", 0);
-export const food = persistentAtom("food", 0);
-export const material = persistentAtom("material", 0);
-export const wealth = persistentAtom("wealth", 0);
-
-
-export const maxKnowledge = persistentAtom("maxKnowledge", 100);
-export const maxFood = persistentAtom("maxFood", 100);
-export const maxMaterial = persistentAtom("maxMaterial", 100);
-export const maxWealth = persistentAtom("maxWealth", 100);
-
-export const incKnowledge = persistentAtom("incKnowledge", 0);
-export const incFood = persistentAtom("incFood", 0);
-export const incMaterial = persistentAtom("incMaterial", 0);
-export const incWealth = persistentAtom("incWealth", 0);
-
-export const progress = persistentAtom("progress", 0);
-export const culture = persistentAtom("culture", 0);
-export const production = persistentAtom("production", 0);
-export const influence = persistentAtom("influence", 0);
-
-export const incProgress = persistentAtom("incProgress", 0);
-export const incCulture = persistentAtom("incCulture", 0);
-export const incProduction = persistentAtom("incProduction", 0);
-export const incInfluence = persistentAtom("incInfluence", 0);
-
-export const innovation = persistentAtom("innovation", 0);
-export const prosperity = persistentAtom("prosperity", 0);
-export const efficiency = persistentAtom("efficiency", 0);
-export const superiority = persistentAtom("superiority", 0);
-
-export const incInnovation = persistentAtom("incInnovation", 0);
-export const incProsperity = persistentAtom("incProsperity", 0);
-export const incEfficiency = persistentAtom("incEfficiency", 0);
-export const incSuperiority = persistentAtom("incSuperiority", 0);
-
-export const allignment = persistentAtom("allignment", 0);
-export const incAllignment = persistentAtom("incAllignment", 0);
-export const satisfaction = persistentAtom("satisfaction", 0);
-export const incSatisfaction = persistentAtom("incSatisfaction", 0);
-export const stability = persistentAtom("stability", 0);
-export const incStability = persistentAtom("incStability", 0);
-export const authority = persistentAtom("authority", 0);
-export const incAuthority = persistentAtom("incAuthority", 0);
+    ],
+);

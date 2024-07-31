@@ -1,5 +1,4 @@
 import { persistentAtom } from 'hooks/persistentAtom';
-import { population } from '../Gamedata/Gamedata';
 import { useAtom } from 'jotai';
 
 //Forager, Farmer, rancher, Hunter,
@@ -90,66 +89,66 @@ export const jobListAtom = persistentAtom(
     'jobListAtom',[
         new Job(
             'villager',
-            ['food', 'material'],
+            ['Food', 'Material'],
             "Forages the wilderness for food and materials.",
             16,
             16,
-            [new increment('food', 10, 0, 1, -1)],
+            [new increment('Food', 10, 0, 1, -1)],
             [    
-                new increment('food', 11, 0, 1, 1),
-                new increment('material', 2, 0, 1, 1),
+                new increment('Food', 11, 0, 1, 1),
+                new increment('Material', 2, 0, 1, 1),
             ],
             [],
         ),
         new Job(
             'hunter',
-            ['food', 'material'],
+            ['Food', 'Material'],
             "Hunts animals for food and materials.",
             0,
             5,
             [
-                new increment('food', 25, 0, 1, -1),
+                new increment('Food', 25, 0, 1, -1),
 
-                new increment('material', 5, 0, 1, -1),
+                new increment('Material', 5, 0, 1, -1),
 
-                new increment('production', 5, 0, 1, -1),
+                new increment('Production', 5, 0, 1, -1),
                 
             ],
             [
-                new increment('food', 50, 0, 1, 1),
+                new increment('Food', 50, 0, 1, 1),
             ],
-            [new effect(0, 'military', 1, 0, 1, 1)],
+            [new effect(0, 'Military', 1, 0, 1, 1)],
         ),
         new Job(
             'crafter',
-            ['material', 'production'],
+            ['Material', 'Production'],
             "Crafts tools and items for other workers.",
             0,
             10,
             [
-                new increment('food', 10, 0, 1, -1),
+                new increment('Food', 10, 0, 1, -1),
 
-                new increment('material', 10, 0, 1, -1),            
+                new increment('Material', 10, 0, 1, -1),            
             ],
             [
-                new increment('science', 1, 0, 1, 1),
-                new increment('production', 3, 0, 1, 1),
+                new increment('Knowledge', 1, 0, 1, 1),
+                new increment('Production', 3, 0, 1, 1),
             ],
             []
         ),
         new Job(
             'builder',
-            ['material', 'production'],
+            ['Material', 'Production'],
             "Consumes large amount of material to build structures.",
             0,
             5,
             [
-                new increment('food', 20, 0, 1, -1),
+                new increment('Food', 20, 0, 1, -1),
 
-                new increment('material', 25, 0, 1, -1),            
+                new increment('Material', 25, 0, 1, -1),            
             ],
             [
-                new increment('production', 10, 0, 1, 1),
+                new increment('Production', 10, 0, 1, 1),
             ],
             []
         ),

@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import '@mantine/core/styles.css'
-import { population } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
 import MainGame from 'components/MainGame/MainGame';
 import ResourceGrid from 'components/ResourceDisplay/ResourceDisplay';

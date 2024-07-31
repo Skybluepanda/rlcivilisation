@@ -34,49 +34,8 @@ import {
 } from '@tabler/icons-react';
 import {
     turn,
-    inspiration,
-    population,
-    infrastructure,
-    military,
-    incPopulation,
-    incInfrastructure,
-    incMilitary,
-    knowledge,
-    food,
-    material,
-    wealth,
-    maxKnowledge,
-    maxFood,
-    maxMaterial,
-    maxWealth,
-    incKnowledge,
-    incFood,
-    incMaterial,
-    incWealth,
-    progress,
-    culture,
-    production,
-    influence,
-    incProgress,
-    incCulture,
-    incProduction,
-    incInfluence,
-    innovation,
-    prosperity,
-    efficiency,
-    superiority,
-    incInnovation,
-    incProsperity,
-    incEfficiency,
-    incSuperiority,
-    allignment,
-    incAllignment,
-    satisfaction,
-    incSatisfaction,
-    stability,
-    incStability,
-    authority,
-    incAuthority,
+    Resource,
+    resourceListAtom,
 } from 'components/Gamedata/Gamedata';
 import { calculateTotal, updateResourceIncome, modifyJobWorkers } from 'components/JobsContent/JobHelpers';
 
@@ -107,28 +66,10 @@ const icons = {
 
 const JobBlock = ({ jobName }) => {
     const [jobs, setJobs] = useAtom(jobListAtom);
-    const [iPopulation, setIPopulation] = useAtom(incPopulation);
+    const [resources, setResources] = useAtom(resourceListAtom);
     const job = jobs.find((j) => j.name === jobName);
 
     const villagerJob = jobs.find((j) => j.name === 'villager');
-    const [iInfrastructure, setIInfrastructure] = useAtom(incInfrastructure);
-    const [iMilitary, setIMilitary] = useAtom(incMilitary);
-    const [iKnowledge, setIKnowledge] = useAtom(incKnowledge);
-    const [iFood, setIFood] = useAtom(incFood);
-    const [iMaterial, setIMaterial] = useAtom(incMaterial);
-    const [iWealth, setIWealth] = useAtom(incWealth);
-    const [iProgress, setIProgress] = useAtom(incProgress);
-    const [iCulture, setICulture] = useAtom(incCulture);
-    const [iProduction, setIProduction] = useAtom(incProduction);
-    const [iInfluence, setIInfluence] = useAtom(incInfluence);
-    const [iInnovation, setIInnovation] = useAtom(incInnovation);
-    const [iProsperity, setIProsperity] = useAtom(incProsperity);
-    const [iEfficiency, setIEfficiency] = useAtom(incEfficiency);
-    const [iSuperiority, setISuperiority] = useAtom(incSuperiority);
-    const [iAllignment, setIAlignment] = useAtom(incAllignment);
-    const [iSatisfaction, setISatisfaction] = useAtom(incSatisfaction);
-    const [iStability, setIStability] = useAtom(incStability);
-    const [iAuthority, setIAuthority] = useAtom(incAuthority);
 
     const decreaseWorkers = () => {
         if (job.current > 0) {
@@ -144,27 +85,14 @@ const JobBlock = ({ jobName }) => {
 
     useEffect(() => {
         const resourceTotals = updateResourceIncome(jobs);
-
-        setIPopulation(resourceTotals.population);
-        setIInfrastructure(resourceTotals.infrastructure);
-        setIMilitary(resourceTotals.military);
-        setIKnowledge(resourceTotals.knowledge);
-        setIFood(resourceTotals.food);
-        setIMaterial(resourceTotals.material);
-        setIWealth(resourceTotals.wealth);
-        setIProgress(resourceTotals.progress);
-        setICulture(resourceTotals.culture);
-        setIProduction(resourceTotals.production);
-        setIInfluence(resourceTotals.influence);
-        setIInnovation(resourceTotals.innovation);
-        setIProsperity(resourceTotals.prosperity);
-        setIEfficiency(resourceTotals.efficiency);
-        setISuperiority(resourceTotals.superiority);
-        setIAlignment(resourceTotals.allignment);
-        setISatisfaction(resourceTotals.satisfaction);
-        setIStability(resourceTotals.stability);
-        setIAuthority(resourceTotals.authority);
-    }, [jobs]);
+        console.log(resourceTotals["Food"]);
+        console.log(resources[0].name)
+        const updatedResources = resources.map((resource: Resource) => ({
+            ...resource,
+            income: resourceTotals[resource.name],
+        }));
+        setResources(updatedResources);
+    }, [jobs, setResources]);
 
     if (job.max == 0) {
         null;
@@ -175,13 +103,13 @@ const JobBlock = ({ jobName }) => {
                 transitionProps={{ transition: 'pop', duration: 300 }}
                 label={
                     <Box>
-                        <Text>Input:</Text>
+                        <Text fw={700}>Input:</Text>
                         {job.input.map((inc, index) => (
                             <Text key={index}>{`${
                                 inc.resource
                             }: ${calculateTotal(inc)}`}</Text>
                         ))}
-                        <Text>Output:</Text>
+                        <Text fw={700}>Output:</Text>
                         {job.output.map((inc, index) => (
                             <Text key={index}>{`${
                                 inc.resource

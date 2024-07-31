@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useState } from 'react';
 import {
     Box,
@@ -14,49 +14,7 @@ import {
 import { persistentAtom } from 'hooks/persistentAtom';
 import {
     turn,
-    inspiration,
-    population,
-    infrastructure,
-    military,
-    incPopulation,
-    incInfrastructure,
-    incMilitary,
-    knowledge,
-    food,
-    material,
-    wealth,
-    maxKnowledge,
-    maxFood,
-    maxMaterial,
-    maxWealth,
-    incKnowledge,
-    incFood,
-    incMaterial,
-    incWealth,
-    progress,
-    culture,
-    production,
-    influence,
-    incProgress,
-    incCulture,
-    incProduction,
-    incInfluence,
-    innovation,
-    prosperity,
-    efficiency,
-    superiority,
-    incInnovation,
-    incProsperity,
-    incEfficiency,
-    incSuperiority,
-    allignment,
-    incAllignment,
-    satisfaction,
-    incSatisfaction,
-    stability,
-    incStability,
-    authority,
-    incAuthority,
+    resourceListAtom
 } from 'components/Gamedata/Gamedata';
 import {
     IconHourglass,
@@ -106,23 +64,23 @@ const icons = {
     Authority: IconCrown,
 };
 
-export const selectedResourcesAtom = persistentAtom('selectedResources', []);
+// export const selectedResourcesAtom = persistentAtom('selectedResources', []);
 const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
     const Icon = icons[name];
     const DiffIcon = income > 0 ? IconArrowUpRight : IconArrowDownRight;
-    const [selectedResources, setSelectedResources] = useAtom(
-        selectedResourcesAtom,
-    );
+    // const [selectedResources, setSelectedResources] = useAtom(
+    //     selectedResourcesAtom,
+    // );
 
-    const toggleSelection = (name: string) => {
-        if (selectedResources.includes(name)) {
-            setSelectedResources(
-                selectedResources.filter(resource => resource !== name),
-            );
-        } else {
-            setSelectedResources([...selectedResources, name]);
-        }
-    };
+    // const toggleSelection = (name: string) => {
+    //     if (selectedResources.includes(name)) {
+    //         setSelectedResources(
+    //             selectedResources.filter(resource => resource !== name),
+    //         );
+    //     } else {
+    //         setSelectedResources([...selectedResources, name]);
+    //     }
+    // };
     return (
         <Tooltip
             position="bottom"
@@ -140,7 +98,7 @@ const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
                             <Text
                                 size="md"
                                 c={
-                                    selectedResources.includes(name)
+                                    0
                                         ? 'default'
                                         : 'dimmed'
                                 }
@@ -161,156 +119,13 @@ const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
                     </Group>
                 }
                 rightSection={<Icon size="1.4rem" stroke={1.5} color="gray" />}
-                onClick={() => toggleSelection(name)}
             ></Button>
         </Tooltip>
     );
 };
 const ResourceGrid = () => {
-    const resourceAtoms = [
-        {
-            name: 'Inspiration',
-            value: useAtom(inspiration)[0],
-            tooltip:
-                'Number of turns you can play. Gain inspiration every 8 minutes.',
-        },
-        {
-            name: 'Population',
-            value: useAtom(population)[0],
-            income: useAtom(incPopulation)[0],
-            tooltip:
-                'Number of people you have. Population grows by 2.5% of current population. Prosperity affects population growth rate.',
-        },
-        {
-            name: 'Infrastructure',
-            value: useAtom(infrastructure)[0],
-            income: useAtom(incInfrastructure)[0],
-            tooltip:
-                'Number of infrastructure you have. Infrastructure can be increased by annexing land or constructing housing.',
-        },
-        {
-            name: 'Military',
-            value: useAtom(military)[0],
-            income: useAtom(incMilitary)[0],
-            tooltip:
-                "Number demonstrating your empire's defensive military power. Certain jobs and buildings increase Military",
-        },
-        {
-            name: 'Knowledge',
-            value: useAtom(knowledge)[0],
-            maxValue: useAtom(maxKnowledge)[0],
-            income: useAtom(incKnowledge)[0],
-            tooltip:
-                'Knowledge is a collective resource for providing technology or advanced materials.',
-        },
-        {
-            name: 'Food',
-            value: useAtom(food)[0],
-            maxValue: useAtom(maxFood)[0],
-            income: useAtom(incFood)[0],
-            tooltip: 'Food is a neccesary resource to sustain your population.',
-        },
-        {
-            name: 'Material',
-            value: useAtom(material)[0],
-            maxValue: useAtom(maxMaterial)[0],
-            income: useAtom(incMaterial)[0],
-            tooltip:
-                'Material is a collective resource that is used for everything physical.',
-        },
-        {
-            name: 'Wealth',
-            value: useAtom(wealth)[0],
-            maxValue: useAtom(maxWealth)[0],
-            income: useAtom(incWealth)[0],
-            tooltip:
-                'Wealth is a monetary resource that is used for everything financial.',
-        },
-        {
-            name: 'Progress',
-            value: useAtom(progress)[0],
-            income: useAtom(incProgress)[0],
-            tooltip:
-                'Progress is an abstract resource, used for advancement in understanding of the universe.',
-        },
-        {
-            name: 'Culture',
-            value: useAtom(culture)[0],
-            income: useAtom(incCulture)[0],
-            tooltip:
-                "Culture is an abstract resource, used for developement of your empire's identity.",
-        },
-        {
-            name: 'Production',
-            value: useAtom(production)[0],
-            income: useAtom(incProduction)[0],
-            tooltip:
-                'Production is a collective resource that is used for building and producing anything.',
-        },
-        {
-            name: 'Influence',
-            value: useAtom(influence)[0],
-            income: useAtom(incInfluence)[0],
-            tooltip:
-                'Influence is an abstract resource, used for governmnet actions.',
-        },
-        {
-            name: 'Innovation',
-            value: useAtom(innovation)[0],
-            income: useAtom(incInnovation)[0],
-            tooltip:
-                "Innovation is a measure of your empire's ability to explore and learn.",
-        },
-        {
-            name: 'Prosperity',
-            value: useAtom(prosperity)[0],
-            income: useAtom(incProsperity)[0],
-            tooltip:
-                "Prosperity is a measure of your empire's ability to expand and grow.",
-        },
-        {
-            name: 'Efficiency',
-            value: useAtom(efficiency)[0],
-            income: useAtom(incEfficiency)[0],
-            tooltip:
-                "Efficiency is a measure of your empire's ability to exploit and operate.",
-        },
-        {
-            name: 'Superiority',
-            value: useAtom(superiority)[0],
-            income: useAtom(incSuperiority)[0],
-            tooltip:
-                "Superiority is a measure of your empire's ability to dominate and control.",
-        },
-        {
-            name: 'Allignment',
-            value: useAtom(allignment)[0],
-            income: useAtom(incAllignment)[0],
-            tooltip:
-                "Allignment is the world's judgement of your empire's actions.",
-        },
-        {
-            name: 'Satisfaction',
-            value: useAtom(satisfaction)[0],
-            income: useAtom(incSatisfaction)[0],
-            tooltip:
-                "Satisfaction is your population's opinion of your actions and the empire.",
-        },
-        {
-            name: 'Stability',
-            value: useAtom(stability)[0],
-            income: useAtom(incStability)[0],
-            tooltip:
-                "Stability is measure of your empire's balance and maintainability. ",
-        },
-        {
-            name: 'Authority',
-            value: useAtom(authority)[0],
-            income: useAtom(incAuthority)[0],
-            tooltip:
-                'Authority is measure of your control over your own empire.',
-        },
-    ];
+    const [resourceAtoms, setResourceAtoms] = useAtom(resourceListAtom);
+    console.log(resourceAtoms);
     const rows = 4;
     const cols = 5;
     const grid = Array.from({ length: rows }, () => []);
@@ -327,7 +142,7 @@ const ResourceGrid = () => {
                     key={index}
                     name={resource.name}
                     value={resource.value}
-                    maxValue={resource.maxValue}
+                    maxValue={resource.max}
                     income={resource.income}
                     tooltip={resource.tooltip}
                 />
