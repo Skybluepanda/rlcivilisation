@@ -32,12 +32,12 @@ export const incMaterial = persistentAtom("incMaterial", 0);
 export const incWealth = persistentAtom("incWealth", 0);
 
 export const progress = persistentAtom("progress", 0);
-export const tradition = persistentAtom("tradition", 0);
+export const culture = persistentAtom("culture", 0);
 export const production = persistentAtom("production", 0);
 export const influence = persistentAtom("influence", 0);
 
 export const incProgress = persistentAtom("incProgress", 0);
-export const incTradition = persistentAtom("incTradition", 0);
+export const incCulture = persistentAtom("incCulture", 0);
 export const incProduction = persistentAtom("incProduction", 0);
 export const incInfluence = persistentAtom("incInfluence", 0);
 

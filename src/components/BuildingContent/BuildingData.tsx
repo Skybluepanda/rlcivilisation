@@ -110,6 +110,7 @@ export class jobEffect {
 
 export class Building {
     name: string;
+    unlocked: boolean;
     tags: string[];
     tooltip: string;
     current: number;
@@ -123,6 +124,7 @@ export class Building {
 
     constructor(
         name: string,
+        unlocked: boolean,
         tags: string[],
         tooltip: string,
         current: number,
@@ -135,6 +137,7 @@ export class Building {
         jobeffect: jobEffect[],
     ) {
         this.name = name;
+        this.unlocked = unlocked;
         this.tags = tags;
         this.tooltip = tooltip;
         this.current = current;
@@ -152,16 +155,15 @@ export class Building {
 export const house = persistentAtom('house', 
     new Building(
         'House',
+        true,
         ['infrastructure', 'population'],
         "Provides home to your people.",
         0,
         [new cost("material", 100, 0, 0, 0), new cost("production", 100, 0, 0, 0)],
+        [new bonusEffect("infrastructure", 1,0,0,0)],
         [],
         [],
         [],
         [],
         [],
-        [],
-
-
 ))

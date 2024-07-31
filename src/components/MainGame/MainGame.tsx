@@ -19,7 +19,7 @@ import WorldContent from 'components/WorldContent/WorldContent';
 // import classes from './MainGame.module.css';
 import Settings from 'components/Settings/Settings';
 import JobContent from 'components/JobsContent/JobsContent';
-
+import EndTurn from 'components/EndTurn/EndTurn';
 
 const tabs = [
     'World',
@@ -29,7 +29,7 @@ const tabs = [
     'Technology',
     'Tradition',
     'Economy',
-    'Authority',
+    'Government',
     'Settings'
 ];
 
@@ -42,7 +42,7 @@ const colors = {
     'Economy' : 'lime',
     'Technology': 'red',
     'Tradition': 'pink',
-    'Authority': 'grape',
+    'Government': 'grape',
     'Settings': 'black',
 };
 
@@ -102,7 +102,7 @@ export default function MainGame() {
                                 Tradition WIP
                             </Tabs.Panel>
 
-                            <Tabs.Panel value="Authority">
+                            <Tabs.Panel value="Government">
                                 Authority WIP
                             </Tabs.Panel>
                             <Tabs.Panel value="Settings">
@@ -112,7 +112,7 @@ export default function MainGame() {
                     </Container>
                 </Container>
             </Paper>
-            <Button fullWidth h="10vh">End Turn</Button>
+            <EndTurn/>
         </MantineProvider>
     );
 }

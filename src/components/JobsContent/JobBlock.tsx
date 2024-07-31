@@ -3,8 +3,7 @@ import { useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Box, Button, Group, Text, Tooltip } from '@mantine/core';
 import {
-    forager,
-    hunter,
+    villager,
     Job,
     increment,
     effect,
@@ -55,11 +54,11 @@ import {
     incMaterial,
     incWealth,
     progress,
-    tradition,
+    culture,
     production,
     influence,
     incProgress,
-    incTradition,
+    incCulture,
     incProduction,
     incInfluence,
     innovation,
@@ -90,7 +89,7 @@ const icons = {
     Material: IconPackages,
     Wealth: IconCoin,
     Progress: IconFlask,
-    Tradition: IconCandle,
+    Culture: IconCandle,
     Production: IconHammer,
     Influence: IconStar,
     Innovation: IconBulb,
@@ -118,7 +117,7 @@ function updateResourceIncome(jobsList: any[]) {
         material: 0,
         wealth: 0,
         progress: 0,
-        tradition: 0,
+        culture: 0,
         production: 0,
         influence: 0,
         innovation: 0,
@@ -152,7 +151,7 @@ function updateResourceIncome(jobsList: any[]) {
 
 const JobBlock = ({ jobAtom, jobsList }) => {
     const [job, setJob] = useAtom<Job>(jobAtom);
-    const [foragerJob, setForagerJob] = useAtom(forager);
+    const [villagerJob, setVillagerJob] = useAtom(villager);
     const [iPopulation, setIPopulation] = useAtom(incPopulation);
     const [iInfrastructure, setIInfrastructure] = useAtom(incInfrastructure);
     const [iMilitary, setIMilitary] = useAtom(incMilitary);
@@ -161,7 +160,7 @@ const JobBlock = ({ jobAtom, jobsList }) => {
     const [iMaterial, setIMaterial] = useAtom(incMaterial);
     const [iWealth, setIWealth] = useAtom(incWealth);
     const [iProgress, setIProgress] = useAtom(incProgress);
-    const [iTradition, setITradition] = useAtom(incTradition);
+    const [iCulture, setICulture] = useAtom(incCulture);
     const [iProduction, setIProduction] = useAtom(incProduction);
     const [iInfluence, setIInfluence] = useAtom(incInfluence);
     const [iInnovation, setIInnovation] = useAtom(incInnovation);
@@ -179,14 +178,14 @@ const JobBlock = ({ jobAtom, jobsList }) => {
         // console.log(job)
         if (job.current > 0) {
             setJob({ ...job, current: job.current - 1 });
-            setForagerJob({ ...foragerJob, current: foragerJob.current + 1 });
+            setVillagerJob({ ...villagerJob, current: villagerJob.current + 1 });
         }
     };
 
     const increaseWorkers = () => {
-        if (job.name === 'forager' || job.current < job.max) {
+        if (villagerJob.current > 0 && job.current < job.max) {
             setJob({ ...job, current: job.current + 1 });
-            setForagerJob({ ...foragerJob, current: foragerJob.current - 1 });
+            setVillagerJob({ ...villagerJob, current: villagerJob.current - 1 });
         }
     };
 
@@ -201,7 +200,7 @@ const JobBlock = ({ jobAtom, jobsList }) => {
         setIMaterial(resourceTotals.material);
         setIWealth(resourceTotals.wealth);
         setIProgress(resourceTotals.progress);
-        setITradition(resourceTotals.tradition);
+        setICulture(resourceTotals.culture);
         setIProduction(resourceTotals.production);
         setIInfluence(resourceTotals.influence);
         setIInnovation(resourceTotals.innovation);
@@ -242,7 +241,7 @@ const JobBlock = ({ jobAtom, jobsList }) => {
                     style={{
                         display: 'grid',
                         gridTemplateColumns:
-                            job.name === 'forager' ? '1fr' : '1fr 2fr 1fr',
+                            job.name === 'villager' ? '1fr' : '1fr 2fr 1fr',
                         alignItems: 'center',
                         padding: '10px',
                         border: '1px solid #ccc',
@@ -252,7 +251,7 @@ const JobBlock = ({ jobAtom, jobsList }) => {
                         textAlign: 'center',
                     }}
                 >
-                    {job.name !== 'forager' ? (
+                    {job.name !== 'villager' ? (
                         <Button
                             variant="default"
                             onClick={decreaseWorkers}
@@ -270,12 +269,12 @@ const JobBlock = ({ jobAtom, jobsList }) => {
                     >
                         <Text ta="center">{job.name}</Text>
                         <Text ta="center" size="sm">
-                            {job.name === 'forager'
+                            {job.name === 'villager'
                                 ? job.current
                                 : `${job.current}/${job.max}`}
                         </Text>
                     </Box>
-                    {job.name !== 'forager' ? (
+                    {job.name !== 'villager' ? (
                         <Button
                             variant="default"
                             onClick={increaseWorkers}

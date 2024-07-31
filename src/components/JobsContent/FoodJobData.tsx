@@ -86,10 +86,10 @@ export class Job {
     }
 }
 
-export const forager = persistentAtom(
-    'forager',
+export const villager = persistentAtom(
+    'villager',
     new Job(
-        'forager',
+        'villager',
         ['food', 'material'],
         "Forages the wilderness for food and materials.",
         16,
@@ -133,7 +133,7 @@ export const crafter = persistentAtom(
         ['material', 'production'],
         "Crafts tools and items for other workers.",
         0,
-        5,
+        10,
         [
             new increment('food', 10, 0, 1, -1),
 
