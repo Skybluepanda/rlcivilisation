@@ -28,15 +28,26 @@ import {
 
 export default function EndTurn() {
   const [resources, setResources] = useAtom(resourceListAtom);
+  const [jobList, setJobList] = useAtom(jobListAtom);
 
 
   function endTurn() {
+    const population = resources.find(j => j.name === 'Population');
+    const change = Math.floor(population.value+population.income) - Math.floor(population.value)
     const updatedResources = resources.map((resource: Resource) => ({
       ...resource,
       value: resource.value + resource.income
     }));
+    const jobListUpdate = jobList.map((job) => {
+      if (job.name === 'forager') {
+        return { ...job, current: job.current + change };
+      }
+      return job;
+    });
+    setJobList(jobListUpdate);
     //Resource specific processing?
-    
+    //Find population increase and increase or decrease foragers by that amount.
+
 
 
 

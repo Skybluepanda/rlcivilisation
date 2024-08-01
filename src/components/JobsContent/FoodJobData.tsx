@@ -55,12 +55,19 @@ export class effect {
     }
 }
 
+export class dependent {
+    name: string;
+    amount: number;
+}
+
 export class Job {
     name: string;
     tags: string[];
     tooltip: string;
     current: number;
     max: number;
+    used: number;
+    dependents: dependent[];
     input: increment[];
     output: increment[];
     bonusEffect: effect[];
@@ -79,6 +86,8 @@ export class Job {
         this.tooltip = tooltip;
         this.current = current;
         this.max = max;
+        this.used = 0;
+        this.dependents = [];
         this.input = input;
         this.output = output;
         this.bonusEffect = bonusEffect;
@@ -88,7 +97,7 @@ export class Job {
 export const jobListAtom = persistentAtom(
     'jobListAtom',[
         new Job(
-            'villager',
+            'forager',
             ['Food', 'Material'],
             "Forages the wilderness for food and materials.",
             16,
@@ -97,6 +106,22 @@ export const jobListAtom = persistentAtom(
             [    
                 new increment('Food', 11, 0, 1, 1),
                 new increment('Material', 2, 0, 1, 1),
+            ],
+            [],
+        ),
+        new Job(
+            'villager',
+            ['Food', 'Material'],
+            "Unspecialised civilians living in a home.",
+            0,
+            5,
+            [new increment('Food', 10, 0, 1, -1)],
+            [    
+                new increment('Food', 5, 0, 1, 1),
+                new increment('Material', 1, 0, 1, 1),
+                new increment('Knowledge', 1, 0, 1, 1),
+                new increment('Wealth', 1, 0, 1, 1),
+                new increment('Population', 0.1, 0, 1, 1),
             ],
             [],
         ),

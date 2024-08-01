@@ -107,12 +107,12 @@ const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
                             </Text>
                         </Box>
                         <Text>
-                            {value}
-                            {maxValue != undefined ? `/${maxValue}` : ''}
+                            {Math.round(value*10)/10}
+                            {maxValue != undefined ? `/${Math.round(maxValue)}` : ''}
                         </Text>
                         <Text c={income > 0 ? 'teal' : income == 0 ? 'gray' : 'red'} fz="sm" fw={500}>
                             <span>
-                                {income != undefined ? `${income}` : ''}
+                                {income != undefined ? `${Math.round(income*10)/10}` : ''}
                             </span>
                             <DiffIcon size="1rem" stroke={1.5} />
                         </Text>

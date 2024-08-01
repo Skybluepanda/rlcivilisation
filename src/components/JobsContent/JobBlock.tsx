@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { Box, Button, Group, Text, Tooltip } from '@mantine/core';
+import { Box, Button, Group, Text, Tooltip, Table } from '@mantine/core';
 import {
     jobListAtom,
     Job,
@@ -69,7 +69,7 @@ const JobBlock = ({ jobName }) => {
     const [resources, setResources] = useAtom(resourceListAtom);
     const job = jobs.find((j) => j.name === jobName);
 
-    const villagerJob = jobs.find((j) => j.name === 'villager');
+    const foragerJob = jobs.find((j) => j.name === 'forager');
 
     const decreaseWorkers = () => {
         if (job.current > 0) {
@@ -78,7 +78,7 @@ const JobBlock = ({ jobName }) => {
     };
 
     const increaseWorkers = () => {
-        if (villagerJob.current > 0 && job.current < job.max) {
+        if (foragerJob.current > 0 && job.current < job.max) {
             setJobs(modifyJobWorkers(jobs, jobName, 1));
         }
     };
@@ -94,6 +94,27 @@ const JobBlock = ({ jobName }) => {
         setResources(updatedResources);
     }, [jobs, setResources]);
 
+
+    const input = job.input.map(inc => 
+        (
+            <Table.Tr key={inc.resource} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '10px' }}>
+                <Table.Td>{inc.resource}</Table.Td>
+                <Table.Td>{Math.floor(calculateTotal(inc)*10)/10}</Table.Td>
+                <Table.Td>{Math.floor(calculateTotal(inc)*job.current*10)/10}</Table.Td>
+            </Table.Tr>
+        )
+    )
+
+    const output = job.output.map(inc => 
+        (
+            <Table.Tr key={inc.resource} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '10px' }}>
+                <Table.Td>{inc.resource}</Table.Td>
+                <Table.Td>{Math.floor(calculateTotal(inc)*10)/10}</Table.Td>
+                <Table.Td>{Math.floor(calculateTotal(inc)*job.current*10)/10}</Table.Td>
+            </Table.Tr>
+        )
+    )
+
     if (job.max == 0) {
         null;
     } else {
@@ -103,18 +124,40 @@ const JobBlock = ({ jobName }) => {
                 transitionProps={{ transition: 'pop', duration: 300 }}
                 label={
                     <Box>
-                        <Text fw={700}>Input:</Text>
-                        {job.input.map((inc, index) => (
-                            <Text key={index}>{`${
-                                inc.resource
-                            }: ${calculateTotal(inc)}`}</Text>
-                        ))}
-                        <Text fw={700}>Output:</Text>
-                        {job.output.map((inc, index) => (
-                            <Text key={index}>{`${
-                                inc.resource
-                            }: ${calculateTotal(inc)}`}</Text>
-                        ))}
+                        <Text>{job.tooltip}</Text>
+                        <Table>
+                            <Table.Thead >
+                                <Table.Tr style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '10px' }}>
+                                    <Table.Th>
+                                        Input
+                                    </Table.Th>
+                                    <Table.Th>
+                                        Per
+                                    </Table.Th>
+                                    <Table.Th>
+                                        Total
+                                    </Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody>{input}</Table.Tbody>
+                        
+                        </Table>
+                        <Table>
+                            <Table.Thead>
+                                <Table.Tr style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '10px' }}>
+                                    <Table.Th>
+                                        Output
+                                    </Table.Th>
+                                    <Table.Th>
+                                        Per
+                                    </Table.Th>
+                                    <Table.Th>
+                                        Total
+                                    </Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody>{output}</Table.Tbody>
+                        </Table>
                     </Box>
                 }
             >
@@ -122,7 +165,7 @@ const JobBlock = ({ jobName }) => {
                     style={{
                         display: 'grid',
                         gridTemplateColumns:
-                            job.name === 'villager' ? '1fr' : '1fr 2fr 1fr',
+                            job.name === 'forager' ? '1fr' : '1fr 2fr 1fr',
                         alignItems: 'center',
                         padding: '10px',
                         border: '1px solid #ccc',
@@ -132,7 +175,7 @@ const JobBlock = ({ jobName }) => {
                         textAlign: 'center',
                     }}
                 >
-                    {job.name !== 'villager' ? (
+                    {job.name !== 'forager' ? (
                         <Button
                             variant="default"
                             onClick={decreaseWorkers}
@@ -150,12 +193,12 @@ const JobBlock = ({ jobName }) => {
                     >
                         <Text ta="center">{job.name}</Text>
                         <Text ta="center" size="sm">
-                            {job.name === 'villager'
+                            {job.name === 'forager'
                                 ? job.current
                                 : `${job.current}/${job.max}`}
                         </Text>
                     </Box>
-                    {job.name !== 'villager' ? (
+                    {job.name !== 'forager' ? (
                         <Button
                             variant="default"
                             onClick={increaseWorkers}

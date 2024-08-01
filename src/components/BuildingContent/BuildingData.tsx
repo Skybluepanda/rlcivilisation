@@ -1,5 +1,4 @@
 import { Tooltip } from '@mantine/core';
-import { stability } from 'components/Gamedata/Gamedata';
 import { persistentAtom } from 'hooks/persistentAtom';
 
 export class increment {
@@ -14,7 +13,7 @@ export class increment {
         base: number,
         bonus: number,
         multiplier: number,
-        globalMultiplier: number
+        globalMultiplier: number,
     ) {
         this.resource = resource;
         this.base = base;
@@ -54,7 +53,7 @@ export class jobMax {
     }
 }
 
-export class cost {
+export class costResource {
     resource: string;
     base: number;
     bonus: number;
@@ -66,10 +65,32 @@ export class cost {
         base: number,
         bonus: number,
         multiplier: number,
-        globalMultiplier: number
-    ) { 
+        globalMultiplier: number,
+    ) {
         this.resource = resource;
-        this.base = base;   
+        this.base = base;
+        this.bonus = bonus;
+        this.multiplier = multiplier;
+        this.globalMultiplier = globalMultiplier;
+    }
+}
+
+export class costJob {
+    job: string;
+    base: number;
+    bonus: number;
+    multiplier: number;
+    globalMultiplier: number;
+
+    constructor(
+        job: string,
+        base: number,
+        bonus: number,
+        multiplier: number,
+        globalMultiplier: number,
+    ) {
+        this.job = job;
+        this.base = base;
         this.bonus = bonus;
         this.multiplier = multiplier;
         this.globalMultiplier = globalMultiplier;
@@ -88,16 +109,15 @@ export class bonusEffect {
         base: number,
         bonus: number,
         multiplier: number,
-        globalMultiplier: number
-    ) { 
+        globalMultiplier: number,
+    ) {
         this.resource = resource;
-        this.base = base;   
+        this.base = base;
         this.bonus = bonus;
         this.multiplier = multiplier;
         this.globalMultiplier = globalMultiplier;
     }
 }
-
 
 export class jobEffect {
     job: string;
@@ -114,34 +134,36 @@ export class Building {
     tags: string[];
     tooltip: string;
     current: number;
-    cost: cost[];
-    bonuseffect: bonusEffect[];
-    input: increment[];
-    output: increment[];
-    resourcemax: resourceMax[];
-    jobmax: jobMax[];
-    jobeffect: jobEffect[];
+    costResource: costResource[];
+    costJob: costJob[];
+    bonuseffect?: bonusEffect[];
+    input?: increment[];
+    output?: increment[];
+    resourcemax?: resourceMax[];
+    jobmax?: jobMax[];
+    jobeffect?: jobEffect[];
 
     constructor(
         name: string,
         unlocked: boolean,
         tags: string[],
         tooltip: string,
-        current: number,
-        cost: cost[],
-        bonuseffect: bonusEffect[],
-        input: increment[],
-        output: increment[],
-        resourcemax: resourceMax[],
-        jobmax: jobMax[],
-        jobeffect: jobEffect[],
+        costResource: costResource[],
+        costJob: costJob[],
+        bonuseffect?: bonusEffect[],
+        input?: increment[],
+        output?: increment[],
+        resourcemax?: resourceMax[],
+        jobmax?: jobMax[],
+        jobeffect?: jobEffect[],
     ) {
         this.name = name;
         this.unlocked = unlocked;
         this.tags = tags;
         this.tooltip = tooltip;
-        this.current = current;
-        this.cost = cost;
+        this.current = 0;
+        this.costResource = costResource;
+        this.costJob = costJob;
         this.bonuseffect = bonuseffect;
         this.input = input;
         this.output = output;
@@ -151,19 +173,39 @@ export class Building {
     }
 }
 
-
-export const house = persistentAtom('house', 
+export const buildingListAtom = persistentAtom('buildingListAtom', [
     new Building(
         'House',
         true,
         ['infrastructure', 'population'],
-        "Provides home to your people.",
-        0,
-        [new cost("material", 100, 0, 0, 0), new cost("production", 100, 0, 0, 0)],
-        [new bonusEffect("infrastructure", 1,0,0,0)],
+        'Provides home to your people.',
+        [
+            new costResource('material', 100, 0, 0, 0),
+            new costResource('production', 100, 0, 0, 0),
+        ],
+        [],
+        [new bonusEffect('infrastructure', 1, 0, 0, 0)],
         [],
         [],
         [],
         [],
         [],
-))
+    ),
+    new Building(
+        'Template', //Name
+        false, //Unlocked
+        ['infrastructure', 'population'], //Tags
+        'Provides home to your people.', //Tooltip
+        [
+            new costResource('material', 100, 0, 0, 0),
+            new costResource('production', 100, 0, 0, 0),
+        ], //Cost
+        [], //CostJob
+        [new bonusEffect('infrastructure', 1, 0, 0, 0)], //Bonus effect
+        [], //Input
+        [], //Output
+        [], //Resource max
+        [], //Job max
+        [], //Job effect
+    ),
+]);

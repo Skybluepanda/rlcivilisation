@@ -13,7 +13,6 @@ import {
     Button
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { population } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
 import WorldContent from 'components/WorldContent/WorldContent';
 // import classes from './MainGame.module.css';

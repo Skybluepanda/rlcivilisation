@@ -52,7 +52,7 @@ export const modifyJobWorkers = (jobs, jobType, change) => {
     return jobs.map((job) => {
         if (job.name === jobType) {
             return { ...job, current: job.current + change };
-        } else if (job.name === 'villager') {
+        } else if (job.name === 'forager') {
             return { ...job, current: job.current - change };
         }
         return job;

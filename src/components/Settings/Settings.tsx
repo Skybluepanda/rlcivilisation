@@ -13,6 +13,9 @@ export default function Settings() {
       <Button onClick={() => setColorScheme('dark')}>Dark</Button>
       <Button onClick={() => setColorScheme('auto')}>Auto</Button>
       <Button onClick={clearColorScheme}>Clear</Button>
+      <Button onClick={() => {
+        localStorage.clear();
+        window.location.reload()}}>Reset Game</Button>
     </Group>
   );
 }
