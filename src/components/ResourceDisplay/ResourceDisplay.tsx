@@ -125,7 +125,6 @@ const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
 };
 const ResourceGrid = () => {
     const [resourceAtoms, setResourceAtoms] = useAtom(resourceListAtom);
-    console.log(resourceAtoms);
     const rows = 4;
     const cols = 5;
     const grid = Array.from({ length: rows }, () => []);

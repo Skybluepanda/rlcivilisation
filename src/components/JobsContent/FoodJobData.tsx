@@ -30,8 +30,31 @@ export class increment {
     }
 }
 
-export class effect {
-    type: number; //0, resource, 1, job, 2, tag, 3 building etc.
+
+export class resourceEffect {//Gets increased and decreased by job count
+    resource: string;
+    base: number;
+    bonus: number;
+    multiplier: number;
+    globalMultiplier: number;
+
+    constructor(
+        resource: string,
+        base: number,
+        bonus: number,
+        multiplier: number,
+        globalMultiplier: number,
+    ) {
+        this.resource = resource;
+        this.base = base;
+        this.bonus = bonus;
+        this.multiplier = multiplier;
+        this.globalMultiplier = globalMultiplier;
+    }
+}
+
+
+export class costResource {
     name: string;
     base: number;
     bonus: number;
@@ -39,14 +62,12 @@ export class effect {
     globalMultiplier: number;
 
     constructor(
-        type: number,
         name: string,
         base: number,
         bonus: number,
         multiplier: number,
         globalMultiplier: number,
     ) {
-        this.type = type;
         this.name = name;
         this.base = base;
         this.bonus = bonus;
@@ -60,6 +81,12 @@ export class dependent {
     amount: number;
 }
 
+export class supplier {
+    name: string;
+    amount: number;
+}
+
+
 export class Job {
     name: string;
     tags: string[];
@@ -67,19 +94,22 @@ export class Job {
     current: number;
     max: number;
     used: number;
+    suppliers: supplier[];
     dependents: dependent[];
     input: increment[];
     output: increment[];
-    bonusEffect: effect[];
+    resourceEffect: resourceEffect[];
     constructor(
         name: string,
         tags: string[],
         tooltip: string,
         current: number,
         max: number,
+        suppliers: supplier[],
+        dependents: dependent[],
         input: increment[],
         output: increment[],
-        bonusEffect: effect[],
+        resourceEffect: resourceEffect[],
     ) {
         this.name = name;
         this.tags = tags;
@@ -87,10 +117,11 @@ export class Job {
         this.current = current;
         this.max = max;
         this.used = 0;
-        this.dependents = [];
+        this.suppliers = suppliers;
+        this.dependents = dependents;
         this.input = input;
         this.output = output;
-        this.bonusEffect = bonusEffect;
+        this.resourceEffect = resourceEffect;
     }
 }
 
@@ -102,6 +133,8 @@ export const jobListAtom = persistentAtom(
             "Forages the wilderness for food and materials.",
             16,
             16,
+            [],
+            [],
             [new increment('Food', 10, 0, 1, -1)],
             [    
                 new increment('Food', 11, 0, 1, 1),
@@ -115,6 +148,8 @@ export const jobListAtom = persistentAtom(
             "Unspecialised civilians living in a home.",
             0,
             5,
+            [],
+            [],
             [new increment('Food', 10, 0, 1, -1)],
             [    
                 new increment('Food', 5, 0, 1, 1),
@@ -131,6 +166,8 @@ export const jobListAtom = persistentAtom(
             "Hunts animals for food and materials.",
             0,
             5,
+            [],
+            [],
             [
                 new increment('Food', 25, 0, 1, -1),
 
@@ -142,7 +179,7 @@ export const jobListAtom = persistentAtom(
             [
                 new increment('Food', 50, 0, 1, 1),
             ],
-            [new effect(0, 'Military', 1, 0, 1, 1)],
+            [new resourceEffect('Military', 1, 0, 1, 1)],
         ),
         new Job(
             'crafter',
@@ -150,6 +187,8 @@ export const jobListAtom = persistentAtom(
             "Crafts tools and items for other workers.",
             0,
             10,
+            [],
+            [],
             [
                 new increment('Food', 10, 0, 1, -1),
 
@@ -167,6 +206,8 @@ export const jobListAtom = persistentAtom(
             "Consumes large amount of material to build structures.",
             0,
             5,
+            [],
+            [],
             [
                 new increment('Food', 20, 0, 1, -1),
 

@@ -19,6 +19,7 @@ import WorldContent from 'components/WorldContent/WorldContent';
 import Settings from 'components/Settings/Settings';
 import JobContent from 'components/JobsContent/JobsContent';
 import EndTurn from 'components/EndTurn/EndTurn';
+import JobList from 'components/JobsContent/JobList';
 
 const tabs = [
     'World',
@@ -86,7 +87,7 @@ export default function MainGame() {
                             </Tabs.Panel>
 
                             <Tabs.Panel value="Buildings">
-                                Buildings WIP
+                                <JobList/>
                             </Tabs.Panel>
 
                             <Tabs.Panel value="Economy">

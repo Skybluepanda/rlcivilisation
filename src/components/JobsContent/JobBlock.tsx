@@ -6,7 +6,6 @@ import {
     jobListAtom,
     Job,
     increment,
-    effect,
 } from 'components/JobsContent/FoodJobData';
 import {
     IconHourglass,
@@ -85,8 +84,6 @@ const JobBlock = ({ jobName }) => {
 
     useEffect(() => {
         const resourceTotals = updateResourceIncome(jobs);
-        console.log(resourceTotals["Food"]);
-        console.log(resources[0].name)
         const updatedResources = resources.map((resource: Resource) => ({
             ...resource,
             income: resourceTotals[resource.name],
