@@ -5,8 +5,8 @@ import { increment, Job } from 'components/JobsContent/FoodJobData';
 
 
 export const calculateTotal = (increment: increment) => {
-    return (increment.base * increment.multiplier + increment.bonus) *
-    increment.globalMultiplier;
+    return (increment.base * (100+increment.multiplier)/100 + increment.bonus) *
+    (100+increment.globalMultiplier)/100;
 };
 
 export const updateResourceIncome = (jobsList: Job[]) => {
@@ -37,9 +37,9 @@ export const updateResourceIncome = (jobsList: Job[]) => {
 
         jobInputOutput.forEach(inc => {
             const total =
-                (inc.base * inc.multiplier + inc.bonus) *
-                inc.globalMultiplier *
-                job.current;
+                (inc.base * (100+inc.multiplier)/100 + inc.bonus) *
+                (100+inc.globalMultiplier)/100 *
+                (job.current - job.used);
             resourceTotals[inc.resource] += total;
 
             //Set incResource to total for each resource in gamedata
@@ -52,9 +52,18 @@ export const modifyJobWorkers = (jobs, jobType, change) => {
     return jobs.map((job) => {
         if (job.name === jobType) {
             return { ...job, current: job.current + change };
-        } else if (job.name === 'forager') {
+        } else if (job.name === 'Forager') {
             return { ...job, current: job.current - change };
         }
         return job;
     });
 };
+
+export const modifyJobUsed = (jobs, jobType, change) => {
+    return jobs.map((job) => {
+        if (job.name === jobType) {
+            return { ...job, used: job.used + change };
+        }
+        return job;
+    });
+}

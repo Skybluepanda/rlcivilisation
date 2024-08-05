@@ -13,7 +13,6 @@ export default function App() {
     <ColorSchemeContext.Provider value={{ colorScheme, onChange: setColorScheme }}>
       <MantineProvider defaultColorScheme="dark">
           <Box p={"md"}>
-          <ResourceGrid />
           <MainGame />
           </Box>
       </MantineProvider>

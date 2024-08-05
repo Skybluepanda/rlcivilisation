@@ -11,6 +11,7 @@ import {
     Button,
     Tooltip,
 } from '@mantine/core';
+import {useViewportSize} from '@mantine/hooks';
 import { persistentAtom } from 'hooks/persistentAtom';
 import {
     turn,
@@ -67,6 +68,7 @@ const icons = {
 // export const selectedResourcesAtom = persistentAtom('selectedResources', []);
 const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
     const Icon = icons[name];
+    const {height, width} = useViewportSize();
     const DiffIcon = income > 0 ? IconArrowUpRight : IconArrowDownRight;
     // const [selectedResources, setSelectedResources] = useAtom(
     //     selectedResourcesAtom,
@@ -87,14 +89,14 @@ const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
             multiline
             w={300}
             transitionProps={{ transition: 'pop', duration: 300 }}
-            label={<Text>{tooltip}</Text>}
+            label={<Box><Text ta={"center"} >{name}</Text><Text>{tooltip}</Text></Box>}
         >
             <Button
                 variant="default"
                 justify="space-between"
                 leftSection={
                     <Group justify="space-between">
-                        <Box w={100}>
+                        {width >= 1920 ? <Box w={100} >
                             <Text
                                 size="md"
                                 c={
@@ -105,7 +107,7 @@ const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
                             >
                                 {name}
                             </Text>
-                        </Box>
+                        </Box> : null}
                         <Text>
                             {Math.round(value*10)/10}
                             {maxValue != undefined ? `/${Math.round(maxValue)}` : ''}

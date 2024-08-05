@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import '@mantine/core/styles.css'
-import { MantineProvider, Button, Tooltip } from '@mantine/core';
+import { MantineProvider, Button, Tooltip, Paper } from '@mantine/core';
 import {
   turn,
   Resource,
@@ -39,7 +39,7 @@ export default function EndTurn() {
       value: resource.value + resource.income
     }));
     const jobListUpdate = jobList.map((job) => {
-      if (job.name === 'forager') {
+      if (job.name === 'Forager') {
         return { ...job, current: job.current + change };
       }
       return job;
@@ -64,7 +64,9 @@ export default function EndTurn() {
 
   return (
     <MantineProvider>
-      <Button onClick={endTurn} disabled={1 >= 0 ? false:true}fullWidth h="10vh">End Turn</Button>
+      <Paper shadow="sm" p="md" withBorder h="70vh" w="20vw">
+      <Button onClick={endTurn} disabled={1 >= 0 ? false:true} fullWidth h="10vh">End Turn</Button>
+      </Paper>
     </MantineProvider>
   )
 }

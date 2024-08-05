@@ -68,7 +68,7 @@ const JobBlock = ({ jobName }) => {
     const [resources, setResources] = useAtom(resourceListAtom);
     const job = jobs.find((j) => j.name === jobName);
 
-    const foragerJob = jobs.find((j) => j.name === 'forager');
+    const foragerJob = jobs.find((j) => j.name === 'Forager');
 
     const decreaseWorkers = () => {
         if (job.current > 0) {
@@ -162,7 +162,7 @@ const JobBlock = ({ jobName }) => {
                     style={{
                         display: 'grid',
                         gridTemplateColumns:
-                            job.name === 'forager' ? '1fr' : '1fr 2fr 1fr',
+                            job.name === 'Forager' ? '1fr' : '1fr 2fr 1fr',
                         alignItems: 'center',
                         padding: '10px',
                         border: '1px solid #ccc',
@@ -172,7 +172,7 @@ const JobBlock = ({ jobName }) => {
                         textAlign: 'center',
                     }}
                 >
-                    {job.name !== 'forager' ? (
+                    {job.name !== 'Forager' ? (
                         <Button
                             variant="default"
                             onClick={decreaseWorkers}
@@ -190,12 +190,12 @@ const JobBlock = ({ jobName }) => {
                     >
                         <Text ta="center">{job.name}</Text>
                         <Text ta="center" size="sm">
-                            {job.name === 'forager'
+                            {job.name === 'Forager'
                                 ? job.current
                                 : `${job.current}/${job.max}`}
                         </Text>
                     </Box>
-                    {job.name !== 'forager' ? (
+                    {job.name !== 'Forager' ? (
                         <Button
                             variant="default"
                             onClick={increaseWorkers}

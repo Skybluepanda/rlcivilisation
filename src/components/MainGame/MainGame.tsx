@@ -5,21 +5,25 @@ import {
     Tabs,
     useMantineTheme,
     Container,
+    Grid,
     Text,
     rem,
     Group,
     createTheme,
     Paper,
-    Button
+    Button,
+    Flex
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useAtom } from 'jotai';
 import WorldContent from 'components/WorldContent/WorldContent';
 // import classes from './MainGame.module.css';
 import Settings from 'components/Settings/Settings';
-import JobContent from 'components/JobsContent/JobsContent';
 import EndTurn from 'components/EndTurn/EndTurn';
 import JobList from 'components/JobsContent/JobList';
+import QueueBox from 'components/QueueBox/QueueBox';
+import ResourceGrid from 'components/ResourceDisplay/ResourceDisplay';
+import BuildingList from 'components/BuildingContent/BuildingContent';
 
 const tabs = [
     'World',
@@ -58,9 +62,14 @@ export default function MainGame() {
     ));
 
     return (
-        <MantineProvider >
-            <Paper shadow="sm" p="md" withBorder h="70vh">
-                <Container fluid={true}>
+        <MantineProvider>
+            <Flex direction={'column'} >
+            <ResourceGrid/>
+            
+            <Paper shadow="sm" p="md" withBorder h={"80vh"}>
+            <Flex>
+                <QueueBox/>
+                <Paper  w={"60vw"} h={"76vh"} shadow="sm" p="md" withBorder>
                     <Container size="xl">
                         <Tabs
                             defaultValue="World"
@@ -83,11 +92,11 @@ export default function MainGame() {
                             </Tabs.Panel>
 
                             <Tabs.Panel value="Jobs">
-                                <JobContent/>
+                                <JobList/>
                             </Tabs.Panel>
 
                             <Tabs.Panel value="Buildings">
-                                <JobList/>
+                                <BuildingList/>
                             </Tabs.Panel>
 
                             <Tabs.Panel value="Economy">
@@ -110,9 +119,13 @@ export default function MainGame() {
                             </Tabs.Panel>
                         </Tabs>
                     </Container>
-                </Container>
+                    
+                </Paper>
+                <EndTurn/>
+                </Flex>
             </Paper>
-            <EndTurn/>
+            </Flex>
+            
         </MantineProvider>
     );
 }
