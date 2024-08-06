@@ -1,6 +1,6 @@
 // jobUtils.ts
 import { useAtom } from 'jotai';
-import { jobListAtom } from 'components/JobsContent/FoodJobData';
+import { dependent, jobListAtom } from 'components/JobsContent/FoodJobData';
 import { increment, Job } from 'components/JobsContent/FoodJobData';
 
 
@@ -34,15 +34,19 @@ export const updateResourceIncome = (jobsList: Job[]) => {
     };
     jobsList.forEach(job => {
         const jobInputOutput = [...job.input, ...job.output];
-
-        jobInputOutput.forEach(inc => {
+        job.input.forEach(inc => {
+            const total =
+                (inc.base * (100+inc.multiplier)/100 + inc.bonus) *
+                (100+inc.globalMultiplier)/100 *
+                (job.current);
+            resourceTotals[inc.resource] += total;
+        });
+        job.output.forEach(inc => {
             const total =
                 (inc.base * (100+inc.multiplier)/100 + inc.bonus) *
                 (100+inc.globalMultiplier)/100 *
                 (job.current - job.used);
             resourceTotals[inc.resource] += total;
-
-            //Set incResource to total for each resource in gamedata
         });
     });
     return resourceTotals;
@@ -59,10 +63,33 @@ export const modifyJobWorkers = (jobs, jobType, change) => {
     });
 };
 
-export const modifyJobUsed = (jobs, jobType, change) => {
+export const modifyJobUsed = (jobs, jobType, dependentName, change) => {
     return jobs.map((job) => {
         if (job.name === jobType) {
-            return { ...job, used: job.used + change };
+            const dep = job.dependents.find(dep => dep.name === dependentName);
+            if (dep) {
+                //If dependent exist change amount.
+                //Else make new dependent.
+                //If amount reaches 0, remove dependent
+                if (dep.amount + change == 0) {
+                    return { ...job, used: job.used + change, dependents: job.dependents.filter(dep => dep.name !== dependentName)};
+                } else {
+                    return { ...job, used: job.used + change, dependents: job.dependents.map(dep => {
+                        if (dep.name === dependentName) {
+                            return { ...dep, amount: dep.amount + change };
+                        }
+                        return dep;
+                    })};
+                }
+            } else {
+                return {
+                    ...job,
+                    used: job.used + change,
+                    dependents: [...job.dependents, new dependent(dependentName, change)],
+                }
+            }
+            
+                
         }
         return job;
     });

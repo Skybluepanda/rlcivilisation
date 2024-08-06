@@ -10,7 +10,8 @@ import { useAtom } from 'jotai';
 import {
   jobListAtom,
 } from 'components/JobsContent/FoodJobData';
-
+import { buildingListAtom } from 'components/BuildingContent/BuildingData';
+import { resourceUpdate, jobListUpdate, buildingListUpdate } from 'components/EndTurn/EndTurnHelper';
 
 //Endturn should change every resource by adding the income.
 //Buildings that are queued should be built.
@@ -29,33 +30,23 @@ import {
 export default function EndTurn() {
   const [resources, setResources] = useAtom(resourceListAtom);
   const [jobList, setJobList] = useAtom(jobListAtom);
+  const [buildings, setBuildings] = useAtom(buildingListAtom);
 
 
   function endTurn() {
     const population = resources.find(j => j.name === 'Population');
+    console.log(population.value)
+    console.log(population.income)
     const change = Math.floor(population.value+population.income) - Math.floor(population.value)
-    const updatedResources = resources.map((resource: Resource) => ({
-      ...resource,
-      value: resource.value + resource.income
-    }));
-    const jobListUpdate = jobList.map((job) => {
-      if (job.name === 'Forager') {
-        return { ...job, current: job.current + change };
-      }
-      return job;
-    });
-    setJobList(jobListUpdate);
+    
+    setJobList(jobListUpdate(jobList, change));
     //Resource specific processing?
     //Find population increase and increase or decrease foragers by that amount.
 
+    setResources(resourceUpdate(resources));
+    setBuildings(buildingListUpdate(buildings, jobList, setJobList));
 
 
-
-
-
-
-
-    setResources(updatedResources);
   }
 
 

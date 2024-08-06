@@ -39,7 +39,15 @@ import {
 } from './FoodJobData';
 import { useAtom, useAtomValue } from 'jotai';
 import { persistentAtom } from 'hooks/persistentAtom';
-import { Box, Button, Divider, ScrollArea, Table, Text, Tooltip } from '@mantine/core';
+import {
+    Box,
+    Button,
+    Divider,
+    ScrollArea,
+    Table,
+    Text,
+    Tooltip,
+} from '@mantine/core';
 import { turn, Resource, resourceListAtom } from 'components/Gamedata/Gamedata';
 import {
     calculateTotal,
@@ -74,9 +82,9 @@ const icons = {
 export default function JobList() {
     const [jobs, setJobs] = useAtom(jobListAtom);
     const [resources, setResources] = useAtom(resourceListAtom);
-    const population = resources.find(r => r.name === "Population");
+    const population = resources.find(r => r.name === 'Population');
 
-    const infrastructure = resources.find(r => r.name === "Infrastructure");
+    const infrastructure = resources.find(r => r.name === 'Infrastructure');
 
     const foragerJob = jobs.find(j => j.name === 'Forager');
     const decreaseWorkers = row => {
@@ -92,12 +100,16 @@ export default function JobList() {
                                 s => s.name === supplier.name,
                             );
                             const res = sup.output.find(
-                                i => i.resource === supplier.resource
-                            )
-                            const usedAmount = Math.round(supplier.amount / res.total*100)/100;
+                                i => i.resource === supplier.resource,
+                            );
+                            const usedAmount =
+                                Math.round(
+                                    (supplier.amount / res.total) * 100,
+                                ) / 100;
                             prevJobs = modifyJobUsed(
                                 prevJobs,
                                 sup.name,
+                                row.original.name,
                                 -usedAmount,
                             );
                         });
@@ -115,7 +127,10 @@ export default function JobList() {
             //Check if there are spare suppliers.
             //Number of required supplier is calculated by jobcost/supplier output.
 
-            if (foragerJob.current > 0 && job && (job.current < job.max) || (job.name==="Villager" && job.current < infrastructure.value)) {
+            if (
+                (foragerJob.current > 0 && job && job.current < job.max) ||
+                (job.name === 'Villager' && job.current < infrastructure.value)
+            ) {
                 if (job.suppliers.length > 0) {
                     let supAvailable = true;
                     job.suppliers.forEach(supplier => {
@@ -123,9 +138,12 @@ export default function JobList() {
                             s => s.name === supplier.name,
                         );
                         const res = sup.output.find(
-                            i => i.resource === supplier.resource
-                        )
-                        if ((sup.current - sup.used)*res.total < supplier.amount) {
+                            i => i.resource === supplier.resource,
+                        );
+                        if (
+                            (sup.current - sup.used) * res.total <
+                            supplier.amount
+                        ) {
                             supAvailable = false;
                         }
                     });
@@ -135,24 +153,25 @@ export default function JobList() {
                                 s => s.name === supplier.name,
                             );
                             const res = sup.output.find(
-                                i => i.resource === supplier.resource
-                            )
-                            const usedAmount = Math.round(supplier.amount / res.total*100)/100;
-                        
+                                i => i.resource === supplier.resource,
+                            );
+                            const usedAmount =
+                                Math.round(
+                                    (supplier.amount / res.total) * 100,
+                                ) / 100;
+
                             prevJobs = modifyJobUsed(
                                 prevJobs,
                                 supplier.name,
-                                usedAmount
+                                row.original.name,
+                                usedAmount,
                             );
                         });
                         return modifyJobWorkers(prevJobs, row.original.name, 1);
                     }
                 } else {
-
                     return modifyJobWorkers(prevJobs, row.original.name, 1);
-
                 }
-
             }
             return prevJobs;
         });
@@ -197,30 +216,48 @@ export default function JobList() {
                             }}
                         >
                             {row.original.name !== 'Forager' ? (
-                                <Tooltip label="Current - used must be greater than 1.
-                                ">
-                                    <Button
-                                    variant="default"
-                                    onClick={() => decreaseWorkers(row)}
-                                    size="sm"
-                                    disabled={row.original.current-row.original.used <= 0}
+                                <Tooltip
+                                    label="Current - used must be greater than 1.
+                                "
                                 >
-                                    -
-                                </Button>
-                            </Tooltip>
+                                    <Button
+                                        variant="default"
+                                        onClick={() => decreaseWorkers(row)}
+                                        size="sm"
+                                        disabled={
+                                            row.original.current -
+                                                row.original.used <=
+                                            0
+                                        }
+                                    >
+                                        -
+                                    </Button>
+                                </Tooltip>
                             ) : null}
-                            {row.original.current}{row.original.name === 'Forager' ? null : row.original.name === 'Villager' ? " / "+Math.floor(infrastructure.value) : " / "+ row.original.max}
+                            {row.original.current}
+                            {row.original.name === 'Forager'
+                                ? null
+                                : row.original.name === 'Villager'
+                                ? ' / ' + Math.floor(infrastructure.value)
+                                : ' / ' + row.original.max}
                             {row.original.used > 0
-                                ? ` (${Math.round(row.original.used*10)/10})`
+                                ? ` (${
+                                      Math.round(row.original.used * 10) / 10
+                                  })`
                                 : ''}
                             {row.original.name !== 'Forager' ? (
                                 <Button
                                     variant="default"
                                     onClick={() => increaseWorkers(row)}
                                     size="sm"
-                                    disabled={row.original.name === "Villager" ? row.original.current >= Math.floor(infrastructure.value) :
-                                        row.original.current >= row.original.max
-                                    || foragerJob.current == 0}
+                                    disabled={
+                                        row.original.name === 'Villager'
+                                            ? row.original.current >=
+                                              Math.floor(infrastructure.value)
+                                            : row.original.current >=
+                                                  row.original.max ||
+                                              foragerJob.current == 0
+                                    }
                                 >
                                     +
                                 </Button>
@@ -330,7 +367,8 @@ export default function JobList() {
                             <Table.Td>
                                 {Math.round(
                                     calculateTotal(inc) *
-                                        (row.original.current - row.original.used) *
+                                        (row.original.current -
+                                            row.original.used) *
                                         100,
                                 ) / 100}
                             </Table.Td>
@@ -338,35 +376,67 @@ export default function JobList() {
                     ));
 
                     const supplier = row.original.suppliers.map(supplier => {
-                        const sup = jobs.find(
-                            s => s.name === supplier.name,
-                        );
+                        const sup = jobs.find(s => s.name === supplier.name);
                         const res = sup.output.find(
-                            i => i.resource === supplier.resource
-                        )
-                        const usedAmount = Math.round(supplier.amount / res.total*100)/100;
+                            i => i.resource === supplier.resource,
+                        );
+                        const usedAmount =
+                            Math.round((supplier.amount / res.total) * 100) /
+                            100;
 
                         return (
-                        
-                        <Table.Tr
-                            key={supplier.name}
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '2fr 1fr 1fr',
-                                gap: '10px',
-                            }}
-                        >
-                            <Table.Td>{supplier.name} ({supplier.resource})</Table.Td>
-                            <Table.Td>
-                                {usedAmount} ({Math.floor(supplier.amount * 10) / 10})
-                            </Table.Td>
-                            <Table.Td>
-                                {Math.round(usedAmount*row.original.current*10)/10} ({Math.floor(
-                                    supplier.amount * row.original.current * 10,
-                                ) / 10})
-                            </Table.Td>
-                        </Table.Tr>
-                    )});
+                            <Table.Tr
+                                key={supplier.name}
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '2fr 1fr 1fr',
+                                    gap: '10px',
+                                }}
+                            >
+                                <Table.Td>
+                                    {supplier.name} ({supplier.resource})
+                                </Table.Td>
+                                <Table.Td>
+                                    {usedAmount} (
+                                    {Math.floor(supplier.amount * 10) / 10})
+                                </Table.Td>
+                                <Table.Td>
+                                    {Math.round(
+                                        usedAmount * row.original.current * 10,
+                                    ) / 10}{' '}
+                                    (
+                                    {Math.floor(
+                                        supplier.amount *
+                                            row.original.current *
+                                            10,
+                                    ) / 10}
+                                    )
+                                </Table.Td>
+                            </Table.Tr>
+                        );
+                    });
+                    const dependents = row.original.dependents.map(dependent => {
+                        return (
+                            <Table.Tr
+                                key={dependent.name}
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '2fr 1fr 1fr',
+                                    gap: '10px',
+                                }}
+                            >
+                                <Table.Td>
+                                    {dependent.name}
+                                </Table.Td>
+                                <Table.Td>
+                                    {Math.round(
+                                        dependent.amount * 10,
+                                    ) / 10}
+                                </Table.Td>
+                            </Table.Tr>
+                        );
+
+                    });
                     return (
                         <Box>
                             {row.original.tooltip}
@@ -445,12 +515,31 @@ export default function JobList() {
                                 />
                             ) : null}
                             {row.original.dependents.length > 0 ? (
-                                <Divider
-                                    my="md"
-                                    label="Dependents"
-                                    labelPosition="center"
-                                    size="lg"
-                                />
+                                <>
+                                    <Divider
+                                        my="md"
+                                        label="Dependents"
+                                        labelPosition="center"
+                                        size="lg"
+                                    />
+                                    <Table withColumnBorders withRowBorders>
+                                        <Table.Thead>
+                                            <Table.Tr
+                                                style={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns:
+                                                        '2fr 1fr 1fr',
+                                                    gap: '10px',
+                                                }}
+                                            >
+                                                <Table.Th>Dependent</Table.Th>
+                                                <Table.Th>Used</Table.Th>
+                                            </Table.Tr>
+                                        </Table.Thead>
+                                        <Divider size="md" />
+                                        <Table.Tbody>{dependents}</Table.Tbody>
+                                    </Table>
+                                </>
                             ) : null}
                         </Box>
                     );

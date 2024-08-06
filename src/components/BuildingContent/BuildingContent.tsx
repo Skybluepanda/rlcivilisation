@@ -54,11 +54,10 @@ import {
 } from '@mantine/core';
 import { turn, Resource, resourceListAtom } from 'components/Gamedata/Gamedata';
 import {
-    calculateTotal,
-    updateResourceIncome,
-    modifyJobWorkers,
-    modifyJobUsed,
-} from 'components/JobsContent/JobHelpers';
+    modifyBuildingQueue,
+    modifyConstructionWorkers,
+} from './BuildingHelper';
+import { modifyJobUsed } from 'components/JobsContent/JobHelpers';
 
 const icons = {
     Inspiration: IconHourglass,
@@ -103,22 +102,90 @@ export default function BuildingList() {
     const [jobs, setJobs] = useAtom(jobListAtom);
     const [buildings, setBuildings] = useAtom(buildingListAtom);
     const [resources, setResources] = useAtom(resourceListAtom);
-    const population = resources.find(r => r.name === 'Population');
+    const Infastrcture = resources.find(r => r.name === 'Infrastructure');
 
-    const infrastructure = resources.find(r => r.name === 'Infrastructure');
-
-    const foragerJob = jobs.find(j => j.name === 'Forager');
+    const decreaseQueue = row => {
+        if (row.original.construction.queued == 0) {
+            return;
+        } else {
+            setBuildings(prevBuildings => {
+                return modifyBuildingQueue(
+                    prevBuildings,
+                    row.original.name,
+                    -1,
+                );
+            });
+            setResources(prevResources => {
+                return prevResources.map(resource => {
+                    if (resource.name === 'Infrastructure') {
+                        return {
+                            ...resource,
+                            value:
+                                resource.value +
+                                row.original.infrastructureCost,
+                        };
+                    }
+                    if (resource.name === 'Wealth') {
+                        if (row.original.construction.queued == 1) {
+                            return {
+                                ...resource,
+                                value:
+                                    resource.value +
+                                    row.original.wealthCost / 2,
+                            };
+                        } else {
+                            return {
+                                ...resource,
+                                value: resource.value + row.original.wealthCost,
+                            };
+                        }
+                    }
+                    return resource;
+                });
+            });
+        }
+    };
 
     const increaseQueue = row => {
-        setBuildings(prevBuildings => {
-            const building = prevBuildings.find(b => b.name === row.original.name);
-            if (building.construction.queued == 0) {
-                return prevBuildings;
+        setResources(prevResources => {
+            const infrastructure = prevResources.find(
+                r => r.name === 'Infrastructure',
+            );
+            const wealth = prevResources.find(r => r.name === 'Wealth');
+            if (
+                infrastructure.value >= row.original.infrastructureCost &&
+                wealth.value >= row.original.wealthCost
+            ) {
+                setBuildings(prevBuildings => {
+                    console.log(prevBuildings);
+                    return modifyBuildingQueue(
+                        prevBuildings,
+                        row.original.name,
+                        1,
+                    );
+                });
+                return prevResources.map(resource => {
+                    if (resource.name === 'Infrastructure') {
+                        return {
+                            ...resource,
+                            value:
+                                resource.value -
+                                row.original.infrastructureCost,
+                        };
+                    }
+                    if (resource.name === 'Wealth') {
+                        return {
+                            ...resource,
+                            value: resource.value - row.original.wealthCost,
+                        };
+                    }
+                    return resource;
+                });
             } else {
-                return [...prevBuildings, building.construction.queued-1];
+                return prevResources;
             }
         });
-    }
+    };
     // useEffect(() => {
     //     const resourceTotals = updateResourceIncome(jobs);
     //     const updatedResources = resources.map((resource: Resource) => ({
@@ -160,16 +227,23 @@ export default function BuildingList() {
                             >
                                 <Button
                                     variant="default"
-                                    // onClick={}
+                                    onClick={() => decreaseQueue(row)}
                                     size="sm"
                                 >
                                     -
                                 </Button>
                             </Tooltip>
-                            <Text>{row.original.built}{row.original.construction.queued > 0 ? ' (+'+row.original.construction.queued+')':''}</Text>
+                            <Text>
+                                {row.original.built}
+                                {row.original.construction.queued > 0
+                                    ? ' (+' +
+                                      row.original.construction.queued +
+                                      ')'
+                                    : ''}
+                            </Text>
                             <Button
                                 variant="default"
-                                // onClick={() => increaseWorkers(row)}
+                                onClick={() => increaseQueue(row)}
                                 size="sm"
                             >
                                 +
@@ -217,9 +291,41 @@ export default function BuildingList() {
                 }}
                 renderDetailPanel={({ row }) => {
                     const costJob = row.original.costJobs?.map(job => {
-                        const worker = row.original.construction?.progress?.find(
-                            p => p.job === job.job,
+                        const worker =
+                            row.original.construction?.progress?.find(
+                                p => p.job === job.job,
+                            );
+                        const workerAtom = jobs.find(w => w.name === job.job);
+                        const workerOutput = workerAtom.output.find(
+                            inc => inc.resource === job.resource,
                         );
+                        const decreaseConstructors = () => {
+                            setJobs(prevJobs => {
+                                return modifyJobUsed(prevJobs, job.job, row.original.name + " (Construction)", -1);
+                            });
+                            setBuildings(prevBuildings => {
+                                return modifyConstructionWorkers(
+                                    prevBuildings,
+                                    row.original.name,
+                                    job.job,
+                                    -1,
+                                );
+                            });
+                        };
+                        const increaseConstructors = () => {
+                            setJobs(prevJobs => {
+                                return modifyJobUsed(prevJobs, job.job, row.original.name + " (Construction)", +1);
+                            });
+                            setBuildings(prevBuildings => {
+                                return modifyConstructionWorkers(
+                                    prevBuildings,
+                                    row.original.name,
+                                    job.job,
+                                    +1,
+                                );
+                            });
+                        };
+
                         return (
                             <Table.Tr
                                 key={job.job}
@@ -229,9 +335,58 @@ export default function BuildingList() {
                                     gap: '10px',
                                 }}
                             >
-                                <Table.Td>{job.job} ({job.resource})</Table.Td>
-                                <Table.Td>{job.amount}</Table.Td>
-                                <Table.Td>{worker ? worker.workers : "N/A"}</Table.Td>
+                                <Table.Td>
+                                    {job.job} ({job.resource})
+                                </Table.Td>
+                                <Table.Td>
+                                    {row.original.construction.queued > 0
+                                        ? worker.amount + ' / '
+                                        : null}
+                                    {job.amount}
+                                    {row.original.construction.queued > 0
+                                        ? ' (+' +
+                                          worker.workers * workerOutput.total +
+                                        ')'
+                                        : null}
+                                </Table.Td>
+                                <Table.Td>
+                                    <Box
+                                        style={{
+                                            display: 'grid',
+                                            gridTemplateColumns:
+                                                row.original.name === 'Forager'
+                                                    ? '1fr'
+                                                    : '1fr 2fr 1fr',
+                                            alignItems: 'center',
+
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        <Button
+                                            variant="default"
+                                            onClick={decreaseConstructors}
+                                            size="sm"
+                                            disabled={worker.workers == 0}
+                                        >
+                                            -
+                                        </Button>
+                                        {worker
+                                            ? worker.workers
+                                            : 'No Construction'}
+                                        <Button
+                                            variant="default"
+                                            onClick={increaseConstructors}
+                                            size="sm"
+                                            disabled={
+                                                workerAtom.current -
+                                                    workerAtom.used <
+                                                1
+                                            }
+                                        >
+                                            +
+                                        </Button>
+                                    </Box>
+                                </Table.Td>
                             </Table.Tr>
                         );
                     });
@@ -245,11 +400,10 @@ export default function BuildingList() {
                                 labelPosition="center"
                                 size="lg"
                             />
-                            <Text>Infastrcture: {row.original.infrastructureCost}
-                            </Text>
                             <Text>
-                            Wealth: {row.original.infrastructureCost}
+                                Infastrcture: {row.original.infrastructureCost}
                             </Text>
+                            <Text>Wealth: {row.original.wealthCost}</Text>
                             <Table withColumnBorders withRowBorders>
                                 <Table.Thead>
                                     <Table.Tr
@@ -259,9 +413,13 @@ export default function BuildingList() {
                                             gap: '10px',
                                         }}
                                     >
-                                        <Table.Th>Building Jobs (Resources)</Table.Th>
+                                        <Table.Th>
+                                            Building Jobs (Resources)
+                                        </Table.Th>
                                         <Table.Th>Construction</Table.Th>
-                                        <Table.Th>WorkerCount</Table.Th>
+                                        <Table.Th>
+                                            Construction Workers
+                                        </Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>
                                 <Divider size="md" />

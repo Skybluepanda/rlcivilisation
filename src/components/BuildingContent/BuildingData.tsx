@@ -160,7 +160,6 @@ export class Building {
     resourcemax: resourceMax[];
     jobmax: jobMax[];
     construction: construction;
-
     constructor(
         name: string,
         unlocked: boolean,
@@ -169,6 +168,7 @@ export class Building {
         infrastructureCost: number,
         wealthCost: number,
         costJobs: costJob[],
+        construction: construction,
         bonuseffect?: bonusEffect[],
         resourcemax?: resourceMax[],
         jobmax?: jobMax[],
@@ -184,7 +184,7 @@ export class Building {
         this.bonuseffect = bonuseffect;
         this.resourcemax = resourcemax;
         this.jobmax = jobmax;
-        this.construction = new construction(0, []);
+        this.construction = construction;
     }
 }
 
@@ -197,8 +197,11 @@ export const buildingListAtom = persistentAtom('buildingListAtom', [
         ['infrastructure', 'population'], //Tags
         'Workplace for crafters.', //Tooltip
         1, //Infrastructure cost
-        100, //Wealth cost
-        [new costJob('Builder', 'Production', 1000)], //CostJob
+        1, //Wealth cost
+        [new costJob('Builder', 'Production', 10)], //CostJob
+        new construction(0, [
+            new progress('Builder', 'Production', 0, 0),
+        ]),
         [new bonusEffect('infrastructure', 1, 0, 0, 0)], //Bonus effect
         [], //Resource max
         [], //Job max
