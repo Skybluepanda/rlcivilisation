@@ -45,8 +45,7 @@ export default function EndTurn() {
 
     setResources(resourceUpdate(resources));
     setBuildings(buildingListUpdate(buildings, jobList, setJobList));
-
-
+    //Update other tables when buildings are done.
   }
 
 

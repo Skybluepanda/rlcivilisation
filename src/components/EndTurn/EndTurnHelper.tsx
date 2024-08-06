@@ -53,6 +53,8 @@ export const buildingListUpdate = (buildingList, jobList, setJobList) => {
                             queued: building.construction.queued - 1,
                         },
                     }
+                    //Also do bonuseffect, resourcemax and jobmax.
+                    
 
                 } else {
                     return building;

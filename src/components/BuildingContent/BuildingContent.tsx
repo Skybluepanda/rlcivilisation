@@ -102,8 +102,6 @@ export default function BuildingList() {
     const [jobs, setJobs] = useAtom(jobListAtom);
     const [buildings, setBuildings] = useAtom(buildingListAtom);
     const [resources, setResources] = useAtom(resourceListAtom);
-    const Infastrcture = resources.find(r => r.name === 'Infrastructure');
-
     const decreaseQueue = row => {
         if (row.original.construction.queued == 0) {
             return;
@@ -187,13 +185,10 @@ export default function BuildingList() {
         });
     };
     // useEffect(() => {
-    //     const resourceTotals = updateResourceIncome(jobs);
-    //     const updatedResources = resources.map((resource: Resource) => ({
-    //         ...resource,
-    //         income: resourceTotals[resource.name],
-    //     }));
-    //     setResources(updatedResources);
-    // }, [jobs, setResources]);
+    //     Infrastructure = resources.find(r => r.name === 'Infrastructure');
+    //     console.log(Infrastructure.value)
+    //     Wealth = resources.find(r => r.name === 'Wealth');
+    // }, [Infrastructure, Wealth,resources, setResources]);
 
     //column definitions - strongly typed if you are using TypeScript (optional, but recommended)
     const columns = useMemo<MRT_ColumnDef<Building>[]>(
@@ -221,30 +216,25 @@ export default function BuildingList() {
                                 textAlign: 'center',
                             }}
                         >
-                            <Tooltip
-                                label="Current - used must be greater than 1.
-                                "
-                            >
                                 <Button
                                     variant="default"
                                     onClick={() => decreaseQueue(row)}
                                     size="sm"
+                                    disabled={row.original.construction.queued === 0}
                                 >
                                     -
                                 </Button>
-                            </Tooltip>
                             <Text>
                                 {row.original.built}
                                 {row.original.construction.queued > 0
-                                    ? ' (+' +
-                                      row.original.construction.queued +
-                                      ')'
+                                    ? ' (+'+row.original.construction.queued+')'
                                     : ''}
                             </Text>
                             <Button
                                 variant="default"
                                 onClick={() => increaseQueue(row)}
                                 size="sm"
+                                // disabled={resources.value < row.original.infrastructureCost || Wealth.value < row.original.wealthCost}
                             >
                                 +
                             </Button>
@@ -401,7 +391,7 @@ export default function BuildingList() {
                                 size="lg"
                             />
                             <Text>
-                                Infastrcture: {row.original.infrastructureCost}
+                                Infrastrcture: {row.original.infrastructureCost}
                             </Text>
                             <Text>Wealth: {row.original.wealthCost}</Text>
                             <Table withColumnBorders withRowBorders>
