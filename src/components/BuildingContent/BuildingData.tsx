@@ -1,12 +1,14 @@
 import { persistentAtom } from 'hooks/persistentAtom';
 
-export class increment {
+
+
+export class resourceMax {
     resource: string;
     base: number;
     bonus: number;
     multiplier: number;
     globalMultiplier: number;
-
+    total: number;
     constructor(
         resource: string,
         base: number,
@@ -19,23 +21,16 @@ export class increment {
         this.bonus = bonus;
         this.multiplier = multiplier;
         this.globalMultiplier = globalMultiplier;
+        this.total = (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
     }
 }
-
-export class resourceMax {
-    resource: string;
-    base: number;
-    bonus: number;
-    multiplier: number;
-    globalMultiplier: number;
-}
-
 export class jobMax {
     job: string;
     base: number;
     bonus: number;
     multiplier: number;
     globalMultiplier: number;
+    total: number;
 
     constructor(
         job: string,
@@ -49,6 +44,7 @@ export class jobMax {
         this.bonus = bonus;
         this.multiplier = multiplier;
         this.globalMultiplier = globalMultiplier;
+        this.total = (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
     }
 }
 
@@ -110,7 +106,7 @@ export class bonusEffect {
         this.bonus = bonus;
         this.multiplier = multiplier;
         this.globalMultiplier = globalMultiplier;
-        this.total = (this.base*this.multiplier + this.bonus)*this.globalMultiplier
+        this.total = (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
     }
 }
 
@@ -202,9 +198,9 @@ export const buildingListAtom = persistentAtom('buildingListAtom', [
         new construction(0, [
             new progress('Builder', 'Production', 0, 0),
         ]),
-        [new bonusEffect('infrastructure', 1, 0, 0, 0)], //Bonus effect
+        [new bonusEffect('Efficiency', 1, 0, 0, 0)], //Bonus effect
         [], //Resource max
-        [], //Job max
+        [new jobMax("Crafter", 5, 0, 0, 0)], //Job max
     ),
     // new Building(
     //     'Template', //Name

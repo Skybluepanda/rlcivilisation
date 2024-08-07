@@ -380,6 +380,69 @@ export default function BuildingList() {
                             </Table.Tr>
                         );
                     });
+                    const resourceMax = row.original.resourcemax.map(resource => {
+                        return (
+                            <Table.Tr
+                            key={resource.resource}
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr 1fr',
+                                    gap: '10px',
+                            }}>
+                                <Table.Td>
+                                    {resource.resource}
+                                </Table.Td>
+                                <Table.Td>
+                                    {resource.total}
+                                </Table.Td>
+                                <Table.Td>
+                                    {resource.total*row.original.built}
+                                </Table.Td>
+                            </Table.Tr>
+                        )
+                    })
+                    const jobMax = row.original.jobmax.map(jobmax => {
+                        return (
+                            <Table.Tr
+                            key={jobmax.job}
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr 1fr',
+                                    gap: '10px',
+                            }}>
+                                <Table.Td>
+                                    {jobmax.job}
+                                </Table.Td>
+                                <Table.Td>
+                                    {jobmax.total}
+                                </Table.Td>
+                                <Table.Td>
+                                    {jobmax.total*row.original.built}
+                                </Table.Td>
+                            </Table.Tr>
+                        )
+                    })
+                    const bonusEffect = row.original.bonuseffect.map(bonus => {
+                        return (
+                            <Table.Tr
+                            key={bonus.resource}
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr 1fr',
+                                    gap: '10px',
+                            }}>
+                                <Table.Td>
+                                    {bonus.resource}
+                                </Table.Td>
+                                <Table.Td>
+                                    {bonus.total}
+                                </Table.Td>
+                                <Table.Td>
+                                    {bonus.total*row.original.built}
+                                </Table.Td>
+                            </Table.Tr>
+                        )
+                    })
 
                     return (
                         <Box>
@@ -412,8 +475,38 @@ export default function BuildingList() {
                                         </Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>
-                                <Divider size="md" />
+                                <Divider size="md"/>
                                 <Table.Tbody>{costJob}</Table.Tbody>
+                            </Table>
+                            <Divider
+                                my="md"
+                                label="Building Effect"
+                                labelPosition="center"
+                                size="lg"
+                            />
+                            {/* BonusEffect, ResourceMax, JobMax */}
+                            <Table withColumnBorders withRowBorders>
+                                <Table.Thead>
+                                    <Table.Tr
+                                        style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr 1fr',
+                                            gap: '10px',
+                                        }}
+                                    >
+                                        <Table.Th>
+                                            Effect
+                                        </Table.Th>
+                                        <Table.Th>Per</Table.Th>
+                                        <Table.Th>Total</Table.Th>
+                                    </Table.Tr>
+                                </Table.Thead>
+                                <Divider size="md"/>
+                                <Table.Tbody>{bonusEffect}</Table.Tbody>
+                                <Divider size="sm"/>
+                                <Table.Tbody>{resourceMax}</Table.Tbody>
+                                <Divider size="sm"/>
+                                <Table.Tbody>{jobMax}</Table.Tbody>
                             </Table>
                         </Box>
                     );

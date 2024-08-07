@@ -18,15 +18,27 @@ export const jobListUpdate = (jobList, populationChange) => {
     });
 };
 
-export const buildingListUpdate = (buildingList, jobList, setJobList) => {
-    return buildingList.map(building => {
+export const buildingListUpdate = (
+    buildingList,
+    jobList,
+    setJobList
+) => {
+    const totalBuilt = {};
+    return [buildingList.map(building => {
         if (building.construction.queued > 0) {
-            let buildingProgresses = constructionProgress(building, jobList)
+            let buildingProgresses = constructionProgress(building, jobList);
             while (true) {
                 if (building.construction.queued == 0) {
                     building.construction.progress.forEach(progress =>
-                        setJobList(modifyJobUsed(jobList, progress.job, building.name + " (Construction)", -progress.workers))
-                    )
+                        setJobList(prevJobs =>
+                            modifyJobUsed(
+                                prevJobs,
+                                progress.job,
+                                building.name + ' (Construction)',
+                                -progress.workers,
+                            ),
+                        ),
+                    );
                     //Release all workers! Leftover materials added to storage.
                     building.construction.progress.map(progress => {
                         progress.workers = 0;
@@ -44,27 +56,33 @@ export const buildingListUpdate = (buildingList, jobList, setJobList) => {
                 });
                 if (complete) {
                     //Increase built by 1, reduce progress by cost. Reduce queue by 1.
-                    buildingProgresses = buildingComplete(buildingProgresses, building)
+                    if (totalBuilt[building.name]) {
+                        totalBuilt[building.name] += 1;
+                    } else {
+                        totalBuilt[building.name] = 1;
+                    }
+                    buildingProgresses = buildingComplete(
+                        buildingProgresses,
+                        building,
+                    );
                     building = {
-                        ...building, built: building.built + 1,
+                        ...building,
+                        built: building.built + 1,
                         construction: {
                             ...building.construction,
                             progress: buildingProgresses,
                             queued: building.construction.queued - 1,
                         },
-                    }
-                    //Also do bonuseffect, resourcemax and jobmax.
-                    
-
+                    };
+                    //Just do bonusEffects.
                 } else {
                     return building;
                 }
             }
-                
         } else {
             return building;
         }
-    });
+    }), totalBuilt];
 };
 
 export const constructionProgress = (building: Building, jobList) => {
@@ -72,13 +90,12 @@ export const constructionProgress = (building: Building, jobList) => {
         if (progress.workers > 0) {
             const constructor = jobList.find(job => job.name === progress.job);
             const constructorOutput = constructor.output.find(
-                inc => inc.resource === progress.resource
+                inc => inc.resource === progress.resource,
             );
             const progressCost = building.costJobs.find(
                 costJob => costJob.job === progress.job,
             );
             if (building.construction.queued == 1) {
-                
             }
             return {
                 ...progress,
@@ -92,7 +109,10 @@ export const constructionProgress = (building: Building, jobList) => {
     });
 };
 
-export const buildingComplete = (progresses: progress[], building:Building) => {
+export const buildingComplete = (
+    progresses: progress[],
+    building: Building,
+) => {
     return progresses.map(progress => {
         //Increase amount by workers*output.
         //If at max of the resource and queue is 1, return workers at the end.
@@ -103,9 +123,28 @@ export const buildingComplete = (progresses: progress[], building:Building) => {
         );
         return {
             ...progress,
-            amount:
-                progress.amount - progressCost.amount
+            amount: progress.amount - progressCost.amount,
         };
     });
+};
 
-}
+export const buildingJobMaxUpdate = (jobList, builtList, buildings) => {
+    return jobList.map(job => {
+        let total = 0;
+        for (let [buildingName, quantity] of Object.entries(builtList)) {
+            const building = buildings.find(building => building.name === buildingName);
+            building.jobmax.forEach(jobMax => {
+                if (jobMax.job === job.name) {
+                    total +=job.max + jobMax.total*Number(quantity);
+                }
+            })
+        }
+        return {...job, max: job.max+total};
+    });
+    
+    
+
+};
+export const buildingResourceMaxUpdate = (resources, builtList, buildings) => {
+
+};
