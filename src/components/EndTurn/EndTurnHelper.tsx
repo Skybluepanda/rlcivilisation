@@ -6,7 +6,13 @@ import { modifyJobUsed } from 'components/JobsContent/JobHelpers';
 
 export const resourceUpdate = resources => {
     return resources.map((resource: Resource) => {
-        return { ...resource, value: resource.value + resource.income };
+        let newValue = resource.value + resource.income;
+        if (resources.max == undefined) {
+            return { ...resource, value: resource.value + resource.income };
+        } else {
+            return { ...resource, value: Math.min(newValue, resource.max) };
+        }
+        
     });
 };
 export const jobListUpdate = (jobList, populationChange) => {
@@ -135,7 +141,7 @@ export const buildingJobMaxUpdate = (jobList, builtList, buildings) => {
             const building = buildings.find(building => building.name === buildingName);
             building.jobmax.forEach(jobMax => {
                 if (jobMax.job === job.name) {
-                    total +=job.max + jobMax.total*Number(quantity);
+                    total += jobMax.total*Number(quantity);
                 }
             })
         }
@@ -146,5 +152,28 @@ export const buildingJobMaxUpdate = (jobList, builtList, buildings) => {
 
 };
 export const buildingResourceMaxUpdate = (resources, builtList, buildings) => {
-
+    return resources.map(resource => {
+        let maxIncrease = 0;
+        let valueIncrease = 0;
+        for (let [buildingName, quantity] of Object.entries(builtList)) {
+            const building = buildings.find(building => building.name === buildingName);
+            if (resource.max != undefined) {
+                building.resourcemax.forEach(rmax => {
+                    if (rmax.resource === resource.name) {
+                        maxIncrease += rmax.total*Number(quantity);
+                    }
+                })
+            }
+            building.bonuseffect.forEach(bfx => {
+                if (bfx.resource === resource.name) {
+                    valueIncrease += bfx.total*Number(quantity);
+                }
+            })
+        }
+        if (resource.max != undefined) {
+            resource = {...resource, max: resource.max+maxIncrease};
+        }
+        return {...resource, value: resource.value+valueIncrease};            
+    });
+    
 };

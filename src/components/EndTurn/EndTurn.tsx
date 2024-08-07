@@ -52,7 +52,7 @@ export default function EndTurn() {
         if (buildingsUpdate[1]) {
             //New building!
             setJobList(prevJobs => buildingJobMaxUpdate(prevJobs, buildingsUpdate[1], buildings));
-            // setResources(buildingResourceMaxUpdate(resources, buildingsUpdate[1], buildings));
+            setResources(buildingResourceMaxUpdate(resources, buildingsUpdate[1], buildings));
 
         }
 
