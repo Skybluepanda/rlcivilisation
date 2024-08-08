@@ -129,8 +129,8 @@ export default function EndTurn() {
                             leftSection={
                                 <IconWorld size="1.4rem" stroke={1.5} color="gray"/>
                             }
-                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
-                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                            rightSection={logSettings.showWorldEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showWorldEvents : !prevSettings.showWorldEvents}})}
                         >
                             World Events
                         </Menu.Item>
@@ -147,69 +147,70 @@ export default function EndTurn() {
                             leftSection={
                                 <IconBuildingCommunity size="1.4rem" stroke={1.5} color="gray"/>
                             }
-                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
-                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                            rightSection={logSettings.showBuildingEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showBuildingEvents : !prevSettings.showBuildingEvents}})}
                         >
-                            Population
+                            Building
                         </Menu.Item>
                         <Menu.Item
                             leftSection={
                                 <IconAlertCircle size="1.4rem" stroke={1.5} color="gray"/>
                             }
-                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
-                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                            rightSection={logSettings.showSituation ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showSituation : !prevSettings.showSituation}})}
                         >
-                            Population
+                            Situation
                         </Menu.Item>
                         <Menu.Item
                             leftSection={
                                 <IconApps size="1.4rem" stroke={1.5} color="gray"/>
                             }
-                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
-                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                            rightSection={logSettings.showTechEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showTechEvents : !prevSettings.showTechEvents}})}
                         >
-                            Population
+                            Technology
                         </Menu.Item>
                         <Menu.Item
                             leftSection={
                                 <IconMasksTheater size="1.4rem" stroke={1.5} color="gray"/>
                             }
-                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
-                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                            rightSection={logSettings.showTraditionEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showTraditionEvents : !prevSettings.showTraditionEvents}})}
                         >
-                            Population
+                            Tradition
                         </Menu.Item>
                         <Menu.Item
                             leftSection={
                                 <IconGavel size="1.4rem" stroke={1.5} color="gray"/>
                             }
-                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
-                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                            rightSection={logSettings.showGovernmentEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showGovernmentEvents : !prevSettings.showGovernmentEvents}})}
                         >
-                            Population
+                            Government
                         </Menu.Item>
 
                         <Menu.Divider />
 
-                        <Menu.Label>Danger zone</Menu.Label>
+                        <Menu.Label>Clear Logs</Menu.Label>
                         
                         <Menu.Item
                             color="red"
                             leftSection={
                                 <IconTrash size="1.4rem" stroke={1.5} color="gray"/>
                             }
+                            onClick={() => setLogs([])}
                         >
                             Clear Logs
                         </Menu.Item>
                     </Menu.Dropdown>
                 </Menu>
                 <Divider size={'xl'}/>
-                <ScrollArea>
+                <ScrollArea h="80%">
                     {logs.map(log => {
                         return (
                             <Box>
                                 <Divider my="sm" />
-                                <Text>Turn {log.turn}</Text>
+                                <Text ta={'left'}>Turn {log.turn}</Text>
                                 {log.population != 0 ? (
                                     <Text>
                                         Population Change:{' '}
