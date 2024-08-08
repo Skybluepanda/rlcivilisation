@@ -29,7 +29,7 @@ export const buildingListUpdate = (
     jobList,
     setJobList
 ) => {
-    const totalBuilt = {};
+    const totalBuilt = {"built":false};
     return [buildingList.map(building => {
         if (building.construction.queued > 0) {
             let buildingProgresses = constructionProgress(building, jobList);
@@ -62,6 +62,7 @@ export const buildingListUpdate = (
                 });
                 if (complete) {
                     //Increase built by 1, reduce progress by cost. Reduce queue by 1.
+                    totalBuilt["built"] = true;
                     if (totalBuilt[building.name]) {
                         totalBuilt[building.name] += 1;
                     } else {
@@ -107,7 +108,7 @@ export const constructionProgress = (building: Building, jobList) => {
                 ...progress,
                 amount:
                     progress.amount +
-                    progress.workers * constructorOutput.total,
+                    progress.workers * constructorOutput.total(),
             };
         } else {
             return progress;
@@ -141,7 +142,7 @@ export const buildingJobMaxUpdate = (jobList, builtList, buildings) => {
             const building = buildings.find(building => building.name === buildingName);
             building.jobmax.forEach(jobMax => {
                 if (jobMax.job === job.name) {
-                    total += jobMax.total*Number(quantity);
+                    total += jobMax.total()*Number(quantity);
                 }
             })
         }
@@ -160,13 +161,13 @@ export const buildingResourceMaxUpdate = (resources, builtList, buildings) => {
             if (resource.max != undefined) {
                 building.resourcemax.forEach(rmax => {
                     if (rmax.resource === resource.name) {
-                        maxIncrease += rmax.total*Number(quantity);
+                        maxIncrease += rmax.total()*Number(quantity);
                     }
                 })
             }
             building.bonuseffect.forEach(bfx => {
                 if (bfx.resource === resource.name) {
-                    valueIncrease += bfx.total*Number(quantity);
+                    valueIncrease += bfx.total()*Number(quantity);
                 }
             })
         }

@@ -7,7 +7,7 @@ export default function QueueBox() {
 
   return (
     <MantineProvider>
-      <Paper shadow="sm" p="md" withBorder w={"20vw"}>
+      <Paper shadow="sm" p="md" withBorder h = "100%">
       <Box>
         Queue Box will be here
       </Box>

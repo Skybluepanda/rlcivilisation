@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import {
     MantineReactTable,
     useMantineReactTable,
@@ -102,6 +102,10 @@ export default function BuildingList() {
     const [jobs, setJobs] = useAtom(jobListAtom);
     const [buildings, setBuildings] = useAtom(buildingListAtom);
     const [resources, setResources] = useAtom(resourceListAtom);
+    const [fullScreen, setFullScreen] = useState(false);
+    const handleToggleFullScreen = () => {
+        setFullScreen(prev => !prev);
+    };
     const decreaseQueue = row => {
         if (row.original.construction.queued == 0) {
             return;
@@ -216,18 +220,22 @@ export default function BuildingList() {
                                 textAlign: 'center',
                             }}
                         >
-                                <Button
-                                    variant="default"
-                                    onClick={() => decreaseQueue(row)}
-                                    size="sm"
-                                    disabled={row.original.construction.queued === 0}
-                                >
-                                    -
-                                </Button>
+                            <Button
+                                variant="default"
+                                onClick={() => decreaseQueue(row)}
+                                size="sm"
+                                disabled={
+                                    row.original.construction.queued === 0
+                                }
+                            >
+                                -
+                            </Button>
                             <Text>
                                 {row.original.built}
                                 {row.original.construction.queued > 0
-                                    ? ' (+'+row.original.construction.queued+')'
+                                    ? ' (+' +
+                                      row.original.construction.queued +
+                                      ')'
                                     : ''}
                             </Text>
                             <Button
@@ -267,7 +275,7 @@ export default function BuildingList() {
     //note: you can also pass table options as props directly to <MantineReactTable /> instead of using useMantineReactTable
     //but the useMantineReactTable hook will be the most recommended way to define table options
     return (
-        <ScrollArea.Autosize mah={'75vh'} mx="auto">
+        <ScrollArea.Autosize mah={'70vh'} mx="auto">
             <MantineReactTable
                 columns={columns}
                 data={buildings}
@@ -275,10 +283,22 @@ export default function BuildingList() {
                 enableColumnOrdering={true}
                 enableRowOrdering={true}
                 enableSorting={false}
+                enablePagination={false}
+                enableRowVirtualization={true}
+                enableStickyHeader={false}
                 initialState={{
                     showColumnFilters: true,
                     showGlobalFilter: true,
                 }}
+                mantineTableContainerProps={{
+                    style: {
+                        maxHeight: fullScreen ? '100vh' : '65vh',
+                        overflow: 'auto',
+                    },
+                }}
+                onIsFullScreenChange={handleToggleFullScreen}
+                rowVirtualizerOptions={{ overscan: 10 }}
+                state={{ isFullScreen: fullScreen }}
                 renderDetailPanel={({ row }) => {
                     const costJob = row.original.costJobs?.map(job => {
                         const worker =
@@ -291,7 +311,12 @@ export default function BuildingList() {
                         );
                         const decreaseConstructors = () => {
                             setJobs(prevJobs => {
-                                return modifyJobUsed(prevJobs, job.job, row.original.name + " (Construction)", -1);
+                                return modifyJobUsed(
+                                    prevJobs,
+                                    job.job,
+                                    row.original.name + ' (Construction)',
+                                    -1,
+                                );
                             });
                             setBuildings(prevBuildings => {
                                 return modifyConstructionWorkers(
@@ -304,7 +329,12 @@ export default function BuildingList() {
                         };
                         const increaseConstructors = () => {
                             setJobs(prevJobs => {
-                                return modifyJobUsed(prevJobs, job.job, row.original.name + " (Construction)", +1);
+                                return modifyJobUsed(
+                                    prevJobs,
+                                    job.job,
+                                    row.original.name + ' (Construction)',
+                                    +1,
+                                );
                             });
                             setBuildings(prevBuildings => {
                                 return modifyConstructionWorkers(
@@ -336,7 +366,7 @@ export default function BuildingList() {
                                     {row.original.construction.queued > 0
                                         ? ' (+' +
                                           worker.workers * workerOutput.total +
-                                        ')'
+                                          ')'
                                         : null}
                                 </Table.Td>
                                 <Table.Td>
@@ -380,69 +410,62 @@ export default function BuildingList() {
                             </Table.Tr>
                         );
                     });
-                    const resourceMax = row.original.resourcemax.map(resource => {
-                        return (
-                            <Table.Tr
-                            key={resource.resource}
-                                style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '1fr 1fr 1fr',
-                                    gap: '10px',
-                            }}>
-                                <Table.Td>
-                                    {resource.resource}
-                                </Table.Td>
-                                <Table.Td>
-                                    {resource.total}
-                                </Table.Td>
-                                <Table.Td>
-                                    {resource.total*row.original.built}
-                                </Table.Td>
-                            </Table.Tr>
-                        )
-                    })
+                    const resourceMax = row.original.resourcemax.map(
+                        resource => {
+                            return (
+                                <Table.Tr
+                                    key={resource.resource}
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr 1fr',
+                                        gap: '10px',
+                                    }}
+                                >
+                                    <Table.Td>{resource.resource}</Table.Td>
+                                    <Table.Td>{resource.total()}</Table.Td>
+                                    <Table.Td>
+                                        {resource.total() * row.original.built}
+                                    </Table.Td>
+                                </Table.Tr>
+                            );
+                        },
+                    );
                     const jobMax = row.original.jobmax.map(jobmax => {
                         return (
                             <Table.Tr
-                            key={jobmax.job}
+                                key={jobmax.job}
                                 style={{
                                     display: 'grid',
                                     gridTemplateColumns: '1fr 1fr 1fr',
                                     gap: '10px',
-                            }}>
+                                }}
+                            >
+                                <Table.Td>{jobmax.job}</Table.Td>
+                                <Table.Td>{jobmax.total()}</Table.Td>
                                 <Table.Td>
-                                    {jobmax.job}
-                                </Table.Td>
-                                <Table.Td>
-                                    {jobmax.total}
-                                </Table.Td>
-                                <Table.Td>
-                                    {jobmax.total*row.original.built}
+                                    {jobmax.total() * row.original.built}
                                 </Table.Td>
                             </Table.Tr>
-                        )
-                    })
+                        );
+                    });
                     const bonusEffect = row.original.bonuseffect.map(bonus => {
                         return (
                             <Table.Tr
-                            key={bonus.resource}
+                                key={bonus.resource}
                                 style={{
                                     display: 'grid',
                                     gridTemplateColumns: '1fr 1fr 1fr',
                                     gap: '10px',
-                            }}>
+                                }}
+                            >
+                                <Table.Td>{bonus.resource}</Table.Td>
+                                <Table.Td>{bonus.total()}</Table.Td>
                                 <Table.Td>
-                                    {bonus.resource}
-                                </Table.Td>
-                                <Table.Td>
-                                    {bonus.total}
-                                </Table.Td>
-                                <Table.Td>
-                                    {bonus.total*row.original.built}
+                                    {bonus.total() * row.original.built}
                                 </Table.Td>
                             </Table.Tr>
-                        )
-                    })
+                        );
+                    });
 
                     return (
                         <Box>
@@ -475,7 +498,7 @@ export default function BuildingList() {
                                         </Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>
-                                <Divider size="md"/>
+                                <Divider size="md" />
                                 <Table.Tbody>{costJob}</Table.Tbody>
                             </Table>
                             <Divider
@@ -494,18 +517,16 @@ export default function BuildingList() {
                                             gap: '10px',
                                         }}
                                     >
-                                        <Table.Th>
-                                            Effect
-                                        </Table.Th>
+                                        <Table.Th>Effect</Table.Th>
                                         <Table.Th>Per</Table.Th>
                                         <Table.Th>Total</Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>
-                                <Divider size="md"/>
+                                <Divider size="md" />
                                 <Table.Tbody>{bonusEffect}</Table.Tbody>
-                                <Divider size="sm"/>
+                                <Divider size="sm" />
                                 <Table.Tbody>{resourceMax}</Table.Tbody>
-                                <Divider size="sm"/>
+                                <Divider size="sm" />
                                 <Table.Tbody>{jobMax}</Table.Tbody>
                             </Table>
                         </Box>

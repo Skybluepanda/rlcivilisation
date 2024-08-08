@@ -14,18 +14,20 @@ export class increment {
     bonus: number;
     multiplier: number;
     globalMultiplier: number;
-    total: number;
 
     constructor(
         resource: string,
         base: number,
+
     ) {
         this.resource = resource;
         this.base = base;
         this.bonus = 0;
         this.multiplier = 0;
         this.globalMultiplier = 0;
-        this.total = (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
+    }
+    total() {
+        return (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
     }
 }
 
@@ -36,7 +38,6 @@ export class resourceEffect {//Gets increased and decreased by job count
     bonus: number;
     multiplier: number;
     globalMultiplier: number;
-    total: number;
 
     constructor(
         resource: string,
@@ -47,7 +48,9 @@ export class resourceEffect {//Gets increased and decreased by job count
         this.bonus = 0;
         this.multiplier = 0;
         this.globalMultiplier = 0;
-        this.total = (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
+    }
+    total() {
+        return (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
     }
 }
 

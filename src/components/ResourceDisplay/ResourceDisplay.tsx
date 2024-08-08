@@ -11,12 +11,9 @@ import {
     Button,
     Tooltip,
 } from '@mantine/core';
-import {useViewportSize} from '@mantine/hooks';
+import { useViewportSize } from '@mantine/hooks';
 import { persistentAtom } from 'hooks/persistentAtom';
-import {
-    turn,
-    resourceListAtom
-} from 'components/Gamedata/Gamedata';
+import { turn, resourceListAtom } from 'components/Gamedata/Gamedata';
 import {
     IconHourglass,
     IconUser,
@@ -68,7 +65,7 @@ const icons = {
 // export const selectedResourcesAtom = persistentAtom('selectedResources', []);
 const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
     const Icon = icons[name];
-    const {height, width} = useViewportSize();
+    const { height, width } = useViewportSize();
     const DiffIcon = income > 0 ? IconArrowUpRight : IconArrowDownRight;
     // const [selectedResources, setSelectedResources] = useAtom(
     //     selectedResourcesAtom,
@@ -89,39 +86,55 @@ const ResourceDisplay = ({ name, value, maxValue, income, tooltip }) => {
             multiline
             w={300}
             transitionProps={{ transition: 'pop', duration: 300 }}
-            label={<Box><Text ta={"center"} >{name}</Text><Text>{tooltip}</Text></Box>}
+            label={
+                <Box>
+                    <Text ta={'center'}>{name}</Text>
+                    <Text>{tooltip}</Text>
+                </Box>
+            }
         >
             <Button
                 variant="default"
                 justify="space-between"
                 leftSection={
                     <Group justify="space-between">
-                        {width >= 1920 ? <Box w={100} >
-                            <Text
-                                size="md"
-                                c={
-                                    0
-                                        ? 'default'
-                                        : 'dimmed'
-                                }
-                            >
-                                {name}
-                            </Text>
-                        </Box> : null}
-                        <Text>
-                            {Math.round(value*10)/10}
-                            {maxValue != undefined ? `/${Math.round(maxValue)}` : ''}
-                        </Text>
-                        <Text c={income > 0 ? 'teal' : income == 0 ? 'gray' : 'red'} fz="sm" fw={500}>
-                            <span>
-                                {income != undefined ? `${Math.round(income*10)/10}` : ''}
-                            </span>
-                            <DiffIcon size="1rem" stroke={1.5} />
-                        </Text>
+                        <Icon size="1rem" stroke={1.5} color='gray'/>
+                        {width >= 1920 ? (
+                            <Box w={100}>
+                                <Text size="md" c={0 ? 'default' : 'dimmed'}>
+                                    {name}
+                                </Text>
+                            </Box>
+                        ) : null}
+                        
                     </Group>
                 }
-                rightSection={<Icon size="1.4rem" stroke={1.5} color="gray" />}
-            ></Button>
+            >
+                <Group style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                alignItems: 'center',
+
+                                textAlign: 'right',
+                            }}>
+                    <Text>
+                        {Math.round(value * 10) / 10}
+                        {maxValue != undefined ? `/${Math.round(maxValue)}` : ''}
+                    </Text>
+                    <Text
+                        c={income > 0 ? 'teal' : income == 0 ? 'gray' : 'red'}
+                        fz="sm"
+                        fw={500}
+                    >
+                        <span>
+                            {income != undefined
+                                ? `${Math.round(income * 10) / 10}`
+                                : ''}
+                        </span>
+                        <DiffIcon size="1rem" stroke={1.5} />
+                    </Text>
+                </Group>
+            </Button>
         </Tooltip>
     );
 };

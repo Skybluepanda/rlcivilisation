@@ -8,7 +8,6 @@ export class resourceMax {
     bonus: number;
     multiplier: number;
     globalMultiplier: number;
-    total: number;
     constructor(
         resource: string,
         base: number,
@@ -21,7 +20,9 @@ export class resourceMax {
         this.bonus = bonus;
         this.multiplier = multiplier;
         this.globalMultiplier = globalMultiplier;
-        this.total = (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
+    }
+    total() {
+        return (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
     }
 }
 export class jobMax {
@@ -30,7 +31,6 @@ export class jobMax {
     bonus: number;
     multiplier: number;
     globalMultiplier: number;
-    total: number;
 
     constructor(
         job: string,
@@ -44,7 +44,9 @@ export class jobMax {
         this.bonus = bonus;
         this.multiplier = multiplier;
         this.globalMultiplier = globalMultiplier;
-        this.total = (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
+    }
+    total() {
+        return (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
     }
 }
 
@@ -92,7 +94,6 @@ export class bonusEffect {
     bonus: number;
     multiplier: number;
     globalMultiplier: number;
-    total: number;
 
     constructor(
         resource: string,
@@ -106,7 +107,9 @@ export class bonusEffect {
         this.bonus = bonus;
         this.multiplier = multiplier;
         this.globalMultiplier = globalMultiplier;
-        this.total = (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
+    }
+    total() {
+        return (this.base*(100+this.multiplier)/100 + this.bonus)*(100+this.globalMultiplier)/100
     }
 }
 

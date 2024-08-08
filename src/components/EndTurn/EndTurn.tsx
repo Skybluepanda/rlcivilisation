@@ -1,7 +1,17 @@
 import { useState } from 'react';
 import '@mantine/core/styles.css';
-import { MantineProvider, Button, Tooltip, Paper } from '@mantine/core';
-import { turn, Resource, resourceListAtom } from 'components/Gamedata/Gamedata';
+import {
+    MantineProvider,
+    Button,
+    Tooltip,
+    Paper,
+    ScrollArea,
+    Text,
+    Divider,
+    Box,
+    Menu,
+} from '@mantine/core';
+import { turn, Resource, resourceListAtom, logSettingsAtom } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
 import { jobListAtom } from 'components/JobsContent/FoodJobData';
 import { buildingListAtom } from 'components/BuildingContent/BuildingData';
@@ -10,8 +20,27 @@ import {
     jobListUpdate,
     buildingListUpdate,
     buildingJobMaxUpdate,
-    buildingResourceMaxUpdate
+    buildingResourceMaxUpdate,
 } from 'components/EndTurn/EndTurnHelper';
+import {
+    IconWorld,
+    IconUsersGroup,
+    IconBuildingCommunity,
+    IconAlertCircle,
+    IconApps,
+    IconMasksTheater,
+    IconCoins,
+    IconGavel,
+    IconAdjustments,
+
+
+
+
+
+    IconTrash,
+    IconCheck,
+    IconX,
+} from '@tabler/icons-react';
 
 //Endturn should change every resource by adding the income.
 //Buildings that are queued should be built.
@@ -24,12 +53,26 @@ import {
 //World exploration, events, enemy attacks, missions, timed events
 //New population are added to foragers, lost populations are deducted from foragers. Insufficient foragers prevent end turn effect.
 
+
+
 export default function EndTurn() {
     const [resources, setResources] = useAtom(resourceListAtom);
     const [jobList, setJobList] = useAtom(jobListAtom);
     const [buildings, setBuildings] = useAtom(buildingListAtom);
+    const [logs, setLogs] = useState([]);
+    const [turnVal, setTurn] = useAtom(turn);
+    const [logSettings, setLogSettings] = useAtom(logSettingsAtom);
 
     function endTurn() {
+        //Log handeling.
+        //First when turn ends, start with Turn x
+        //
+        const log = {
+            turn: turnVal,
+            population: 0,
+        };
+
+        setResources(resourceUpdate(resources));
         const population = resources.find(j => j.name === 'Population');
         const change =
             Math.floor(population.value + population.income) -
@@ -37,40 +80,156 @@ export default function EndTurn() {
 
         if (change) {
             setJobList(jobListUpdate(jobList, change));
+            log.population = change;
         }
-        //Resource specific processing?
-        //Find population increase and increase or decrease foragers by that amount.
 
-        setResources(resourceUpdate(resources));
         const buildingsUpdate = buildingListUpdate(
             buildings,
             jobList,
-            setJobList
+            setJobList,
         );
+
         setBuildings(buildingsUpdate[0]);
-        
-        if (buildingsUpdate[1]) {
-            //New building!
-            setJobList(prevJobs => buildingJobMaxUpdate(prevJobs, buildingsUpdate[1], buildings));
-            setResources(buildingResourceMaxUpdate(resources, buildingsUpdate[1], buildings));
-
+        if (buildingsUpdate[1]['built']) {
+            delete buildingsUpdate[1].built;
+            const buildingLog = [];
+            for (let [buildingName, quantity] of Object.entries(
+                buildingsUpdate[1],
+            )) {
+                buildingLog.push(`${quantity} ${buildingName} was built.`);
+            }
+            log['Buildings'] = buildingLog;
+            console.log('new building');
+            setJobList(prevJobs =>
+                buildingJobMaxUpdate(prevJobs, buildingsUpdate[1], buildings),
+            );
+            setResources(
+                buildingResourceMaxUpdate(
+                    resources,
+                    buildingsUpdate[1],
+                    buildings,
+                ),
+            );
         }
-
-        //Update other tables when buildings are done.
-        //Update jobmax and resourcemax
-        //Bonus effect should happen witin building list update.
+        setTurn(turnVal + 1);
+        setLogs([...logs, log]);
     }
 
     return (
         <MantineProvider>
-            <Paper shadow="sm" p="md" withBorder h="70vh" w="20vw">
-                <Button
+            <Paper shadow="sm" p="md" withBorder h={"100%"}>
+                <Menu shadow="md" width={200} closeOnItemClick={false}>
+                    <Menu.Target>
+                        <Button fullWidth variant="default">Log Options</Button>
+                    </Menu.Target>
+
+                    <Menu.Dropdown>
+                        <Menu.Label>Toggle Logs</Menu.Label>
+                        <Menu.Item
+                            leftSection={
+                                <IconWorld size="1.4rem" stroke={1.5} color="gray"/>
+                            }
+                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                        >
+                            World Events
+                        </Menu.Item>
+                        <Menu.Item
+                            leftSection={
+                                <IconUsersGroup size="1.4rem" stroke={1.5} color="gray"/>
+                            }
+                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                        >
+                            Population
+                        </Menu.Item>
+                        <Menu.Item
+                            leftSection={
+                                <IconBuildingCommunity size="1.4rem" stroke={1.5} color="gray"/>
+                            }
+                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                        >
+                            Population
+                        </Menu.Item>
+                        <Menu.Item
+                            leftSection={
+                                <IconAlertCircle size="1.4rem" stroke={1.5} color="gray"/>
+                            }
+                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                        >
+                            Population
+                        </Menu.Item>
+                        <Menu.Item
+                            leftSection={
+                                <IconApps size="1.4rem" stroke={1.5} color="gray"/>
+                            }
+                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                        >
+                            Population
+                        </Menu.Item>
+                        <Menu.Item
+                            leftSection={
+                                <IconMasksTheater size="1.4rem" stroke={1.5} color="gray"/>
+                            }
+                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                        >
+                            Population
+                        </Menu.Item>
+                        <Menu.Item
+                            leftSection={
+                                <IconGavel size="1.4rem" stroke={1.5} color="gray"/>
+                            }
+                            rightSection={logSettings.showPopulationEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
+                            onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showPopulationEvents : !prevSettings.showPopulationEvents}})}
+                        >
+                            Population
+                        </Menu.Item>
+
+                        <Menu.Divider />
+
+                        <Menu.Label>Danger zone</Menu.Label>
+                        
+                        <Menu.Item
+                            color="red"
+                            leftSection={
+                                <IconTrash size="1.4rem" stroke={1.5} color="gray"/>
+                            }
+                        >
+                            Clear Logs
+                        </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
+                <Divider size={'xl'}/>
+                <ScrollArea>
+                    {logs.map(log => {
+                        return (
+                            <Box>
+                                <Divider my="sm" />
+                                <Text>Turn {log.turn}</Text>
+                                {log.population != 0 ? (
+                                    <Text>
+                                        Population Change:{' '}
+                                        {log.population > 0 ? '+' : '-'}
+                                        {log.population}
+                                    </Text>
+                                ) : null}
+                            </Box>
+                        );
+                    })}
+                </ScrollArea>
+                <Button 
+                    variant="default"
                     onClick={endTurn}
                     disabled={1 >= 0 ? false : true}
                     fullWidth
-                    h="10vh"
+                    h="8vh"
+                    
                 >
-                    End Turn
+                    End Turn {turnVal}
                 </Button>
             </Paper>
         </MantineProvider>

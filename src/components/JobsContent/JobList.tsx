@@ -1,8 +1,9 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import {
     MantineReactTable,
     useMantineReactTable,
     type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
+    type MRT_Updater,
 } from 'mantine-react-table';
 import {
     IconHourglass,
@@ -42,8 +43,9 @@ import { persistentAtom } from 'hooks/persistentAtom';
 import {
     Box,
     Button,
+    Container,
     Divider,
-    ScrollArea,
+    Paper,
     Table,
     Text,
     Tooltip,
@@ -83,6 +85,11 @@ export default function JobList() {
     const [jobs, setJobs] = useAtom(jobListAtom);
     const [resources, setResources] = useAtom(resourceListAtom);
     const population = resources.find(r => r.name === 'Population');
+    const [fullScreen, setFullScreen] = useState(false);
+    const handleToggleFullScreen = () => {
+        setFullScreen(prev => !prev);
+    };
+    
 
     const infrastructure = resources.find(r => r.name === 'Infrastructure');
 
@@ -104,7 +111,7 @@ export default function JobList() {
                             );
                             const usedAmount =
                                 Math.round(
-                                    (supplier.amount / res.total) * 100,
+                                    (supplier.amount / res.total()) * 100,
                                 ) / 100;
                             prevJobs = modifyJobUsed(
                                 prevJobs,
@@ -141,7 +148,7 @@ export default function JobList() {
                             i => i.resource === supplier.resource,
                         );
                         if (
-                            (sup.current - sup.used) * res.total <
+                            (sup.current - sup.used) * res.total() <
                             supplier.amount
                         ) {
                             supAvailable = false;
@@ -157,7 +164,7 @@ export default function JobList() {
                             );
                             const usedAmount =
                                 Math.round(
-                                    (supplier.amount / res.total) * 100,
+                                    (supplier.amount / res.total()) * 100,
                                 ) / 100;
 
                             prevJobs = modifyJobUsed(
@@ -315,137 +322,157 @@ export default function JobList() {
     //note: you can also pass table options as props directly to <MantineReactTable /> instead of using useMantineReactTable
     //but the useMantineReactTable hook will be the most recommended way to define table options
     return (
-        <ScrollArea.Autosize mah={'70vh'} mx="auto">
-            <MantineReactTable
-                columns={columns}
-                data={jobs}
-                enableColumnFilterModes={true}
-                enableColumnOrdering={true}
-                enableRowOrdering={true}
-                enableSorting={false}
-                initialState={{
-                    showColumnFilters: true,
-                    showGlobalFilter: true,
-                }}
-                renderDetailPanel={({ row }) => {
-                    const input = row.original.input.map(inc => (
-                        <Table.Tr
-                            key={inc.resource}
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '2fr 1fr 1fr',
-                                gap: '10px',
-                            }}
-                        >
-                            <Table.Td>{inc.resource}</Table.Td>
-                            <Table.Td>
-                                {Math.floor(calculateTotal(inc) * 10) / 10}
-                            </Table.Td>
-                            <Table.Td>
-                                {Math.floor(
-                                    calculateTotal(inc) *
-                                        row.original.current *
-                                        10,
-                                ) / 10}
-                            </Table.Td>
-                        </Table.Tr>
-                    ));
+        <Box h="65vh">
+        <MantineReactTable
+            columns={columns}
+            data={jobs}
+            enableColumnFilterModes={true}
+            enableColumnOrdering={true}
+            enableRowOrdering={true}
+            enableSorting={false}
+            enablePagination={false}
+            enableRowVirtualization={true}
+            enableStickyHeader={false}
+            mantineTableContainerProps={{
+                style: {
+                    maxHeight: fullScreen ? "100vh" : "65vh",
+                    overflow: 'auto',
+                },
+            }}
+            onIsFullScreenChange={handleToggleFullScreen}
+            
+            rowVirtualizerOptions={{ overscan: 10 }}
+            initialState={{
+                showColumnFilters: false,
+                showGlobalFilter: false,
+            }}
+            state={{isFullScreen: fullScreen}}
+            renderDetailPanel={({ row }) => {
+                const input = row.original.input.map(inc => (
+                    <Table.Tr
+                        key={inc.resource}
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '2fr 1fr 1fr',
+                            gap: '10px',
+                        }}
+                    >
+                        <Table.Td>{inc.resource}</Table.Td>
+                        <Table.Td>
+                            {Math.floor(calculateTotal(inc) * 10) / 10}
+                        </Table.Td>
+                        <Table.Td>
+                            {Math.floor(
+                                calculateTotal(inc) * row.original.current * 10,
+                            ) / 10}
+                        </Table.Td>
+                    </Table.Tr>
+                ));
 
-                    const output = row.original.output.map(inc => (
+                const output = row.original.output.map(inc => (
+                    <Table.Tr
+                        key={inc.resource}
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '2fr 1fr 1fr',
+                            gap: '10px',
+                        }}
+                    >
+                        <Table.Td>{inc.resource}</Table.Td>
+                        <Table.Td>
+                            {Math.round(calculateTotal(inc) * 10) / 10}
+                        </Table.Td>
+                        <Table.Td>
+                            {Math.round(
+                                calculateTotal(inc) *
+                                    (row.original.current - row.original.used) *
+                                    100,
+                            ) / 100}
+                        </Table.Td>
+                    </Table.Tr>
+                ));
+
+                const supplier = row.original.suppliers.map(supplier => {
+                    const sup = jobs.find(s => s.name === supplier.name);
+                    const res = sup.output.find(
+                        i => i.resource === supplier.resource,
+                    );
+                    const usedAmount =
+                        Math.round((supplier.amount / res.total()) * 100) / 100;
+
+                    return (
                         <Table.Tr
-                            key={inc.resource}
+                            key={supplier.name}
                             style={{
                                 display: 'grid',
                                 gridTemplateColumns: '2fr 1fr 1fr',
                                 gap: '10px',
                             }}
                         >
-                            <Table.Td>{inc.resource}</Table.Td>
                             <Table.Td>
-                                {Math.round(calculateTotal(inc) * 10) / 10}
+                                {supplier.name} ({supplier.resource})
+                            </Table.Td>
+                            <Table.Td>
+                                {usedAmount} (
+                                {Math.floor(supplier.amount * 10) / 10})
                             </Table.Td>
                             <Table.Td>
                                 {Math.round(
-                                    calculateTotal(inc) *
-                                        (row.original.current -
-                                            row.original.used) *
-                                        100,
-                                ) / 100}
+                                    usedAmount * row.original.current * 10,
+                                ) / 10}{' '}
+                                (
+                                {Math.floor(
+                                    supplier.amount * row.original.current * 10,
+                                ) / 10}
+                                )
                             </Table.Td>
                         </Table.Tr>
-                    ));
-
-                    const supplier = row.original.suppliers.map(supplier => {
-                        const sup = jobs.find(s => s.name === supplier.name);
-                        const res = sup.output.find(
-                            i => i.resource === supplier.resource,
-                        );
-                        const usedAmount =
-                            Math.round((supplier.amount / res.total) * 100) /
-                            100;
-
-                        return (
-                            <Table.Tr
-                                key={supplier.name}
-                                style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '2fr 1fr 1fr',
-                                    gap: '10px',
-                                }}
-                            >
-                                <Table.Td>
-                                    {supplier.name} ({supplier.resource})
-                                </Table.Td>
-                                <Table.Td>
-                                    {usedAmount} (
-                                    {Math.floor(supplier.amount * 10) / 10})
-                                </Table.Td>
-                                <Table.Td>
-                                    {Math.round(
-                                        usedAmount * row.original.current * 10,
-                                    ) / 10}{' '}
-                                    (
-                                    {Math.floor(
-                                        supplier.amount *
-                                            row.original.current *
-                                            10,
-                                    ) / 10}
-                                    )
-                                </Table.Td>
-                            </Table.Tr>
-                        );
-                    });
-                    const dependents = row.original.dependents.map(dependent => {
-                        return (
-                            <Table.Tr
-                                key={dependent.name}
-                                style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '2fr 1fr 1fr',
-                                    gap: '10px',
-                                }}
-                            >
-                                <Table.Td>
-                                    {dependent.name}
-                                </Table.Td>
-                                <Table.Td>
-                                    {Math.round(
-                                        dependent.amount * 10,
-                                    ) / 10}
-                                </Table.Td>
-                            </Table.Tr>
-                        );
-
-                    });
+                    );
+                });
+                const dependents = row.original.dependents.map(dependent => {
                     return (
-                        <Box>
-                            {row.original.tooltip}
-                            <Divider
-                                my="md"
-                                label="Upkeep"
-                                labelPosition="center"
-                                size="lg"
-                            />
+                        <Table.Tr
+                            key={dependent.name}
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: '2fr 1fr 1fr',
+                                gap: '10px',
+                            }}
+                        >
+                            <Table.Td>{dependent.name}</Table.Td>
+                            <Table.Td>
+                                {Math.round(dependent.amount * 10) / 10}
+                            </Table.Td>
+                        </Table.Tr>
+                    );
+                });
+                return (
+                    <Box>
+                        {row.original.tooltip}
+                        <Divider
+                            my="md"
+                            label="Upkeep"
+                            labelPosition="center"
+                            size="lg"
+                        />
+                        <Table withColumnBorders withRowBorders>
+                            <Table.Thead>
+                                <Table.Tr
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '2fr 1fr 1fr',
+                                        gap: '10px',
+                                    }}
+                                >
+                                    <Table.Th>Resources</Table.Th>
+                                    <Table.Th>Per</Table.Th>
+                                    <Table.Th>Total</Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Divider size="md" />
+                            <Table.Tbody>{input}</Table.Tbody>
+                        </Table>
+                        {row.original.suppliers.length > 0 ? (
                             <Table withColumnBorders withRowBorders>
                                 <Table.Thead>
                                     <Table.Tr
@@ -455,15 +482,54 @@ export default function JobList() {
                                             gap: '10px',
                                         }}
                                     >
-                                        <Table.Th>Resources</Table.Th>
+                                        <Table.Th>Supplier</Table.Th>
                                         <Table.Th>Per</Table.Th>
                                         <Table.Th>Total</Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>
                                 <Divider size="md" />
-                                <Table.Tbody>{input}</Table.Tbody>
+                                <Table.Tbody>{supplier}</Table.Tbody>
                             </Table>
-                            {row.original.suppliers.length > 0 ? (
+                        ) : null}
+                        <Divider
+                            my="md"
+                            label="Output"
+                            labelPosition="center"
+                            size="lg"
+                        />
+                        <Table withColumnBorders withRowBorders>
+                            <Table.Thead>
+                                <Table.Tr
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '2fr 1fr 1fr',
+                                        gap: '10px',
+                                    }}
+                                >
+                                    <Table.Th>Output</Table.Th>
+                                    <Table.Th>Per</Table.Th>
+                                    <Table.Th>Total</Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Divider size="md" />
+                            <Table.Tbody>{output}</Table.Tbody>
+                        </Table>
+                        {row.original.resourceEffect.length > 0 ? (
+                            <Divider
+                                my="md"
+                                label="Constant Effect"
+                                labelPosition="center"
+                                size="lg"
+                            />
+                        ) : null}
+                        {row.original.dependents.length > 0 ? (
+                            <>
+                                <Divider
+                                    my="md"
+                                    label="Dependents"
+                                    labelPosition="center"
+                                    size="lg"
+                                />
                                 <Table withColumnBorders withRowBorders>
                                     <Table.Thead>
                                         <Table.Tr
@@ -474,90 +540,32 @@ export default function JobList() {
                                                 gap: '10px',
                                             }}
                                         >
-                                            <Table.Th>Supplier</Table.Th>
-                                            <Table.Th>Per</Table.Th>
-                                            <Table.Th>Total</Table.Th>
+                                            <Table.Th>Dependent</Table.Th>
+                                            <Table.Th>Used</Table.Th>
                                         </Table.Tr>
                                     </Table.Thead>
                                     <Divider size="md" />
-                                    <Table.Tbody>{supplier}</Table.Tbody>
+                                    <Table.Tbody>{dependents}</Table.Tbody>
                                 </Table>
-                            ) : null}
-                            <Divider
-                                my="md"
-                                label="Output"
-                                labelPosition="center"
-                                size="lg"
-                            />
-                            <Table withColumnBorders withRowBorders>
-                                <Table.Thead>
-                                    <Table.Tr
-                                        style={{
-                                            display: 'grid',
-                                            gridTemplateColumns: '2fr 1fr 1fr',
-                                            gap: '10px',
-                                        }}
-                                    >
-                                        <Table.Th>Output</Table.Th>
-                                        <Table.Th>Per</Table.Th>
-                                        <Table.Th>Total</Table.Th>
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Divider size="md" />
-                                <Table.Tbody>{output}</Table.Tbody>
-                            </Table>
-                            {row.original.resourceEffect.length > 0 ? (
-                                <Divider
-                                    my="md"
-                                    label="Constant Effect"
-                                    labelPosition="center"
-                                    size="lg"
-                                />
-                            ) : null}
-                            {row.original.dependents.length > 0 ? (
-                                <>
-                                    <Divider
-                                        my="md"
-                                        label="Dependents"
-                                        labelPosition="center"
-                                        size="lg"
-                                    />
-                                    <Table withColumnBorders withRowBorders>
-                                        <Table.Thead>
-                                            <Table.Tr
-                                                style={{
-                                                    display: 'grid',
-                                                    gridTemplateColumns:
-                                                        '2fr 1fr 1fr',
-                                                    gap: '10px',
-                                                }}
-                                            >
-                                                <Table.Th>Dependent</Table.Th>
-                                                <Table.Th>Used</Table.Th>
-                                            </Table.Tr>
-                                        </Table.Thead>
-                                        <Divider size="md" />
-                                        <Table.Tbody>{dependents}</Table.Tbody>
-                                    </Table>
-                                </>
-                            ) : null}
-                        </Box>
-                    );
-                }}
-                mantineRowDragHandleProps={({ table }) => ({
-                    onDragEnd: () => {
-                        const { draggingRow, hoveredRow } = table.getState();
-                        if (hoveredRow && draggingRow) {
-                            jobs.splice(
-                                hoveredRow.index,
-                                0,
-                                jobs.splice(draggingRow.index, 1)[0],
-                            );
-                            setJobs([...jobs]);
-                        }
-                    },
-                })}
-            />
-        </ScrollArea.Autosize>
+                            </>
+                        ) : null}
+                    </Box>
+                );
+            }}
+            mantineRowDragHandleProps={({ table }) => ({
+                onDragEnd: () => {
+                    const { draggingRow, hoveredRow } = table.getState();
+                    if (hoveredRow && draggingRow) {
+                        jobs.splice(
+                            hoveredRow.index,
+                            0,
+                            jobs.splice(draggingRow.index, 1)[0],
+                        );
+                        setJobs([...jobs]);
+                    }
+                },
+            })}
+        />
+        </Box>
     );
 }

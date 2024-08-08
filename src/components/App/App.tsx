@@ -12,9 +12,9 @@ export default function App() {
   return (
     <ColorSchemeContext.Provider value={{ colorScheme, onChange: setColorScheme }}>
       <MantineProvider defaultColorScheme="dark">
-          <Box p={"md"}>
+        <Box w={"100vw"} h={"100dvh"}>
           <MainGame />
-          </Box>
+        </Box>
       </MantineProvider>
     </ColorSchemeContext.Provider>
   )

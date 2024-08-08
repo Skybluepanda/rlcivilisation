@@ -12,9 +12,11 @@ import {
     createTheme,
     Paper,
     Button,
-    Flex
+    Flex,
+    Stack,
+    AppShell,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useViewportSize } from '@mantine/hooks';
 import { useAtom } from 'jotai';
 import WorldContent from 'components/WorldContent/WorldContent';
 // import classes from './MainGame.module.css';
@@ -24,7 +26,17 @@ import JobList from 'components/JobsContent/JobList';
 import QueueBox from 'components/QueueBox/QueueBox';
 import ResourceGrid from 'components/ResourceDisplay/ResourceDisplay';
 import BuildingList from 'components/BuildingContent/BuildingContent';
-
+import {
+    IconWorld,
+    IconUsersGroup,
+    IconBuildingCommunity,
+    IconAlertCircle,
+    IconApps,
+    IconMasksTheater,
+    IconCoins,
+    IconGavel,
+    IconAdjustments,
+} from '@tabler/icons-react';
 const tabs = [
     'World',
     'Jobs',
@@ -34,98 +46,220 @@ const tabs = [
     'Tradition',
     'Economy',
     'Government',
-    'Settings'
+    'Settings',
 ];
 
-const colors = {
-    'World': "indigo",
-    'Diplomacy' : 'blue',
-    'Situation' : 'cyan',
-    'Jobs' : 'teal',
-    'Buildings': 'green',
-    'Economy' : 'lime',
-    'Technology': 'red',
-    'Tradition': 'pink',
-    'Government': 'grape',
-    'Settings': 'black',
-};
-
 export default function MainGame() {
-    const theme = useMantineTheme();
-    const [opened, { toggle }] = useDisclosure(false);
-    const [userMenuOpened, setUserMenuOpened] = useState(false);
-
-    const items = tabs.map(tab => (
-        <Tabs.Tab value={tab} key={tab} color={colors[tab]}>
-            {tab}
-        </Tabs.Tab>
-    ));
-
+    const { height, width } = useViewportSize();
+    const [tabChosen, setTabChosen] = useState('World');
     return (
         <MantineProvider>
-            <Flex direction={'column'} >
-            <ResourceGrid/>
-            
-            <Paper shadow="sm" p="md" withBorder h={"80vh"}>
-            <Flex>
-                <QueueBox/>
-                <Paper  w={"60vw"} h={"76vh"} shadow="sm" p="md" withBorder>
-                    <Container size="xl">
-                        <Tabs
-                            defaultValue="World"
-                            variant="default"
-                            visibleFrom="sm"
-                        >
-                            <Tabs.List>{items}</Tabs.List>
-                            <Tabs.Panel value="World">
-                                <Paper shadow="sm" p="md" withBorder>
-                                <WorldContent />
+            <AppShell header={{height:180}} padding="sm" >
+                <AppShell.Header p="sm"><ResourceGrid /></AppShell.Header>
+                <AppShell.Main display={'flex'} h={'100%'}>
+                        <Paper shadow="sm" withBorder flex={1}
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 2fr 1fr',
+                            alignItems: 'center',
+
+                            textAlign: 'center',
+                        }}>
+                                <QueueBox/>
+                                <Paper  shadow="sm" withBorder h={'100%'}>
+                                    <Container size="xl">
+                                        <Tabs
+                                            defaultValue="World"
+                                            variant="default"
+                                            visibleFrom="sm"
+                                            onChange={value => {
+                                                setTabChosen(value);
+                                            }}
+                                        >
+                                            <Tabs.List grow justify="space-between">
+                                                <Tabs.Tab
+                                                    value="World"
+                                                    leftSection={
+                                                        <IconWorld
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'World' ||
+                                                    width >= 2000
+                                                        ? 'World'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                <Tabs.Tab
+                                                    value="Jobs"
+                                                    leftSection={
+                                                        <IconUsersGroup
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Jobs' ||
+                                                    width >= 2000
+                                                        ? 'Jobs'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                <Tabs.Tab
+                                                    value="Buildings"
+                                                    leftSection={
+                                                        <IconBuildingCommunity
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Buildings' ||
+                                                    width >= 2000
+                                                        ? 'Buildings'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                <Tabs.Tab
+                                                    value="Situation"
+                                                    leftSection={
+                                                        <IconAlertCircle
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Situation' ||
+                                                    width >= 2000
+                                                        ? 'Situation'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                <Tabs.Tab
+                                                    value="Technology"
+                                                    leftSection={
+                                                        <IconApps
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Technology' ||
+                                                    width >= 2000
+                                                        ? 'Technology'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                <Tabs.Tab
+                                                    value="Tradition"
+                                                    leftSection={
+                                                        <IconMasksTheater
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Tradition' ||
+                                                    width >= 2000
+                                                        ? 'Tradition'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                <Tabs.Tab
+                                                    value="Economy"
+                                                    leftSection={
+                                                        <IconCoins
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Economy' ||
+                                                    width >= 2000
+                                                        ? 'Economy'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                <Tabs.Tab
+                                                    value="Government"
+                                                    leftSection={
+                                                        <IconGavel
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Government' ||
+                                                    width >= 2000
+                                                        ? 'Government'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                <Tabs.Tab
+                                                    value="Settings"
+                                                    leftSection={
+                                                        <IconAdjustments
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Settings' ||
+                                                    width >= 2000
+                                                        ? 'Settings'
+                                                        : null}
+                                                </Tabs.Tab>
+                                            </Tabs.List>
+                                            <Tabs.Panel value="World">
+                                                <Paper shadow="sm" p="md" withBorder>
+                                                    <WorldContent />
+                                                </Paper>
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Diplomacy">
+                                                Diplomacy WIP
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Situation">
+                                                Situation WIP
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Jobs">
+                                                <JobList />
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Buildings">
+                                                <BuildingList />
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Economy">
+                                                Economy WIP
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Technology">
+                                                Technology WIP
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Tradition">
+                                                Tradition WIP
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Government">
+                                                Authority WIP
+                                            </Tabs.Panel>
+                                            <Tabs.Panel value="Settings">
+                                                <Settings />
+                                            </Tabs.Panel>
+                                        </Tabs>
+                                    </Container>
                                 </Paper>
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="Diplomacy">
-                                Diplomacy WIP
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="Situation">
-                                Situation WIP
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="Jobs">
-                                <JobList/>
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="Buildings">
-                                <BuildingList/>
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="Economy">
-                                Economy WIP
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="Technology">
-                                Technology WIP
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="Tradition">
-                                Tradition WIP
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="Government">
-                                Authority WIP
-                            </Tabs.Panel>
-                            <Tabs.Panel value="Settings">
-                                <Settings/>
-                            </Tabs.Panel>
-                        </Tabs>
-                    </Container>
-                    
-                </Paper>
-                <EndTurn/>
-                </Flex>
-            </Paper>
-            </Flex>
-            
+                                <EndTurn />
+                        </Paper>
+                </AppShell.Main>
+            </AppShell>
         </MantineProvider>
     );
 }

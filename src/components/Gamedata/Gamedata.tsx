@@ -4,6 +4,17 @@ import { persistentAtom } from 'hooks/persistentAtom';
 
 export const turn = persistentAtom("turn", 0);
 
+export const logSettingsAtom = persistentAtom("logSettings",{
+    showWorldEvents: true,
+    showPopulationEvents: true,
+    showBuildingEvents:true,
+    showSituation: true,
+    showTechEvents:true,
+    showTraditionEvents:true,
+    showGovernmentEvents:true,
+});
+
+
 export class Resource {
     name: string;
     value: number;
