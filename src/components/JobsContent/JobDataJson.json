@@ -1,0 +1,86 @@
+[
+    {   
+        "UID": 1,
+        "name": "Forager",
+        "tags": ["Food", "Material"],
+        "tooltip": "Forages the wilderness for food and materials.",
+        "current": 16,
+        "max": 16,
+        "suppliers": [],
+        "dependents": [],
+        "input": [{ "resource": "Food", "base": -10 }],
+        "output": [
+            { "resource": "Food", "base": 11 },
+            { "resource": "Material", "base": 2 }
+        ],
+        "resourceEffect": []
+    },
+    {
+        "UID": 2,
+        "name": "Villager",
+        "tags": ["Food", "Material"],
+        "tooltip": "Unspecialised civilians living in a home.",
+        "current": 0,
+        "max": 5,
+        "suppliers": [],
+        "dependents": [],
+        "input": [{ "resource": "Food", "base": -10 }],
+        "output": [
+            { "resource": "Food", "base": 5 },
+            { "resource": "Material", "base": 1 },
+            { "resource": "Knowledge", "base": 1 },
+            { "resource": "Wealth", "base": 1 },
+            { "resource": "Population", "base": 0.1 }
+        ],
+        "resourceEffect": []
+    },
+    {
+        "UID": 3,
+        "name": "Hunter",
+        "tags": ["Food", "Material"],
+        "tooltip": "Hunts animals for food and materials.",
+        "current": 0,
+        "max": 5,
+        "suppliers": [],
+        "dependents": [],
+        "input": [{ "resource": "Food", "base": -25 }],
+        "output": [
+            { "resource": "Food", "base": 50 },
+            { "resource": "Material", "base": 5 }
+        ],
+        "resourceEffect": [
+            { "resource": "Military", "base": 1 }
+        ]
+    },
+    {
+        "UID": 4,
+        "name": "Crafter",
+        "tags": ["Material", "Production"],
+        "tooltip": "Crafts tools and items for other workers.",
+        "current": 0,
+        "max": 10,
+        "suppliers": [],
+        "dependents": [],
+        "input": [{ "resource": "Food", "base": -10 }],
+        "output": [
+            { "resource": "Knowledge", "base": 1 },
+            { "resource": "Production", "base": 3 }
+        ],
+        "resourceEffect": []
+    },
+    {
+        "UID": 5,
+        "name": "Builder",
+        "tags": ["Material", "Production"],
+        "tooltip": "Consumes large amount of material to build structures.",
+        "current": 0,
+        "max": 5,
+        "suppliers": [],
+        "dependents": [],
+        "input": [{ "resource": "Food", "base": -20 }],
+        "output": [
+            { "resource": "Production", "base": 10 }
+        ],
+        "resourceEffect": []
+    }
+]

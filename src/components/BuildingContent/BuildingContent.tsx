@@ -223,7 +223,7 @@ export default function BuildingList() {
                             <Button
                                 variant="default"
                                 onClick={() => decreaseQueue(row)}
-                                size="sm"
+                                size="compact-md"
                                 disabled={
                                     row.original.construction.queued === 0
                                 }
@@ -241,7 +241,7 @@ export default function BuildingList() {
                             <Button
                                 variant="default"
                                 onClick={() => increaseQueue(row)}
-                                size="sm"
+                                size="compact-md"
                                 // disabled={resources.value < row.original.infrastructureCost || Wealth.value < row.original.wealthCost}
                             >
                                 +
@@ -365,7 +365,7 @@ export default function BuildingList() {
                                     {job.amount}
                                     {row.original.construction.queued > 0
                                         ? ' (+' +
-                                          worker.workers * workerOutput.total +
+                                          worker.workers * workerOutput.total() +
                                           ')'
                                         : null}
                                 </Table.Td>
@@ -385,7 +385,7 @@ export default function BuildingList() {
                                         <Button
                                             variant="default"
                                             onClick={decreaseConstructors}
-                                            size="sm"
+                                            size="compact-md"
                                             disabled={worker.workers == 0}
                                         >
                                             -
@@ -396,7 +396,7 @@ export default function BuildingList() {
                                         <Button
                                             variant="default"
                                             onClick={increaseConstructors}
-                                            size="sm"
+                                            size="compact-md"
                                             disabled={
                                                 workerAtom.current -
                                                     workerAtom.used <

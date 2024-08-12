@@ -1,5 +1,6 @@
 import { persistentAtom } from 'hooks/persistentAtom';
 import { useAtom } from 'jotai';
+import { useEffect } from 'react';
 
 //Forager, Farmer, rancher, Hunter,
 //Max Forager, Farmer, Ranger, Hunter
@@ -101,6 +102,7 @@ export class supplier {
 
 
 export class Job {
+    UID: number;
     name: string;
     tags: string[];
     tooltip: string;
@@ -113,6 +115,7 @@ export class Job {
     output: increment[];
     resourceEffect: resourceEffect[];
     constructor(
+        UID:number,
         name: string,
         tags: string[],
         tooltip: string,
@@ -124,6 +127,7 @@ export class Job {
         output: increment[],
         resourceEffect: resourceEffect[],
     ) {
+        this.UID = UID;
         this.name = name;
         this.tags = tags;
         this.tooltip = tooltip;
@@ -138,98 +142,142 @@ export class Job {
     }
 }
 
-export const jobListAtom = persistentAtom(
-    'jobListAtom',[
-        new Job(
-            'Forager',
-            ['Food', 'Material'],
-            "Forages the wilderness for food and materials.",
-            16,
-            16,
-            [],
-            [],
-            [new increment('Food', -10)],
-            [    
-                new increment('Food', 11),
-                new increment('Material', 2),
-            ],
-            [],
-        ),
-        new Job(
-            'Villager',
-            ['Food', 'Material'],
-            "Unspecialised civilians living in a home.",
-            0,
-            5,
-            [],
-            [],
-            [new increment('Food', -10)],
-            [    
-                new increment('Food', 5),
-                new increment('Material', 1),
-                new increment('Knowledge', 1),
-                new increment('Wealth', 1),
-                new increment('Population', 0.1),
-            ],
-            [],
-        ),
-        new Job(
-            'Hunter',
-            ['Food', 'Material'],
-            "Hunts animals for food and materials.",
-            0,
-            5,
-            [],
-            [],
-            [
-                new increment('Food', -25),
 
-                new increment('Material', -5),
 
-                new increment('Production', -5),
+
+// Function to load JSON data
+async function loadJobsFromJSON(jsonPath: string): Promise<Job[]> {
+    const response = await fetch(jsonPath);
+    const jobsData = await response.json();
+    let UID = 1
+    return jobsData.map((jobData: any) => new Job(
+        UID++,
+        jobData.name,
+        jobData.tags,
+        jobData.tooltip,
+        jobData.current,
+        jobData.max,
+        jobData.suppliers.map((s: any) => new supplier(s.name, s.resource, s.amount)),
+        jobData.dependents.map((d: any) => new dependent(d.name, d.amount)),
+        jobData.input.map((i: any) => new increment(i.resource, i.base)),
+        jobData.output.map((o: any) => new increment(o.resource, o.base)),
+        jobData.resourceEffect.map((re: any) => new resourceEffect(re.resource, re.base))
+    ));
+}
+
+
+
+// Atom that holds the job list
+export const jobListAtom = persistentAtom('jobListAtom', []);
+
+export const useJobListLoader = (jsonPath: string) => {
+    const [, setJobList] = useAtom(jobListAtom);
+
+    useEffect(() => {
+        async function loadJobs() {
+            const jobs = await loadJobsFromJSON(jsonPath);
+            setJobList(jobs);
+        }
+
+        loadJobs();
+    }, [jsonPath, setJobList]);
+};
+
+
+
+
+// export const jobListAtom = persistentAtom(
+//     'jobListAtom',[
+//         new Job(
+//             'Forager',
+//             ['Food', 'Material'],
+//             "Forages the wilderness for food and materials.",
+//             16,
+//             16,
+//             [],
+//             [],
+//             [new increment('Food', -10)],
+//             [    
+//                 new increment('Food', 11),
+//                 new increment('Material', 2),
+//             ],
+//             [],
+//         ),
+//         new Job(
+//             'Villager',
+//             ['Food', 'Material'],
+//             "Unspecialised civilians living in a home.",
+//             0,
+//             5,
+//             [],
+//             [],
+//             [new increment('Food', -10)],
+//             [    
+//                 new increment('Food', 5),
+//                 new increment('Material', 1),
+//                 new increment('Knowledge', 1),
+//                 new increment('Wealth', 1),
+//                 new increment('Population', 0.1),
+//             ],
+//             [],
+//         ),
+//         new Job(
+//             'Hunter',
+//             ['Food', 'Material'],
+//             "Hunts animals for food and materials.",
+//             0,
+//             5,
+//             [],
+//             [],
+//             [
+//                 new increment('Food', -25),
+
+//                 new increment('Material', -5),
+
+//                 new increment('Production', -5),
                 
-            ],
-            [
-                new increment('Food', 50),
-            ],
-            [new resourceEffect('Military', 1)],
-        ),
-        new Job(
-            'Crafter',
-            ['Material', 'Production'],
-            "Crafts tools and items for other workers.",
-            0,
-            10,
-            [],
-            [],
-            [
-                new increment('Food', -10),
+//             ],
+//             [
+//                 new increment('Food', 50),
+//             ],
+//             [new resourceEffect('Military', 1)],
+//         ),
+//         new Job(
+//             'Crafter',
+//             ['Material', 'Production'],
+//             "Crafts tools and items for other workers.",
+//             0,
+//             10,
+//             [],
+//             [],
+//             [
+//                 new increment('Food', -10),
 
-                new increment('Material', -10),            
-            ],
-            [
-                new increment('Knowledge', 1),
-                new increment('Production', 3),
-            ],
-            []
-        ),
-        new Job(
-            'Builder',
-            ['Material', 'Production'],
-            "Consumes large amount of material to build structures.",
-            0,
-            5,
-            [new supplier("Crafter", "Production", 1)],
-            [],
-            [
-                new increment('Food', -20),
+//                 new increment('Material', -10),            
+//             ],
+//             [
+//                 new increment('Knowledge', 1),
+//                 new increment('Production', 3),
+//             ],
+//             []
+//         ),
+//         new Job(
+//             'Builder',
+//             ['Material', 'Production'],
+//             "Consumes large amount of material to build structures.",
+//             0,
+//             5,
+//             [new supplier("Crafter", "Production", 1)],
+//             [],
+//             [
+//                 new increment('Food', -20),
 
-                new increment('Material', -25),            
-            ],
-            [
-                new increment('Production', 10),
-            ],
-            []
-        ),
-    ],
-);
+//                 new increment('Material', -25),            
+//             ],
+//             [
+//                 new increment('Production', 10),
+//             ],
+//             []
+//         ),
+//     ],
+// );
