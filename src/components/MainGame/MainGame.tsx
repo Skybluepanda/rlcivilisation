@@ -48,9 +48,17 @@ const tabs = [
     'Government',
     'Settings',
 ];
+import { gameStartedAtom } from 'components/WorldContent/WorldContent';
+import { useJobDictionaryLoader } from 'components/JobsContent/FoodJobData';
+import { useBuildingDictionarLoader } from 'components/BuildingContent/BuildingData';
 
 export default function MainGame() {
+    useJobDictionaryLoader(
+        '/rlcivilisation/src/components/JobsContent/JobDataJson.json');
+    useBuildingDictionarLoader(
+        '/rlcivilisation/src/components/BuildingContent/BuildingDataJson.json');
     const { height, width } = useViewportSize();
+    const [gameStarted, setGameStarted] = useAtom(gameStartedAtom);
     const [tabChosen, setTabChosen] = useState('World');
     return (
         <MantineProvider>
@@ -67,7 +75,7 @@ export default function MainGame() {
                         }}>
                                 <QueueBox/>
                                 <Paper  shadow="sm" withBorder h={'100%'}>
-                                    <Container size="xl">
+                                    {gameStarted ? <Container size="xl">
                                         <Tabs
                                             defaultValue="World"
                                             variant="default"
@@ -254,7 +262,59 @@ export default function MainGame() {
                                                 <Settings />
                                             </Tabs.Panel>
                                         </Tabs>
-                                    </Container>
+                                    </Container>: <Container size="xl">
+                                        <Tabs
+                                            defaultValue="World"
+                                            variant="default"
+                                            visibleFrom="sm"
+                                            onChange={value => {
+                                                setTabChosen(value);
+                                            }}
+                                        >
+                                            <Tabs.List grow justify="space-between">
+                                                <Tabs.Tab
+                                                    value="World"
+                                                    leftSection={
+                                                        <IconWorld
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'World' ||
+                                                    width >= 2000
+                                                        ? 'World'
+                                                        : null}
+                                                </Tabs.Tab>
+                                                
+                                                <Tabs.Tab
+                                                    value="Settings"
+                                                    leftSection={
+                                                        <IconAdjustments
+                                                            size="1.4rem"
+                                                            stroke={1.5}
+                                                            color="gray"
+                                                        />
+                                                    }
+                                                >
+                                                    {tabChosen == 'Settings' ||
+                                                    width >= 2000
+                                                        ? 'Settings'
+                                                        : null}
+                                                </Tabs.Tab>
+                                            </Tabs.List>
+                                            <Tabs.Panel value="World">
+                                                <Paper shadow="sm" p="md" withBorder>
+                                                    <WorldContent />
+                                                </Paper>
+                                            </Tabs.Panel>
+
+                                            <Tabs.Panel value="Settings">
+                                                <Settings />
+                                            </Tabs.Panel>
+                                        </Tabs>
+                                    </Container>}
                                 </Paper>
                                 <EndTurn />
                         </Paper>

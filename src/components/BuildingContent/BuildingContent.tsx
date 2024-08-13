@@ -40,6 +40,8 @@ import {
 import {
     Building,
     buildingListAtom,
+    jobMax,
+    resourceMax,
 } from 'components/BuildingContent/BuildingData';
 import { useAtom, useAtomValue } from 'jotai';
 import { persistentAtom } from 'hooks/persistentAtom';
@@ -56,31 +58,12 @@ import { turn, Resource, resourceListAtom } from 'components/Gamedata/Gamedata';
 import {
     modifyBuildingQueue,
     modifyConstructionWorkers,
+    calculateJM,
+    calculateRM,
+    calculateBE,
 } from './BuildingHelper';
 import { modifyJobUsed } from 'components/JobsContent/JobHelpers';
 
-const icons = {
-    Inspiration: IconHourglass,
-    Population: IconUser,
-    Infrastructure: IconHexagon,
-    Military: IconSword,
-    Knowledge: IconSchool,
-    Food: IconCarrot,
-    Material: IconPackages,
-    Wealth: IconCoin,
-    Progress: IconFlask,
-    Culture: IconCandle,
-    Production: IconHammer,
-    Influence: IconStar,
-    Innovation: IconBulb,
-    Prosperity: IconPeace,
-    Efficiency: IconSettings,
-    Superiority: IconTrophy,
-    Allignment: IconScale,
-    Satisfaction: IconThumbUp,
-    Stability: IconBuildingCastle,
-    Authority: IconCrown,
-};
 
 //Constructing and deconstructing buildings.
 //Only returns infrastructure costs.
@@ -159,7 +142,6 @@ export default function BuildingList() {
                 wealth.value >= row.original.wealthCost
             ) {
                 setBuildings(prevBuildings => {
-                    console.log(prevBuildings);
                     return modifyBuildingQueue(
                         prevBuildings,
                         row.original.name,
@@ -360,13 +342,11 @@ export default function BuildingList() {
                                 </Table.Td>
                                 <Table.Td>
                                     {row.original.construction.queued > 0
-                                        ? worker.amount + ' / '
+                                        ? worker.amount+' / '
                                         : null}
                                     {job.amount}
                                     {row.original.construction.queued > 0
-                                        ? ' (+' +
-                                          worker.workers * workerOutput.total() +
-                                          ')'
+                                        ?' (+' +worker.workers*workerOutput.total()+')'
                                         : null}
                                 </Table.Td>
                                 <Table.Td>
@@ -410,8 +390,7 @@ export default function BuildingList() {
                             </Table.Tr>
                         );
                     });
-                    const resourceMax = row.original.resourcemax.map(
-                        resource => {
+                    const resourceMax = row.original.resourcemax.map(resource => {
                             return (
                                 <Table.Tr
                                     key={resource.resource}
@@ -422,28 +401,28 @@ export default function BuildingList() {
                                     }}
                                 >
                                     <Table.Td>{resource.resource}</Table.Td>
-                                    <Table.Td>{resource.total()}</Table.Td>
+                                    <Table.Td>{calculateRM(resource)}</Table.Td>
                                     <Table.Td>
-                                        {resource.total() * row.original.built}
+                                        {calculateRM(resource) * row.original.built}
                                     </Table.Td>
                                 </Table.Tr>
                             );
                         },
                     );
-                    const jobMax = row.original.jobmax.map(jobmax => {
+                    const jobMaxes = row.original.jobmax.map(jobM => {
                         return (
                             <Table.Tr
-                                key={jobmax.job}
+                                key={jobM.job}
                                 style={{
                                     display: 'grid',
                                     gridTemplateColumns: '1fr 1fr 1fr',
                                     gap: '10px',
                                 }}
                             >
-                                <Table.Td>{jobmax.job}</Table.Td>
-                                <Table.Td>{jobmax.total()}</Table.Td>
+                                <Table.Td>{jobM.job}</Table.Td>
+                                <Table.Td>{calculateJM(jobM)}</Table.Td>
                                 <Table.Td>
-                                    {jobmax.total() * row.original.built}
+                                    {calculateJM(jobM) * row.original.built}
                                 </Table.Td>
                             </Table.Tr>
                         );
@@ -459,9 +438,9 @@ export default function BuildingList() {
                                 }}
                             >
                                 <Table.Td>{bonus.resource}</Table.Td>
-                                <Table.Td>{bonus.total()}</Table.Td>
+                                <Table.Td>{calculateBE(bonus)}</Table.Td>
                                 <Table.Td>
-                                    {bonus.total() * row.original.built}
+                                    {calculateBE(bonus) * row.original.built}
                                 </Table.Td>
                             </Table.Tr>
                         );
@@ -527,7 +506,7 @@ export default function BuildingList() {
                                 <Divider size="sm" />
                                 <Table.Tbody>{resourceMax}</Table.Tbody>
                                 <Divider size="sm" />
-                                <Table.Tbody>{jobMax}</Table.Tbody>
+                                <Table.Tbody>{jobMaxes}</Table.Tbody>
                             </Table>
                         </Box>
                     );

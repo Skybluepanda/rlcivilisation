@@ -166,12 +166,32 @@ async function loadJobsFromJSON(jsonPath: string): Promise<Job[]> {
 }
 
 
-
 // Atom that holds the job list
 export const jobListAtom = persistentAtom('jobListAtom', []);
+export const jobDictionaryAtom = persistentAtom('jobDictionary', []);
+export const jobListAdminAtom = persistentAtom('jobListAdminAtom', []);
 
-export const useJobListLoader = (jsonPath: string) => {
-    const [, setJobList] = useAtom(jobListAtom);
+
+export const jobUnlocker = (jobList, jobDict, job: String) => {
+    const newJob = jobDict.find(j => j.name === job);
+    return [...jobList, newJob];
+};
+
+export const useJobDictionaryLoader = (jsonPath: string) => {
+    const [, setJobList] = useAtom(jobDictionaryAtom);
+
+    useEffect(() => {
+        async function loadJobs() {
+            const jobs = await loadJobsFromJSON(jsonPath);
+            setJobList(jobs);
+        }
+
+        loadJobs();
+    }, [jsonPath, setJobList]);
+};
+
+export const useJobListLoaderAdmin = (jsonPath: string) => {
+    const [, setJobList] = useAtom(jobListAdminAtom);
 
     useEffect(() => {
         async function loadJobs() {

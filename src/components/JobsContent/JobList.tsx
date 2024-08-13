@@ -37,7 +37,6 @@ import {
     increment,
     costResource,
     resourceEffect,
-    useJobListLoader,
 } from './FoodJobData';
 import { useAtom, useAtomValue } from 'jotai';
 import { persistentAtom } from 'hooks/persistentAtom';
@@ -83,7 +82,6 @@ const icons = {
 };
 
 export default function JobList() {
-    useJobListLoader('/rlcivilisation/src/components/JobsContent/JobDataJson.json');
     const [jobs, setJobs] = useAtom(jobListAtom);
     const [resources, setResources] = useAtom(resourceListAtom);
     const population = resources.find(r => r.name === 'Population');

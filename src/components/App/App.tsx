@@ -8,6 +8,7 @@ import ColorSchemeContext from 'shared/ColorSchemeContext';
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import JobManager from 'components/JobsContent/JobListAdmin';
+import BuildingManager from 'components/BuildingContent/BuildingAdmin';
 export default function App() {
   const theme = createTheme ({
     fontFamily: "Roboto",
@@ -29,6 +30,7 @@ export default function App() {
               <Routes>
                   <Route path="/rlcivilisation" element={<MainGame />} />
                   <Route path="/rlcivilisation/jobs" element={<JobManager />} />
+                  <Route path="/rlcivilisation/buildings" element={<BuildingManager />} />
               </Routes>
           </Router>
         </Box>

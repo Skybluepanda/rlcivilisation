@@ -74,7 +74,7 @@
         "tags": ["Material", "Production"],
         "tooltip": "Consumes large amount of material to build structures.",
         "current": 0,
-        "max": 5,
+        "max": 0,
         "suppliers": [],
         "dependents": [],
         "input": [{ "resource": "Food", "base": -20 }],

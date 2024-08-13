@@ -1,0 +1,40 @@
+[
+    {
+        "UID": 1,
+        "name": "Workshop",
+        "unlocked": true,
+        "tags": ["infrastructure", "population"],
+        "tooltip": "Workplace for crafters.",
+        "infrastructureCost": 1,
+        "wealthCost": 1,
+        "costJobs": [
+            {
+                "job": "Builder",
+                "resource": "Production",
+                "amount": 10
+            }
+        ],
+        "construction": {
+            "queued": 0,
+            "progress": [
+                {
+                    "job": "Builder",
+                    "resource": "Production"
+                }
+            ]
+        },
+        "bonuseffect": [
+            {
+                "resource": "Efficiency",
+                "base": 1
+            }
+        ],
+        "resourcemax": [],
+        "jobmax": [
+            {
+                "job": "Crafter",
+                "base": 5
+            }
+        ]
+    }
+]

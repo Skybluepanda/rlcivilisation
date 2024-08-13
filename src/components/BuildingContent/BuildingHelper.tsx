@@ -1,3 +1,5 @@
+import { resourceMax, jobMax, bonusEffect } from "./BuildingData";
+
 export const modifyBuildingQueue = (buildings, buildingName, change) => {
     return buildings.map((building) => {
         if (building.name === buildingName) {
@@ -10,6 +12,20 @@ export const modifyBuildingQueue = (buildings, buildingName, change) => {
     });
 }
 
+export const calculateRM = (target:resourceMax) => {
+    return (target.base * (100+target.multiplier)/100 + target.bonus) *
+    (100+target.globalMultiplier)/100;
+};
+
+export const calculateJM = (target:jobMax) => {
+    return (target.base * (100+target.multiplier)/100 + target.bonus) *
+    (100+target.globalMultiplier)/100;
+};
+
+export const calculateBE = (target:bonusEffect) => {
+    return (target.base * (100+target.multiplier)/100 + target.bonus) *
+    (100+target.globalMultiplier)/100;
+};
 export const modifyConstructionWorkers = (buildings, buildingName,jobName, change) => {
     return buildings.map((building) => {
         if (building.name === buildingName) {
