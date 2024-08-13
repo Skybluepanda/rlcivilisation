@@ -94,10 +94,10 @@ const BuildingManager: React.FC = () => {
                 <Title order={2}>Building List</Title>
                 <TextInput
                     label="Search Buildings"
-                    // onChange={e => setBuildingSearch(e.target.value)}
+                    onChange={e => setBuildingSearch(e.target.value)}
                 />
                 <ScrollArea h={'30vh'}>
-                    {/* {buildingList.map(building => buildingSearch ? ( building.name.toLowerCase().includes(buildingSearch.toLowerCase().trim()) ?
+                    {buildingList.map(building => buildingSearch ? ( building.name.toLowerCase().includes(buildingSearch.toLowerCase().trim()) ?
                         <Button
                             variant="outline"
                             key={building.name}
@@ -111,12 +111,12 @@ const BuildingManager: React.FC = () => {
                     onClick={() => handleBuildingSelect(building)}
                 >
                     {building.UID} {building.name}
-                </Button>)} */}
+                </Button>)}
                 </ScrollArea>
             </Paper>
             <Paper withBorder p={'md'}>
                 <Title order={2}>Edit Building</Title>
-                {/* {selectedBuilding ? (
+                {selectedBuilding ? (
                     <Paper>
                         <TextInput
                             label="Building Name"
@@ -142,7 +142,7 @@ const BuildingManager: React.FC = () => {
                                 })
                             }
                         />
-                        {/* Resource INPUT output onetime table*/}
+                        {/* Resource INPUT output onetime table */}
                 <Table>
                     <Table.Thead>
                         <Table.Tr
@@ -253,7 +253,7 @@ const BuildingManager: React.FC = () => {
                     Save
                 </Button>
             </Paper>
-            {/* ) : (<p>Select a building to edit</p>)</Paper> */}
+            ) : (<p>Select a building to edit</p>)}</Paper>
             <Paper withBorder p={'md'}>
                 <Title order={2}>Add New Building</Title>
                 <TextInput
