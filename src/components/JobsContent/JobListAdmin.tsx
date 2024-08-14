@@ -72,7 +72,7 @@ const JobManager: React.FC = () => {
     };
 
     const handleAddNewJob = () => {
-        const lastJob = jobList.toSorted((a, b) => a.UID - b.UID)[jobList.length-1];
+        const lastJob = jobList.toSorted((a, b) => a.UID - b.UID)[jobList.length - 1];
         const newUID = lastJob ? lastJob.UID + 1 : 1;
         console.log(newJob)
         if (newJob) {
@@ -272,13 +272,7 @@ const JobManager: React.FC = () => {
                                 handleSaveJob({
                                     ...selectedJob,
                                     suppliers: selectedJob.suppliers.map(s =>
-                                        s.name === supplier.name
-                                            ? {
-                                                  ...s,
-                                                  amount: e.target
-                                                      .valueAsNumber,
-                                              }
-                                            : s,
+                                        s.name === supplier.name ? {...s, amount: e.target.valueAsNumber ,} : s,
                                     ),
                                 })
                             }
@@ -657,11 +651,11 @@ const JobManager: React.FC = () => {
     };
 
     const resourceOptions = (resourceList.filter(item =>
-            item.toLowerCase().includes(search.toLowerCase().trim()),
-        ).map(item => (
-            <Combobox.Option value={item} key={item}>
-                {item}
-            </Combobox.Option>
+        item.toLowerCase().includes(search.toLowerCase().trim()),
+    ).map(item => (
+        <Combobox.Option value={item} key={item}>
+            {item}
+        </Combobox.Option>
     )));
 
     const handleExportJSON = () => {
@@ -679,9 +673,9 @@ const JobManager: React.FC = () => {
             <Title order={1}>Job Dev Mode</Title>
             <Paper withBorder p={'md'}>
                 <Title order={2}>Job List</Title>
-                <TextInput label="Search Jobs" onChange={e => setJobSearch(e.target.value)}/>
+                <TextInput label="Search Jobs" onChange={e => setJobSearch(e.target.value)} />
                 <ScrollArea h={'30vh'}>
-                    {jobList.map(job => jobSearch ? ( job.name.toLowerCase().includes(jobSearch.toLowerCase().trim()) ?
+                    {jobList.map(job => jobSearch ? (job.name.toLowerCase().includes(jobSearch.toLowerCase().trim()) ?
                         <Button
                             variant="outline"
                             key={job.name}
@@ -689,13 +683,13 @@ const JobManager: React.FC = () => {
                         >
                             {job.UID} {job.name}
                         </Button>
-                    : null ): <Button
-                    variant="outline"
-                    key={job.name}
-                    onClick={() => handleJobSelect(job)}
-                >
-                    {job.UID} {job.name}
-                </Button>)}
+                        : null) : <Button
+                            variant="outline"
+                            key={job.name}
+                            onClick={() => handleJobSelect(job)}
+                        >
+                        {job.UID} {job.name}
+                    </Button>)}
                 </ScrollArea>
             </Paper>
             <Paper withBorder p={'md'}>
@@ -752,11 +746,11 @@ const JobManager: React.FC = () => {
                                     <Table.Th>UPKEEP</Table.Th>
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
-                            variant="outline"
-                            onClick={() => handleNewUpkeep()}
-                        >
-                            Add Upkeep
-                        </Button></Table.Th>
+                                        variant="outline"
+                                        onClick={() => handleNewUpkeep()}
+                                    >
+                                        Add Upkeep
+                                    </Button></Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{inputTable()}</Table.Tbody>
@@ -771,11 +765,11 @@ const JobManager: React.FC = () => {
                                     <Table.Th>OUTPUT</Table.Th>
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
-                            variant="outline"
-                            onClick={() => handleNewUpkeep()}
-                        >
-                            Add Output
-                        </Button></Table.Th>
+                                        variant="outline"
+                                        onClick={() => handleNewUpkeep()}
+                                    >
+                                        Add Output
+                                    </Button></Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{outputTable()}</Table.Tbody>
@@ -790,11 +784,11 @@ const JobManager: React.FC = () => {
                                     <Table.Th>BONUS</Table.Th>
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
-                            variant="outline"
-                            onClick={() => handleNewUpkeep()}
-                        >
-                            Add Bonus
-                        </Button></Table.Th>
+                                        variant="outline"
+                                        onClick={() => handleNewUpkeep()}
+                                    >
+                                        Add Bonus
+                                    </Button></Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{reseffTable()}</Table.Tbody>
@@ -841,19 +835,19 @@ const JobManager: React.FC = () => {
             <Paper withBorder p={'md'}>
                 <Title order={2}>Add New Job</Title>
                 <TextInput
-                            label="Job Name"
-                            description="Think very hard, changing this later is really unfun."
-                            type="text"
-                            value={newJob}
-                            onChange={e => 
-                                handleNewJobChange(e.target.value)
-                            }
-                        />
+                    label="Job Name"
+                    description="Think very hard, changing this later is really unfun."
+                    type="text"
+                    value={newJob}
+                    onChange={e =>
+                        handleNewJobChange(e.target.value)
+                    }
+                />
                 <Button variant="outline" disabled={validNewJob} onClick={handleAddNewJob}>Add Job</Button>
             </Paper>
-            
-            <Flex justify="space-between"><Button variant="outline"  onClick={handleExportJSON}>Export Jobs as JSON</Button>
-            {/* <Button variant="outline"  onClick={resetJob}>Reset to Server</Button> */}
+
+            <Flex justify="space-between"><Button variant="outline" onClick={handleExportJSON}>Export Jobs as JSON</Button>
+                {/* <Button variant="outline"  onClick={resetJob}>Reset to Server</Button> */}
             </Flex>
         </Container>
     );
