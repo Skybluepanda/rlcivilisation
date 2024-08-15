@@ -205,7 +205,7 @@ export default function EndTurn() {
                     </Menu.Dropdown>
                 </Menu>
                 <Divider size={'xl'}/>
-                <ScrollArea h="80%">
+                <ScrollArea h="60vh">
                     {logs.map(log => {
                         return (
                             <Box>

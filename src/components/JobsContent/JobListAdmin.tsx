@@ -72,7 +72,7 @@ const JobManager: React.FC = () => {
     };
 
     const handleAddNewJob = () => {
-        const lastJob = jobList.toSorted((a, b) => a.UID - b.UID)[jobList.length - 1];
+        const lastJob = jobList.toSorted((a, b) => a.UID - b.UID)[jobList.length-1];
         const newUID = lastJob ? lastJob.UID + 1 : 1;
         console.log(newJob)
         if (newJob) {
@@ -90,9 +90,11 @@ const JobManager: React.FC = () => {
         setSelectedJob(null);
         setSelectedJob(updatedJob);
     };
-
+    const [editing, setEditing] = useState(false);
     const [editingSupplier, setEditingSupplier] = useState(0);
-    const [editingResource, setEditingResource] = useState(0);
+    const [editingResourceIn, setEditingResourceIn] = useState(0);
+    const [editingResourceOut, setEditingResourceOut] = useState(0);
+    const [editingResourceBonus, setEditingResourceBonus] = useState(0);
     const [search, setSearch] = useState('');
     const comboboxSupplierJob = useCombobox({
         onDropdownClose: () => {
@@ -170,8 +172,7 @@ const JobManager: React.FC = () => {
                     key={index}
                     style={{
                         display: 'grid',
-                        gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                        gap: '10px',
+                        gridTemplateColumns: '1fr 1fr 2fr 2fr',
                     }}
                 >
                     <Table.Td>
@@ -272,7 +273,13 @@ const JobManager: React.FC = () => {
                                 handleSaveJob({
                                     ...selectedJob,
                                     suppliers: selectedJob.suppliers.map(s =>
-                                        s.name === supplier.name ? {...s, amount: e.target.valueAsNumber ,} : s,
+                                        s.name === supplier.name
+                                            ? {
+                                                  ...s,
+                                                  amount: e.target
+                                                      .valueAsNumber,
+                                              }
+                                            : s,
                                     ),
                                 })
                             }
@@ -280,7 +287,9 @@ const JobManager: React.FC = () => {
                     </Table.Td>
                     <Table.Td>
                         <Button
-                            onClick={() => setEditingSupplier(0)}
+                            onClick={() => {setEditingSupplier(0);
+                                setEditing(false);
+                            }}
                             variant="outline"
                         >
                             Save
@@ -292,8 +301,7 @@ const JobManager: React.FC = () => {
                     key={index}
                     style={{
                         display: 'grid',
-                        gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                        gap: '10px',
+                        gridTemplateColumns: '1fr 1fr 2fr 2fr',
                     }}
                 >
                     <Table.Td>{supplier.name}</Table.Td>
@@ -301,9 +309,10 @@ const JobManager: React.FC = () => {
                     <Table.Td>{supplier.amount}</Table.Td>
                     <Table.Td>
                         <Button
-                            disabled={editingSupplier != 0}
+                            disabled={editing}
                             onClick={() => {
                                 setEditingSupplier(index + 1);
+                                setEditing(true);
                                 console.log(index);
                             }}
                             variant="outline"
@@ -311,7 +320,7 @@ const JobManager: React.FC = () => {
                             Edit
                         </Button>
                         <Button
-                            disabled={editingSupplier != 0}
+                            disabled={editing}
                             onClick={() => {
                                 handleSaveJob({
                                     ...selectedJob,
@@ -333,13 +342,12 @@ const JobManager: React.FC = () => {
 
     const inputTable = () => {
         const inputTableBody = selectedJob.input.map((resource, index) =>
-            editingResource === index + 1 ? (
+            editingResourceIn === index + 1 ? (
                 <Table.Tr
                     key={index}
                     style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr',
-                        gap: '10px',
                     }}
                 >
                     <Table.Td>
@@ -387,7 +395,10 @@ const JobManager: React.FC = () => {
                     </Table.Td>
                     <Table.Td>
                         <Button
-                            onClick={() => setEditingResource(0)}
+                            onClick={() => {setEditingResourceIn(0);
+                                setEditing(false);
+                            }
+                            }
                             variant="outline"
                         >
                             Save
@@ -400,16 +411,16 @@ const JobManager: React.FC = () => {
                     style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr',
-                        gap: '10px',
                     }}
                 >
                     <Table.Td>{resource.resource}</Table.Td>
                     <Table.Td>{resource.base}</Table.Td>
                     <Table.Td>
                         <Button
-                            disabled={editingResource != 0}
+                            disabled={editing}
                             onClick={() => {
-                                setEditingResource(index + 1);
+                                setEditingResourceIn(index + 1);
+                                setEditing(true);
                                 console.log(index);
                             }}
                             variant="outline"
@@ -417,7 +428,7 @@ const JobManager: React.FC = () => {
                             Edit
                         </Button>
                         <Button
-                            disabled={editingResource != 0}
+                            disabled={editing}
                             onClick={() => {
                                 handleSaveJob({
                                     ...selectedJob,
@@ -439,13 +450,12 @@ const JobManager: React.FC = () => {
     };
     const outputTable = () => {
         const outputTableBody = selectedJob.output.map((resource, index) =>
-            editingResource === index + 1 ? (
+            editingResourceOut === index + 1 ? (
                 <Table.Tr
                     key={index}
                     style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr',
-                        gap: '10px',
                     }}
                 >
                     <Table.Td>
@@ -493,7 +503,10 @@ const JobManager: React.FC = () => {
                     </Table.Td>
                     <Table.Td>
                         <Button
-                            onClick={() => setEditingResource(0)}
+                            onClick={() => {setEditingResourceOut(0)
+                                setEditing(false);
+                            }
+                            }
                             variant="outline"
                         >
                             Save
@@ -506,16 +519,16 @@ const JobManager: React.FC = () => {
                     style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr',
-                        gap: '10px',
                     }}
                 >
                     <Table.Td>{resource.resource}</Table.Td>
                     <Table.Td>{resource.base}</Table.Td>
                     <Table.Td>
                         <Button
-                            disabled={editingResource != 0}
+                            disabled={editing}
                             onClick={() => {
-                                setEditingResource(index + 1);
+                                setEditingResourceOut(index + 1);
+                                setEditing(true);
                                 console.log(index);
                             }}
                             variant="outline"
@@ -523,7 +536,7 @@ const JobManager: React.FC = () => {
                             Edit
                         </Button>
                         <Button
-                            disabled={editingResource != 0}
+                            disabled={editing}
                             onClick={() => {
                                 handleSaveJob({
                                     ...selectedJob,
@@ -545,13 +558,12 @@ const JobManager: React.FC = () => {
     };
     const reseffTable = () => {
         const reseffTableBody = selectedJob.resourceEffect.map((resource, index) =>
-            editingResource === index + 1 ? (
+            editingResourceBonus === index + 1 ? (
                 <Table.Tr
                     key={index}
                     style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr',
-                        gap: '10px',
                     }}
                 >
                     <Table.Td>
@@ -599,7 +611,10 @@ const JobManager: React.FC = () => {
                     </Table.Td>
                     <Table.Td>
                         <Button
-                            onClick={() => setEditingResource(0)}
+                            onClick={() => {setEditingResourceBonus(0)
+                                setEditing(false);
+                            }
+                            }
                             variant="outline"
                         >
                             Save
@@ -612,16 +627,16 @@ const JobManager: React.FC = () => {
                     style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr 1fr',
-                        gap: '10px',
                     }}
                 >
                     <Table.Td>{resource.resource}</Table.Td>
                     <Table.Td>{resource.base}</Table.Td>
                     <Table.Td>
                         <Button
-                            disabled={editingResource != 0}
+                            disabled={editing}
                             onClick={() => {
-                                setEditingResource(index + 1);
+                                setEditingResourceBonus(index + 1);
+                                setEditing(true);
                                 console.log(index);
                             }}
                             variant="outline"
@@ -629,7 +644,7 @@ const JobManager: React.FC = () => {
                             Edit
                         </Button>
                         <Button
-                            disabled={editingResource != 0}
+                            disabled={editing}
                             onClick={() => {
                                 handleSaveJob({
                                     ...selectedJob,
@@ -651,11 +666,11 @@ const JobManager: React.FC = () => {
     };
 
     const resourceOptions = (resourceList.filter(item =>
-        item.toLowerCase().includes(search.toLowerCase().trim()),
-    ).map(item => (
-        <Combobox.Option value={item} key={item}>
-            {item}
-        </Combobox.Option>
+            item.toLowerCase().includes(search.toLowerCase().trim()),
+        ).map(item => (
+            <Combobox.Option value={item} key={item}>
+                {item}
+            </Combobox.Option>
     )));
 
     const handleExportJSON = () => {
@@ -673,23 +688,25 @@ const JobManager: React.FC = () => {
             <Title order={1}>Job Dev Mode</Title>
             <Paper withBorder p={'md'}>
                 <Title order={2}>Job List</Title>
-                <TextInput label="Search Jobs" onChange={e => setJobSearch(e.target.value)} />
+                <TextInput label="Search Jobs" onChange={e => setJobSearch(e.target.value)}/>
                 <ScrollArea h={'30vh'}>
-                    {jobList.map(job => jobSearch ? (job.name.toLowerCase().includes(jobSearch.toLowerCase().trim()) ?
+                    {jobList.map(job => jobSearch ? ( job.name.toLowerCase().includes(jobSearch.toLowerCase().trim()) ?
                         <Button
+                            disabled={editing}
                             variant="outline"
                             key={job.name}
                             onClick={() => handleJobSelect(job)}
                         >
                             {job.UID} {job.name}
                         </Button>
-                        : null) : <Button
-                            variant="outline"
-                            key={job.name}
-                            onClick={() => handleJobSelect(job)}
-                        >
-                        {job.UID} {job.name}
-                    </Button>)}
+                    : null ): <Button
+                    disabled={editing}
+                    variant="outline"
+                    key={job.name}
+                    onClick={() => handleJobSelect(job)}
+                >
+                    {job.UID} {job.name}
+                </Button>)}
                 </ScrollArea>
             </Paper>
             <Paper withBorder p={'md'}>
@@ -727,7 +744,6 @@ const JobManager: React.FC = () => {
                                     style={{
                                         display: 'grid',
                                         gridTemplateColumns: '1fr 1fr 1fr',
-                                        gap: '10px',
                                     }}
                                 >
                                     <Table.Th>Resource</Table.Th>
@@ -740,17 +756,16 @@ const JobManager: React.FC = () => {
                                     style={{
                                         display: 'grid',
                                         gridTemplateColumns: '1fr 1fr 1fr',
-                                        gap: '10px',
                                     }}
                                 >
                                     <Table.Th>UPKEEP</Table.Th>
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
-                                        variant="outline"
-                                        onClick={() => handleNewUpkeep()}
-                                    >
-                                        Add Upkeep
-                                    </Button></Table.Th>
+                            variant="outline"
+                            onClick={() => handleNewUpkeep()}
+                        >
+                            Add Upkeep
+                        </Button></Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{inputTable()}</Table.Tbody>
@@ -759,17 +774,16 @@ const JobManager: React.FC = () => {
                                     style={{
                                         display: 'grid',
                                         gridTemplateColumns: '1fr 1fr 1fr',
-                                        gap: '10px',
                                     }}
                                 >
                                     <Table.Th>OUTPUT</Table.Th>
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
-                                        variant="outline"
-                                        onClick={() => handleNewUpkeep()}
-                                    >
-                                        Add Output
-                                    </Button></Table.Th>
+                            variant="outline"
+                            onClick={() => handleNewUpkeep()}
+                        >
+                            Add Output
+                        </Button></Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{outputTable()}</Table.Tbody>
@@ -778,17 +792,16 @@ const JobManager: React.FC = () => {
                                     style={{
                                         display: 'grid',
                                         gridTemplateColumns: '1fr 1fr 1fr',
-                                        gap: '10px',
                                     }}
                                 >
                                     <Table.Th>BONUS</Table.Th>
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
-                                        variant="outline"
-                                        onClick={() => handleNewUpkeep()}
-                                    >
-                                        Add Bonus
-                                    </Button></Table.Th>
+                            variant="outline"
+                            onClick={() => handleNewUpkeep()}
+                        >
+                            Add Bonus
+                        </Button></Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{reseffTable()}</Table.Tbody>
@@ -796,25 +809,24 @@ const JobManager: React.FC = () => {
 
 
 
-                        <Button
-                            variant="outline"
-                            onClick={() => handleNewSupplier()}
-                        >
-                            New Supplier
-                        </Button>
+                        
                         <Table>
                             <Table.Thead>
                                 <Table.Tr
                                     style={{
                                         display: 'grid',
-                                        gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                                        gap: '10px',
+                                        gridTemplateColumns: '1fr 1fr 2fr 2fr',
                                     }}
                                 >
                                     <Table.Th>Supplier</Table.Th>
                                     <Table.Th>Resource</Table.Th>
                                     <Table.Th>Amount</Table.Th>
-                                    <Table.Th></Table.Th>
+                                    <Table.Th><Button
+                            variant="outline"
+                            onClick={() => handleNewSupplier()}
+                        >
+                            New Supplier
+                        </Button></Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{supplierTable()}</Table.Tbody>
@@ -835,19 +847,19 @@ const JobManager: React.FC = () => {
             <Paper withBorder p={'md'}>
                 <Title order={2}>Add New Job</Title>
                 <TextInput
-                    label="Job Name"
-                    description="Think very hard, changing this later is really unfun."
-                    type="text"
-                    value={newJob}
-                    onChange={e =>
-                        handleNewJobChange(e.target.value)
-                    }
-                />
+                            label="Job Name"
+                            description="Think very hard, changing this later is really unfun."
+                            type="text"
+                            value={newJob}
+                            onChange={e => 
+                                handleNewJobChange(e.target.value)
+                            }
+                        />
                 <Button variant="outline" disabled={validNewJob} onClick={handleAddNewJob}>Add Job</Button>
             </Paper>
-
-            <Flex justify="space-between"><Button variant="outline" onClick={handleExportJSON}>Export Jobs as JSON</Button>
-                {/* <Button variant="outline"  onClick={resetJob}>Reset to Server</Button> */}
+            
+            <Flex justify="space-between"><Button variant="outline"  onClick={handleExportJSON}>Export Jobs as JSON</Button>
+            {/* <Button variant="outline"  onClick={resetJob}>Reset to Server</Button> */}
             </Flex>
         </Container>
     );

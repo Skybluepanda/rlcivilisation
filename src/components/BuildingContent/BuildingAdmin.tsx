@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { jobListAdminAtom } from 'components/JobsContent/FoodJobData'; // Assuming buildingListAtom is in buildingAtoms.tsx
+import {
+    jobListAdminAtom,
+    useJobListLoaderAdmin,
+} from 'components/JobsContent/FoodJobData'; // Assuming buildingListAtom is in buildingAtoms.tsx
 
 import {
     Button,
@@ -24,27 +27,97 @@ import {
     useBuildingListLoaderAdmin,
     Building,
     construction,
+    costJob,
+    resourceMax,
 } from './BuildingData';
 const BuildingManager: React.FC = () => {
     useBuildingListLoaderAdmin(
         '/rlcivilisation/src/components/BuildingContent/BuildingDataJson.json',
     );
     const [buildingList, setBuildingList] = useAtom(buildingListAdminAtom);
+    useJobListLoaderAdmin(
+        '/rlcivilisation/src/components/JobsContent/JobDataJson.json',
+    );
+    const [jobList, setJobList] = useAtom(jobListAdminAtom);
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(
         null,
     );
     const [newBuilding, setNewBuilding] = useState('');
     const [buildingSearch, setBuildingSearch] = useState('');
     const [validNewBuilding, setValidNewBuilding] = useState(false);
+    const [editing, setEditing] = useState(false);
+    const [editingInf, setEditingInf] = useState(false);
+    const [editingWealth, setEditingWealth] = useState(false);
+    const [editingContruction, setEditingContruction] = useState(0);
+    const [editingResourceMax, setEditingResourceMax] = useState(0);
+    const [editingJobMax, setEditingJobMax] = useState(0);
+    const [editingBonus, setEditingBonus] = useState(0);
+    const [search, setSearch] = useState('');
+
+    const jobOptions = jobList
+        .filter(item =>
+            item.name.toLowerCase().includes(search.toLowerCase().trim()),
+        )
+        .map(item => (
+            <Combobox.Option value={item.name} key={item.name}>
+                {item.name}
+            </Combobox.Option>
+        ));
+
+    const comboboxResource = useCombobox({
+        onDropdownClose: () => {
+            comboboxResource.resetSelectedOption();
+            comboboxResource.focusTarget();
+            setSearch('');
+        },
+
+        onDropdownOpen: () => {
+            comboboxResource.focusSearchInput();
+        },
+    });
+
+    const resourceList = [
+        'Inspiration',
+        'Population',
+        'Infrastructure',
+        'Military',
+        'Knowledge',
+        'Food',
+        'Material',
+        'Wealth',
+        'Progress',
+        'Culture',
+        'Production',
+        'Influence',
+        'Innovation',
+        'Prosperity',
+        'Efficiency',
+        'Superiority',
+        'Allignment',
+        'Satisfaction',
+        'Stability',
+        'Authority',
+    ];
+
+    const resourceOptions = resourceList
+        .filter(item =>
+            item.toLowerCase().includes(search.toLowerCase().trim()),
+        )
+        .map(item => (
+            <Combobox.Option value={item} key={item}>
+                {item}
+            </Combobox.Option>
+        ));
     const handleBuildingSelect = (building: Building) => {
         setSelectedBuilding(building);
     };
     const handleNewBuildingChange = (value: string) => {
         setNewBuilding(value);
-        const dupe = buildingList.filter(building => building.name === value).length;
+        const dupe = buildingList.filter(
+            building => building.name === value,
+        ).length;
         if (value.length > 3) {
-            if (dupe)
-                setValidNewBuilding(true);
+            if (dupe) setValidNewBuilding(true);
             else {
                 setValidNewBuilding(false);
             }
@@ -53,29 +126,506 @@ const BuildingManager: React.FC = () => {
         }
     };
     const handleNewBuilding = () => {
-        const lastBuilding = buildingList.toSorted((a, b) => a.UID - b.UID)[buildingList.length-1];
+        const lastBuilding = buildingList.toSorted((a, b) => a.UID - b.UID)[
+            buildingList.length - 1
+        ];
         const newUID = lastBuilding ? lastBuilding.UID + 1 : 1;
-        console.log(newBuilding)
+        console.log(newBuilding);
         if (newBuilding) {
-            setBuildingList([...buildingList, new Building(newUID, newBuilding, false, [], "", 0, 0, [], new construction(0, []), [], [], [])]);
+            setBuildingList([
+                ...buildingList,
+                new Building(
+                    newUID,
+                    newBuilding,
+                    false,
+                    [],
+                    '',
+                    0,
+                    0,
+                    [],
+                    new construction(0, []),
+                    [],
+                    [],
+                    [],
+                ),
+            ]);
             setValidNewBuilding(false);
         }
-
     };
     const handleSaveBuilding = (updatedBuilding: Building) => {
         setBuildingList(
             buildingList.map(building =>
-                building.name === updatedBuilding.name ? updatedBuilding : building,
+                building.name === updatedBuilding.name
+                    ? updatedBuilding
+                    : building,
             ),
         );
-        setBuildingList(null);
-        setBuildingList(updatedBuilding);
+        setSelectedBuilding(null);
+        setSelectedBuilding(updatedBuilding);
     };
 
+    const handleNewConstruction = () => {
+        handleSaveBuilding({
+            ...selectedBuilding,
+            costJobs: [
+                ...selectedBuilding.costJobs,
+                new costJob('Forager', 'Material', 0),
+            ],
+        });
+    };
+    
+    const handleNewResourceMax = () => {
+        handleSaveBuilding({
+            ...selectedBuilding,
+            resourcemax: [
+                ...selectedBuilding.resourcemax,
+                new resourceMax('Food', 0),]
+    })};
 
+    const infraTable = () => {
+        return editingInf ? (
+            <Table.Tr
+                key={'Infra'}
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                }}
+            >
+                <Table.Td>Infrastructure</Table.Td>
+                <Table.Td>
+                    <TextInput
+                        type="number"
+                        value={selectedBuilding.infrastructureCost}
+                        onChange={e =>
+                            handleSaveBuilding({
+                                ...selectedBuilding,
+                                infrastructureCost: e.target.valueAsNumber,
+                            })
+                        }
+                    />
+                </Table.Td>
+                <Table.Td>
+                    <Button
+                        onClick={() => {
+                            setEditingInf(false);
+                            setEditing(false);
+                        }}
+                        variant="outline"
+                    >
+                        Save
+                    </Button>
+                </Table.Td>
+            </Table.Tr>
+        ) : (
+            <Table.Tr
+                key={'Infra'}
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                }}
+            >
+                <Table.Td>Infrastructure</Table.Td>
+                <Table.Td>{selectedBuilding.infrastructureCost}</Table.Td>
+                <Table.Td>
+                    <Button
+                        disabled={editing}
+                        onClick={() => {
+                            setEditingInf(true);
+                            setEditing(true);
+                        }}
+                        variant="outline"
+                    >
+                        Edit
+                    </Button>
+                </Table.Td>
+            </Table.Tr>
+        );
+    };
 
+    const wealthTable = () => {
+        return editingWealth ? (
+            <Table.Tr
+                key={'Wealth'}
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                }}
+            >
+                <Table.Td>Wealth</Table.Td>
+                <Table.Td>
+                    <TextInput
+                        type="number"
+                        value={selectedBuilding.wealthCost}
+                        onChange={e =>
+                            handleSaveBuilding({
+                                ...selectedBuilding,
+                                wealthCost: e.target.valueAsNumber,
+                            })
+                        }
+                    />
+                </Table.Td>
+                <Table.Td>
+                    <Button
+                        onClick={() => {
+                            setEditingWealth(false);
+                            setEditing(false);
+                        }}
+                        variant="outline"
+                    >
+                        Save
+                    </Button>
+                </Table.Td>
+            </Table.Tr>
+        ) : (
+            <Table.Tr
+                key={'Wealth'}
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                }}
+            >
+                <Table.Td>Wealth</Table.Td>
+                <Table.Td>{selectedBuilding.wealthCost}</Table.Td>
+                <Table.Td>
+                    <Button
+                        disabled={editing}
+                        onClick={() => {
+                            setEditingWealth(true);
+                            setEditing(true);
+                        }}
+                        variant="outline"
+                    >
+                        Edit
+                    </Button>
+                </Table.Td>
+            </Table.Tr>
+        );
+    };
 
+    const comboboxCostJob = useCombobox({
+        onDropdownClose: () => {
+            comboboxCostJob.resetSelectedOption();
+            comboboxCostJob.focusTarget();
+            setSearch('');
+        },
 
+        onDropdownOpen: () => {
+            comboboxCostJob.focusSearchInput();
+        },
+    });
+
+    const constructionWorkerTable = () => {
+        const costJobTableBody = selectedBuilding.costJobs.map(
+            (costJob, index) =>
+                editingContruction === index + 1 ? (
+                    <Table.Tr
+                        key={index}
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 2fr 2fr',
+                        }}
+                    >
+                        <Table.Td>
+                            <Combobox
+                                store={comboboxCostJob}
+                                onOptionSubmit={val => {
+                                    console.log(val);
+                                    handleSaveBuilding({
+                                        ...selectedBuilding,
+                                        costJobs: selectedBuilding.costJobs.map(
+                                            s =>
+                                                s.job === costJob.job
+                                                    ? { ...s, job: val }
+                                                    : s,
+                                        ),
+                                    });
+                                    console.log(val);
+                                    comboboxCostJob.closeDropdown();
+                                }}
+                            >
+                                <Combobox.Target>
+                                    <InputBase
+                                        component="button"
+                                        type="button"
+                                        pointer
+                                        rightSection={<Combobox.Chevron />}
+                                        rightSectionPointerEvents="none"
+                                        onClick={() =>
+                                            comboboxCostJob.openDropdown()
+                                        }
+                                    >
+                                        {costJob.job}
+                                    </InputBase>
+                                </Combobox.Target>
+                                <Combobox.Dropdown>
+                                    <Combobox.Search
+                                        value={search}
+                                        onChange={event =>
+                                            setSearch(event.currentTarget.value)
+                                        }
+                                        placeholder="Search Jobs"
+                                    />
+                                    <Combobox.Options>
+                                        {jobOptions}
+                                    </Combobox.Options>
+                                </Combobox.Dropdown>
+                            </Combobox>
+                        </Table.Td>
+                        <Table.Td>
+                            <Combobox
+                                store={comboboxResource}
+                                onOptionSubmit={val => {
+                                    console.log(val);
+                                    handleSaveBuilding({
+                                        ...selectedBuilding,
+                                        costJobs: selectedBuilding.costJobs.map(
+                                            s =>
+                                                s.job === costJob.job
+                                                    ? { ...s, resource: val }
+                                                    : s,
+                                        ),
+                                    });
+                                    console.log(val);
+                                    comboboxResource.closeDropdown();
+                                }}
+                            >
+                                <Combobox.Target>
+                                    <InputBase
+                                        component="button"
+                                        type="button"
+                                        pointer
+                                        rightSection={<Combobox.Chevron />}
+                                        rightSectionPointerEvents="none"
+                                        onClick={() =>
+                                            comboboxResource.openDropdown()
+                                        }
+                                    >
+                                        {costJob.job}
+                                    </InputBase>
+                                </Combobox.Target>
+                                <Combobox.Dropdown>
+                                    <Combobox.Search
+                                        value={search}
+                                        onChange={event =>
+                                            setSearch(event.currentTarget.value)
+                                        }
+                                        placeholder="Search Resources"
+                                    />
+                                    <Combobox.Options>
+                                        {resourceOptions}
+                                    </Combobox.Options>
+                                </Combobox.Dropdown>
+                            </Combobox>
+                        </Table.Td>
+                        <Table.Td>
+                            <TextInput
+                                type="number"
+                                value={selectedBuilding.wealthCost}
+                                onChange={e =>
+                                    handleSaveBuilding({
+                                        ...selectedBuilding,
+                                        costJobs: selectedBuilding.costJobs.map(
+                                            s =>
+                                                s.job === costJob.job
+                                                    ? {
+                                                          ...s,
+                                                          amount: e.target
+                                                              .valueAsNumber,
+                                                      }
+                                                    : s,
+                                        ),
+                                    })
+                                }
+                            />
+                        </Table.Td>
+                        <Table.Td>
+                            <Button
+                                onClick={() => {
+                                    setEditingContruction(0);
+                                    setEditing(false);
+                                }}
+                                variant="outline"
+                            >
+                                Save
+                            </Button>
+                        </Table.Td>
+                    </Table.Tr>
+                ) : (
+                    <Table.Tr
+                        key={index}
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns:
+                                '1fr 1fr 2fr 2fr',
+                        }}
+                    >
+                        <Table.Td>{costJob.job}</Table.Td>
+                        <Table.Td>{costJob.resource}</Table.Td>
+                        <Table.Td>{costJob.amount}</Table.Td>
+                        <Table.Td>
+                            <Button
+                                disabled={editing}
+                                onClick={() => {
+                                    setEditingContruction(index + 1);
+                                    setEditing(true);
+                                }}
+                                variant="outline"
+                            >
+                                Edit
+                            </Button>
+                            <Button
+                                disabled={editing}
+                                onClick={() => {
+                                    handleSaveBuilding({
+                                        ...selectedBuilding,
+                                        costJobs:
+                                            selectedBuilding.costJobs.filter(
+                                                s => s.job === costJob.job,
+                                            ),
+                                    });
+                                }}
+                                variant="outline"
+                            >
+                                Delete
+                            </Button>
+                        </Table.Td>
+                    </Table.Tr>
+                ),
+        );
+
+        return costJobTableBody;
+    };
+
+    const resourceMaxTable = () => {
+        const resourceMaxTableBody = selectedBuilding.resourcemax.map((resM, index) =>
+            editingResourceMax === index + 1 ? (
+                <Table.Tr
+                    key={resM.resource}
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
+                    }}
+                >
+                    <Table.Td>
+                    <Combobox
+                                store={comboboxResource}
+                                onOptionSubmit={val => {
+                                    console.log(val);
+                                    handleSaveBuilding({
+                                        ...selectedBuilding,
+                                        resourcemax: selectedBuilding.resourcemax.map(
+                                            r =>
+                                                r.resource === resM.resource
+                                                    ? new resourceMax(val, r.base)
+                                                    : r,
+                                        ),
+                                    });
+                                    console.log(val);
+                                    comboboxResource.closeDropdown();
+                                }}
+                            >
+                                <Combobox.Target>
+                                    <InputBase
+                                        component="button"
+                                        type="button"
+                                        pointer
+                                        rightSection={<Combobox.Chevron />}
+                                        rightSectionPointerEvents="none"
+                                        onClick={() =>
+                                            comboboxResource.openDropdown()
+                                        }
+                                    >
+                                        {resM.resource}
+                                    </InputBase>
+                                </Combobox.Target>
+                                <Combobox.Dropdown>
+                                    <Combobox.Search
+                                        value={search}
+                                        onChange={event =>
+                                            setSearch(event.currentTarget.value)
+                                        }
+                                        placeholder="Search Resources"
+                                    />
+                                    <Combobox.Options>
+                                        {resourceOptions}
+                                    </Combobox.Options>
+                                </Combobox.Dropdown>
+                            </Combobox>  
+                    </Table.Td>
+                    <Table.Td>
+                    <TextInput
+                                type="number"
+                                value={resM.base}
+                                onChange={e =>
+                                    handleSaveBuilding({
+                                        ...selectedBuilding,
+                                        resourcemax: selectedBuilding.resourcemax.map(
+                                            r =>
+                                                r.resource === resM.resource
+                                                    ? new resourceMax(
+                                                        resM.resource,
+                                                        e.target.valueAsNumber,
+                                                    )
+                                                    : r,
+                                        ),
+                                    })
+                                }
+                            />
+                    </Table.Td>
+                    <Table.Td>
+                        <Button
+                            onClick={() => {
+                                setEditingResourceMax(0);
+                                setEditing(false);
+                            }}
+                            variant="outline"
+                        >
+                            Save
+                        </Button>
+                    </Table.Td>
+                </Table.Tr>
+            ) : (
+                <Table.Tr
+                    key={resM.resource}
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
+                    }}
+                >
+                    <Table.Td>{resM.resource}</Table.Td>
+                    <Table.Td>{resM.base}</Table.Td>
+                    <Table.Td>
+                        <Button
+                            disabled={editing}
+                            onClick={() => {
+                                setEditingResourceMax(index + 1);
+                                setEditing(true);
+                            }}
+                            variant="outline"
+                        >
+                            Edit
+                        </Button>
+                        <Button
+                            disabled={editing}
+                            onClick={() => {
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    resourcemax: selectedBuilding.resourcemax.filter(
+                                        r => r.resource !== resM.resource && r.base !== resM.base,
+                                    ),
+                                });
+                            }}
+                            variant="outline"
+                        >
+                            Delete
+                        </Button>
+                    </Table.Td>
+                </Table.Tr>
+            ),
+        );
+        return resourceMaxTableBody;
+
+    }
 
     const handleExportJSON = () => {
         const dataStr = JSON.stringify(buildingList, null, 2);
@@ -97,21 +647,35 @@ const BuildingManager: React.FC = () => {
                     onChange={e => setBuildingSearch(e.target.value)}
                 />
                 <ScrollArea h={'30vh'}>
-                    {buildingList.map(building => buildingSearch ? ( building.name.toLowerCase().includes(buildingSearch.toLowerCase().trim()) ?
-                        <Button
-                            variant="outline"
-                            key={building.name}
-                            onClick={() => handleBuildingSelect(building)}
-                        >
-                            {building.UID} {building.name}
-                        </Button>
-                    : null ): <Button
-                    variant="outline"
-                    key={building.name}
-                    onClick={() => handleBuildingSelect(building)}
-                >
-                    {building.UID} {building.name}
-                </Button>)}
+                    {buildingList.map(building =>
+                        buildingSearch ? (
+                            building.name
+                                .toLowerCase()
+                                .includes(
+                                    buildingSearch.toLowerCase().trim(),
+                                ) ? (
+                                <Button
+                                    disabled={editing}
+                                    variant="outline"
+                                    key={building.name}
+                                    onClick={() =>
+                                        handleBuildingSelect(building)
+                                    }
+                                >
+                                    {building.UID} {building.name}
+                                </Button>
+                            ) : null
+                        ) : (
+                            <Button
+                                variant="outline"
+                                key={building.name}
+                                onClick={() => handleBuildingSelect(building)}
+                                disabled={editing}
+                            >
+                                {building.UID} {building.name}
+                            </Button>
+                        ),
+                    )}
                 </ScrollArea>
             </Paper>
             <Paper withBorder p={'md'}>
@@ -143,117 +707,117 @@ const BuildingManager: React.FC = () => {
                             }
                         />
                         {/* Resource INPUT output onetime table */}
-                <Table>
-                    <Table.Thead>
-                        <Table.Tr
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr 1fr',
-                                gap: '10px',
-                            }}
-                        >
-                            <Table.Th>Resource</Table.Th>
-                            <Table.Th>Amount</Table.Th>
-                            <Table.Th></Table.Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Thead>
-                        <Table.Tr
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr 1fr',
-                                gap: '10px',
-                            }}
-                        >
-                            <Table.Th>UPKEEP</Table.Th>
-                            <Table.Th></Table.Th>
-                            <Table.Th>
-                                <Button
-                                    variant="outline"
-                                    // onClick={() => handleNewUpkeep()}
+                        <Table>
+                            <Table.Thead>
+                                <Table.Tr
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr 1fr',
+                                    }}
                                 >
-                                    Add Upkeep
-                                </Button>
-                            </Table.Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody></Table.Tbody>
-                    <Table.Thead>
-                        <Table.Tr
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr 1fr',
-                                gap: '10px',
-                            }}
-                        >
-                            <Table.Th>OUTPUT</Table.Th>
-                            <Table.Th></Table.Th>
-                            <Table.Th>
-                                <Button
-                                    variant="outline"
-                                    // onClick={() => handleNewUpkeep()}
+                                    <Table.Th>Resource</Table.Th>
+                                    <Table.Th>Amount</Table.Th>
+                                    <Table.Th></Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody>{infraTable()}</Table.Tbody>
+                            <Table.Tbody>{wealthTable()}</Table.Tbody>
+                            <Table.Thead>
+                                <Table.Tr
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr 1fr',
+                                    }}
                                 >
-                                    Add Output
-                                </Button>
-                            </Table.Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody></Table.Tbody>
-                    <Table.Thead>
-                        <Table.Tr
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr 1fr',
-                                gap: '10px',
-                            }}
-                        >
-                            <Table.Th>BONUS</Table.Th>
-                            <Table.Th></Table.Th>
-                            <Table.Th>
-                                <Button
-                                    variant="outline"
-                                    // onClick={() => handleNewUpkeep()}
+                                    <Table.Th>Construction Job</Table.Th>
+                                    <Table.Th></Table.Th>
+                                    <Table.Th>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() =>
+                                                handleNewConstruction()
+                                            }
+                                        >
+                                            Add Cost Job
+                                        </Button>
+                                    </Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody>
+                                {constructionWorkerTable()}
+                            </Table.Tbody>
+                            <Table.Thead>
+                                <Table.Tr
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr 1fr',
+                                    }}
                                 >
-                                    Add Bonus
-                                </Button>
-                            </Table.Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody></Table.Tbody>
-                </Table>
-
-                <Button
-                    variant="outline"
-                    // onClick={() => handleNewSupplier()}
-                >
-                    New Supplier
-                </Button>
-                <Table>
-                    <Table.Thead>
-                        <Table.Tr
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                                gap: '10px',
-                            }}
+                                    <Table.Th>Resource Max</Table.Th>
+                                    <Table.Th></Table.Th>
+                                    <Table.Th>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => handleNewResourceMax()}
+                                        >
+                                            Add Resource Max
+                                        </Button>
+                                    </Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody>{resourceMaxTable()}</Table.Tbody>
+                            <Table.Thead>
+                                <Table.Tr
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr 1fr',
+                                    }}
+                                >
+                                    <Table.Th>Job Max</Table.Th>
+                                    <Table.Th></Table.Th>
+                                    <Table.Th>
+                                        <Button
+                                            variant="outline"
+                                            // onClick={() => handleNewUpkeep()}
+                                        >
+                                            Add JobMax
+                                        </Button>
+                                    </Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody></Table.Tbody>
+                            <Table.Thead>
+                                <Table.Tr
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr 1fr',
+                                    }}
+                                >
+                                    <Table.Th>Bonus</Table.Th>
+                                    <Table.Th></Table.Th>
+                                    <Table.Th>
+                                        <Button
+                                            variant="outline"
+                                            // onClick={() => handleNewUpkeep()}
+                                        >
+                                            Add Bonus
+                                        </Button>
+                                    </Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody></Table.Tbody>
+                        </Table>
+                        <Button
+                            variant="outline"
+                            // onClick={() => handleSaveBuilding(selectedBuilding)}
                         >
-                            <Table.Th>Supplier</Table.Th>
-                            <Table.Th>Resource</Table.Th>
-                            <Table.Th>Amount</Table.Th>
-                            <Table.Th></Table.Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody></Table.Tbody>
-                </Table>
-
-                <Button
-                    variant="outline"
-                    // onClick={() => handleSaveBuilding(selectedBuilding)}
-                >
-                    Save
-                </Button>
+                            Save
+                        </Button>
+                    </Paper>
+                ) : (
+                    <p>Select a building to edit</p>
+                )}
             </Paper>
-            ) : (<p>Select a building to edit</p>)}</Paper>
             <Paper withBorder p={'md'}>
                 <Title order={2}>Add New Building</Title>
                 <TextInput
@@ -261,12 +825,12 @@ const BuildingManager: React.FC = () => {
                     description="Think very hard, changing this later is really unfun."
                     type="text"
                     value={newBuilding}
-                    // onChange={e => handleNewBuildingChange(e.target.value)}
+                    onChange={e => handleNewBuildingChange(e.target.value)}
                 />
                 <Button
                     variant="outline"
                     disabled={validNewBuilding}
-                    // onClick={handleAddNewBuilding}
+                    onClick={handleNewBuilding}
                 >
                     Add Building
                 </Button>
