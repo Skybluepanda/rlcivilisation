@@ -144,7 +144,6 @@ export class Job {
 
 
 
-
 // Function to load JSON data
 async function loadJobsFromJSON(jsonPath: string): Promise<Job[]> {
     const response = await fetch(jsonPath);

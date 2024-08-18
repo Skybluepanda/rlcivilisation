@@ -35,23 +35,45 @@ const JobManager: React.FC = () => {
         setSelectedJob(job);
     };
 
-    const handleNewSupplier = () => {
+    const handleNewSupplier = (index) => {
         handleSaveJob({
             ...selectedJob,
             suppliers: [
                 ...selectedJob.suppliers,
-                { name: 'Forager', resource: 'Food', amount: 0 },
+                { name: 'Forager' + index, resource: 'Food', amount: 0 },
             ],
         });
         setSelectedJob(prevJob => prevJob);
     };
 
-    const handleNewUpkeep = () => {
+    const handleNewUpkeep = (index) => {
         handleSaveJob({
             ...selectedJob,
             input: [
                 ...selectedJob.input,
-                new increment('Food', 0),
+                new increment('Food' + index, 0),
+            ],
+        });
+        setSelectedJob(prevJob => prevJob);
+    };
+
+    const handleNewOutput = (index) => {
+        handleSaveJob({
+            ...selectedJob,
+            output: [
+                ...selectedJob.output,
+                new increment('Food' + index, 0),
+            ],
+        });
+        setSelectedJob(prevJob => prevJob);
+    };
+
+    const handleNewBonus = (index) => {
+        handleSaveJob({
+            ...selectedJob,
+            resourceEffect: [
+                ...selectedJob.resourceEffect,
+                new resourceEffect('Food' + index, 0),
             ],
         });
         setSelectedJob(prevJob => prevJob);
@@ -325,7 +347,7 @@ const JobManager: React.FC = () => {
                                 handleSaveJob({
                                     ...selectedJob,
                                     suppliers: selectedJob.suppliers.filter(
-                                        s => s.name !== supplier.name && s.amount !== supplier.amount,
+                                        s => s.name !== supplier.name,
                                     ),
                                 });
                                 console.log(index);
@@ -433,7 +455,7 @@ const JobManager: React.FC = () => {
                                 handleSaveJob({
                                     ...selectedJob,
                                     input: selectedJob.input.filter(
-                                        r => r.resource !== resource.resource && r.base !== resource.base,
+                                        r => r.resource !== resource.resource,
                                     ),
                                 });
                                 console.log(index);
@@ -541,7 +563,7 @@ const JobManager: React.FC = () => {
                                 handleSaveJob({
                                     ...selectedJob,
                                     output: selectedJob.output.filter(
-                                        r => r.resource !== resource.resource && r.base !== resource.base,
+                                        r => r.resource !== resource.resource,
                                     ),
                                 });
                                 console.log(index);
@@ -649,7 +671,7 @@ const JobManager: React.FC = () => {
                                 handleSaveJob({
                                     ...selectedJob,
                                     resourceEffect: selectedJob.resourceEffect.filter(
-                                        r => r.resource !== resource.resource && r.base !== resource.base,
+                                        r => r.resource !== resource.resource,
                                     ),
                                 });
                                 console.log(index);
@@ -762,7 +784,7 @@ const JobManager: React.FC = () => {
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
                             variant="outline"
-                            onClick={() => handleNewUpkeep()}
+                            onClick={() => handleNewUpkeep(selectedJob.input.length)}
                         >
                             Add Upkeep
                         </Button></Table.Th>
@@ -780,7 +802,7 @@ const JobManager: React.FC = () => {
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
                             variant="outline"
-                            onClick={() => handleNewUpkeep()}
+                            onClick={() => handleNewOutput(selectedJob.output.length)}
                         >
                             Add Output
                         </Button></Table.Th>
@@ -798,7 +820,7 @@ const JobManager: React.FC = () => {
                                     <Table.Th></Table.Th>
                                     <Table.Th><Button
                             variant="outline"
-                            onClick={() => handleNewUpkeep()}
+                            onClick={() => handleNewBonus(selectedJob.resourceEffect.length)}
                         >
                             Add Bonus
                         </Button></Table.Th>
@@ -823,7 +845,7 @@ const JobManager: React.FC = () => {
                                     <Table.Th>Amount</Table.Th>
                                     <Table.Th><Button
                             variant="outline"
-                            onClick={() => handleNewSupplier()}
+                            onClick={() => handleNewSupplier(selectedJob.suppliers.length)}
                         >
                             New Supplier
                         </Button></Table.Th>

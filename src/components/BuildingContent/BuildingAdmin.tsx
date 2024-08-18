@@ -29,6 +29,8 @@ import {
     construction,
     costJob,
     resourceMax,
+    jobMax,
+    bonusEffect,
 } from './BuildingData';
 const BuildingManager: React.FC = () => {
     useBuildingListLoaderAdmin(
@@ -164,23 +166,47 @@ const BuildingManager: React.FC = () => {
         setSelectedBuilding(updatedBuilding);
     };
 
-    const handleNewConstruction = () => {
+    const handleNewConstruction = (index) => {
         handleSaveBuilding({
             ...selectedBuilding,
             costJobs: [
                 ...selectedBuilding.costJobs,
-                new costJob('Forager', 'Material', 0),
+                new costJob('Forager' + index, 'Material', 0),
             ],
         });
     };
-    
-    const handleNewResourceMax = () => {
+
+    const handleNewResourceMax = (index) => {
         handleSaveBuilding({
             ...selectedBuilding,
             resourcemax: [
                 ...selectedBuilding.resourcemax,
-                new resourceMax('Food', 0),]
-    })};
+                new resourceMax('New Resource' + index, 0),]
+        })
+    };
+
+
+    const handleNewJobMax = (index) => {
+        handleSaveBuilding({
+            ...selectedBuilding,
+            jobmax: [
+                ...selectedBuilding.jobmax,
+                new jobMax('New Job'  + index, 0),
+            ],
+        });
+    };
+
+    const handleNewBonus = (index) => {
+        handleSaveBuilding({
+            ...selectedBuilding,
+            bonuseffect: [
+                ...selectedBuilding.bonuseffect,
+                new bonusEffect('New Bonus' + index, 0),
+            ],
+        });
+    };
+
+
 
     const infraTable = () => {
         return editingInf ? (
@@ -400,7 +426,7 @@ const BuildingManager: React.FC = () => {
                                             comboboxResource.openDropdown()
                                         }
                                     >
-                                        {costJob.job}
+                                        {costJob.resource}
                                     </InputBase>
                                 </Combobox.Target>
                                 <Combobox.Dropdown>
@@ -428,10 +454,10 @@ const BuildingManager: React.FC = () => {
                                             s =>
                                                 s.job === costJob.job
                                                     ? {
-                                                          ...s,
-                                                          amount: e.target
-                                                              .valueAsNumber,
-                                                      }
+                                                        ...s,
+                                                        amount: e.target
+                                                            .valueAsNumber,
+                                                    }
                                                     : s,
                                         ),
                                     })
@@ -476,11 +502,12 @@ const BuildingManager: React.FC = () => {
                             <Button
                                 disabled={editing}
                                 onClick={() => {
+                                    console.log(costJob.job);
                                     handleSaveBuilding({
                                         ...selectedBuilding,
                                         costJobs:
                                             selectedBuilding.costJobs.filter(
-                                                s => s.job === costJob.job,
+                                                s => s.job !== costJob.job,
                                             ),
                                     });
                                 }}
@@ -507,70 +534,70 @@ const BuildingManager: React.FC = () => {
                     }}
                 >
                     <Table.Td>
-                    <Combobox
-                                store={comboboxResource}
-                                onOptionSubmit={val => {
-                                    console.log(val);
-                                    handleSaveBuilding({
-                                        ...selectedBuilding,
-                                        resourcemax: selectedBuilding.resourcemax.map(
-                                            r =>
-                                                r.resource === resM.resource
-                                                    ? new resourceMax(val, r.base)
-                                                    : r,
-                                        ),
-                                    });
-                                    console.log(val);
-                                    comboboxResource.closeDropdown();
-                                }}
-                            >
-                                <Combobox.Target>
-                                    <InputBase
-                                        component="button"
-                                        type="button"
-                                        pointer
-                                        rightSection={<Combobox.Chevron />}
-                                        rightSectionPointerEvents="none"
-                                        onClick={() =>
-                                            comboboxResource.openDropdown()
-                                        }
-                                    >
-                                        {resM.resource}
-                                    </InputBase>
-                                </Combobox.Target>
-                                <Combobox.Dropdown>
-                                    <Combobox.Search
-                                        value={search}
-                                        onChange={event =>
-                                            setSearch(event.currentTarget.value)
-                                        }
-                                        placeholder="Search Resources"
-                                    />
-                                    <Combobox.Options>
-                                        {resourceOptions}
-                                    </Combobox.Options>
-                                </Combobox.Dropdown>
-                            </Combobox>  
+                        <Combobox
+                            store={comboboxResource}
+                            onOptionSubmit={val => {
+                                console.log(val);
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    resourcemax: selectedBuilding.resourcemax.map(
+                                        r =>
+                                            (r.resource === resM.resource && r.base === resM.base)
+                                                ? new resourceMax(val, r.base)
+                                                : r,
+                                    ),
+                                });
+                                console.log(val);
+                                comboboxResource.closeDropdown();
+                            }}
+                        >
+                            <Combobox.Target>
+                                <InputBase
+                                    component="button"
+                                    type="button"
+                                    pointer
+                                    rightSection={<Combobox.Chevron />}
+                                    rightSectionPointerEvents="none"
+                                    onClick={() =>
+                                        comboboxResource.openDropdown()
+                                    }
+                                >
+                                    {resM.resource}
+                                </InputBase>
+                            </Combobox.Target>
+                            <Combobox.Dropdown>
+                                <Combobox.Search
+                                    value={search}
+                                    onChange={event =>
+                                        setSearch(event.currentTarget.value)
+                                    }
+                                    placeholder="Search Resources"
+                                />
+                                <Combobox.Options>
+                                    {resourceOptions}
+                                </Combobox.Options>
+                            </Combobox.Dropdown>
+                        </Combobox>
                     </Table.Td>
                     <Table.Td>
-                    <TextInput
-                                type="number"
-                                value={resM.base}
-                                onChange={e =>
-                                    handleSaveBuilding({
-                                        ...selectedBuilding,
-                                        resourcemax: selectedBuilding.resourcemax.map(
-                                            r =>
-                                                r.resource === resM.resource
-                                                    ? new resourceMax(
-                                                        resM.resource,
-                                                        e.target.valueAsNumber,
-                                                    )
-                                                    : r,
-                                        ),
-                                    })
-                                }
-                            />
+                        <TextInput
+                            type="number"
+                            value={resM.base}
+                            onChange={e =>
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    resourcemax: selectedBuilding.resourcemax.map(
+                                        r =>
+                                            (r.resource === resM.resource)
+                                                ? new resourceMax(
+                                                    resM.resource,
+                                                    e.target.valueAsNumber,
+                                                )
+                                                : r,
+                                    ),
+                                })
+                            }
+                        />
                     </Table.Td>
                     <Table.Td>
                         <Button
@@ -611,7 +638,7 @@ const BuildingManager: React.FC = () => {
                                 handleSaveBuilding({
                                     ...selectedBuilding,
                                     resourcemax: selectedBuilding.resourcemax.filter(
-                                        r => r.resource !== resM.resource && r.base !== resM.base,
+                                        r => r.resource !== resM.resource,
                                     ),
                                 });
                             }}
@@ -626,6 +653,270 @@ const BuildingManager: React.FC = () => {
         return resourceMaxTableBody;
 
     }
+
+    const jobMaxTable = () => {
+        const resourceMaxTableBody = selectedBuilding.jobmax.map((jobM, index) =>
+            editingJobMax === index + 1 ? (
+                <Table.Tr
+                    key={jobM.job}
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
+                    }}
+                >
+                    <Table.Td>
+                        <Combobox
+                            store={comboboxCostJob}
+                            onOptionSubmit={val => {
+                                console.log(val);
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    jobmax: selectedBuilding.jobmax.map(
+                                        j =>
+                                            (j.job === jobM.job && j.base === jobM.base)
+                                                ? new jobMax(val, j.base)
+                                                : j,
+                                    ),
+                                });
+                                console.log(val);
+                                comboboxCostJob.closeDropdown();
+                            }}
+                        >
+                            <Combobox.Target>
+                                <InputBase
+                                    component="button"
+                                    type="button"
+                                    pointer
+                                    rightSection={<Combobox.Chevron />}
+                                    rightSectionPointerEvents="none"
+                                    onClick={() =>
+                                        comboboxCostJob.openDropdown()
+                                    }
+                                >
+                                    {jobM.job}
+                                </InputBase>
+                            </Combobox.Target>
+                            <Combobox.Dropdown>
+                                <Combobox.Search
+                                    value={search}
+                                    onChange={event =>
+                                        setSearch(event.currentTarget.value)
+                                    }
+                                    placeholder="Search Resources"
+                                />
+                                <Combobox.Options>
+                                    {jobOptions}
+                                </Combobox.Options>
+                            </Combobox.Dropdown>
+                        </Combobox>
+                    </Table.Td>
+                    <Table.Td>
+                        <TextInput
+                            type="number"
+                            value={jobM.base}
+                            onChange={e =>
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    jobmax: selectedBuilding.jobmax.map(
+                                        j =>
+                                            (j.job === jobM.job && j.base === jobM.base)
+                                                ? new jobMax(
+                                                    jobM.job,
+                                                    e.target.valueAsNumber,
+                                                )
+                                                : j,
+                                    ),
+                                })
+                            }
+                        />
+                    </Table.Td>
+                    <Table.Td>
+                        <Button
+                            onClick={() => {
+                                setEditingJobMax(0);
+                                setEditing(false);
+                            }}
+                            variant="outline"
+                        >
+                            Save
+                        </Button>
+                    </Table.Td>
+                </Table.Tr>
+            ) : (
+                <Table.Tr
+                    key={jobM.job}
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
+                    }}
+                >
+                    <Table.Td>{jobM.job}</Table.Td>
+                    <Table.Td>{jobM.base}</Table.Td>
+                    <Table.Td>
+                        <Button
+                            disabled={editing}
+                            onClick={() => {
+                                setEditingJobMax(index + 1);
+                                setEditing(true);
+                            }}
+                            variant="outline"
+                        >
+                            Edit
+                        </Button>
+                        <Button
+                            disabled={editing}
+                            onClick={() => {
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    jobmax: selectedBuilding.jobmax.filter(
+                                        r => r.job !== jobM.job,
+                                    ),
+                                });
+                            }}
+                            variant="outline"
+                        >
+                            Delete
+                        </Button>
+                    </Table.Td>
+                </Table.Tr>
+            ),
+        );
+        return resourceMaxTableBody;
+
+    }
+
+
+    const bonusEffectTable = () => {
+        const bonusTableBody = selectedBuilding.bonuseffect.map((bonusM, index) =>
+            editingBonus === index + 1 ? (
+                <Table.Tr
+                    key={bonusM.resource}
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
+                    }}
+                >
+                    <Table.Td>
+                        <Combobox
+                            store={comboboxResource}
+                            onOptionSubmit={val => {
+                                console.log(val);
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    bonuseffect: selectedBuilding.bonuseffect.map(
+                                        r =>
+                                            r.resource === bonusM.resource && r.base === bonusM.base
+                                                ? new bonusEffect(val, r.base)
+                                                : r,
+                                    ),
+                                });
+                                console.log(val);
+                                comboboxResource.closeDropdown();
+                            }}
+                        >
+                            <Combobox.Target>
+                                <InputBase
+                                    component="button"
+                                    type="button"
+                                    pointer
+                                    rightSection={<Combobox.Chevron />}
+                                    rightSectionPointerEvents="none"
+                                    onClick={() =>
+                                        comboboxResource.openDropdown()
+                                    }
+                                >
+                                    {bonusM.resource}
+                                </InputBase>
+                            </Combobox.Target>
+                            <Combobox.Dropdown>
+                                <Combobox.Search
+                                    value={search}
+                                    onChange={event =>
+                                        setSearch(event.currentTarget.value)
+                                    }
+                                    placeholder="Search Resources"
+                                />
+                                <Combobox.Options>
+                                    {resourceOptions}
+                                </Combobox.Options>
+                            </Combobox.Dropdown>
+                        </Combobox>
+                    </Table.Td>
+                    <Table.Td>
+                        <TextInput
+                            type="number"
+                            value={bonusM.base}
+                            onChange={e =>
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    bonuseffect: selectedBuilding.bonuseffect.map(
+                                        r =>
+                                            r.resource === bonusM.resource && r.base === bonusM.base
+                                                ? new resourceMax(
+                                                    bonusM.resource,
+                                                    e.target.valueAsNumber,
+                                                )
+                                                : r,
+                                    ),
+                                })
+                            }
+                        />
+                    </Table.Td>
+                    <Table.Td>
+                        <Button
+                            onClick={() => {
+                                setEditingBonus(0);
+                                setEditing(false);
+                            }}
+                            variant="outline"
+                        >
+                            Save
+                        </Button>
+                    </Table.Td>
+                </Table.Tr>
+            ) : (
+                <Table.Tr
+                    key={bonusM.resource}
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
+                    }}
+                >
+                    <Table.Td>{bonusM.resource}</Table.Td>
+                    <Table.Td>{bonusM.base}</Table.Td>
+                    <Table.Td>
+                        <Button
+                            disabled={editing}
+                            onClick={() => {
+                                setEditingBonus(index + 1);
+                                setEditing(true);
+                            }}
+                            variant="outline"
+                        >
+                            Edit
+                        </Button>
+                        <Button
+                            disabled={editing}
+                            onClick={() => {
+                                handleSaveBuilding({
+                                    ...selectedBuilding,
+                                    bonuseffect: selectedBuilding.bonuseffect.filter(
+                                        r => (r.resource != bonusM.resource),
+                                    ),
+                                });
+                            }}
+                            variant="outline"
+                        >
+                            Delete
+                        </Button>
+                    </Table.Td>
+                </Table.Tr>
+            ),
+        );
+        return bonusTableBody;
+
+    }
+
 
     const handleExportJSON = () => {
         const dataStr = JSON.stringify(buildingList, null, 2);
@@ -735,7 +1026,7 @@ const BuildingManager: React.FC = () => {
                                         <Button
                                             variant="outline"
                                             onClick={() =>
-                                                handleNewConstruction()
+                                                handleNewConstruction(selectedBuilding.costJobs.length)
                                             }
                                         >
                                             Add Cost Job
@@ -758,7 +1049,7 @@ const BuildingManager: React.FC = () => {
                                     <Table.Th>
                                         <Button
                                             variant="outline"
-                                            onClick={() => handleNewResourceMax()}
+                                            onClick={() => handleNewResourceMax(selectedBuilding.resourcemax.length)}
                                         >
                                             Add Resource Max
                                         </Button>
@@ -778,14 +1069,14 @@ const BuildingManager: React.FC = () => {
                                     <Table.Th>
                                         <Button
                                             variant="outline"
-                                            // onClick={() => handleNewUpkeep()}
+                                            onClick={() => handleNewJobMax(selectedBuilding.jobmax.length)}
                                         >
                                             Add JobMax
                                         </Button>
                                     </Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
-                            <Table.Tbody></Table.Tbody>
+                            <Table.Tbody>{jobMaxTable()}</Table.Tbody>
                             <Table.Thead>
                                 <Table.Tr
                                     style={{
@@ -798,18 +1089,18 @@ const BuildingManager: React.FC = () => {
                                     <Table.Th>
                                         <Button
                                             variant="outline"
-                                            // onClick={() => handleNewUpkeep()}
+                                            onClick={() => handleNewBonus(selectedBuilding.bonuseffect.length)}
                                         >
                                             Add Bonus
                                         </Button>
                                     </Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
-                            <Table.Tbody></Table.Tbody>
+                            <Table.Tbody>{bonusEffectTable()}</Table.Tbody>
                         </Table>
                         <Button
                             variant="outline"
-                            // onClick={() => handleSaveBuilding(selectedBuilding)}
+                        // onClick={() => handleSaveBuilding(selectedBuilding)}
                         >
                             Save
                         </Button>
