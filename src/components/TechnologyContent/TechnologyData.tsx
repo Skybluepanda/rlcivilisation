@@ -36,12 +36,17 @@ export class discoveryMethod {
 //Function to check if a tech is discoverable when exploration or technology is unlocked.
 
 //Then once discoverable, they will be added to a list of technology that will be iterated through to increase discovery points.
-
-
-
-
-
-
+//Artifact based discoveries??
+//Exploring new areas will retrieve artifacts to the civilisation. Researching these artifacts could unlock new discoveries and technologies.
+//Split to core tech and optional tech. Core technology will always be discoverable, just matter of time.
+//Rest requires both core and artifacts to discover.
+//Technology is split to 4 categories.
+//Exploration, Expansion, Exploitation and Extermination.
+//Players will be able to choose from these 4 categories, drawing 3 cards from the chosen category. Completing the reseach will allow the player to repeat the selection
+//Player may also sacrifice innovation to draw more cards. Optional discoveries are from exploring the world.
+//Tradition are born from how the player is managing the tier 3 resource. 
+//
+//Authority refer to endless space 2 senate system cause it's cool as fuck.
 
 
 export class technology {
