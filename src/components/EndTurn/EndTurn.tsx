@@ -23,6 +23,7 @@ import {
     buildingResourceMaxUpdate,
 } from 'components/EndTurn/EndTurnHelper';
 import {
+    IconMap,
     IconWorld,
     IconUsersGroup,
     IconBuildingCommunity,
@@ -32,11 +33,6 @@ import {
     IconCoins,
     IconGavel,
     IconAdjustments,
-
-
-
-
-
     IconTrash,
     IconCheck,
     IconX,
@@ -127,7 +123,7 @@ export default function EndTurn() {
                         <Menu.Label>Toggle Logs</Menu.Label>
                         <Menu.Item
                             leftSection={
-                                <IconWorld size="1.4rem" stroke={1.5} color="gray"/>
+                                <IconMap size="1.4rem" stroke={1.5} color="gray"/>
                             }
                             rightSection={logSettings.showWorldEvents ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
                             onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showWorldEvents : !prevSettings.showWorldEvents}})}
@@ -154,12 +150,12 @@ export default function EndTurn() {
                         </Menu.Item>
                         <Menu.Item
                             leftSection={
-                                <IconAlertCircle size="1.4rem" stroke={1.5} color="gray"/>
+                                <IconWorld size="1.4rem" stroke={1.5} color="gray"/>
                             }
                             rightSection={logSettings.showSituation ? <IconCheck size="1.4rem" stroke={1.5} color="green"/> : <IconX size="1.4rem" stroke={1.5} color="red"/>}
                             onClick={() => setLogSettings(prevSettings => {return {...prevSettings, showSituation : !prevSettings.showSituation}})}
                         >
-                            Situation
+                            Diplomacy
                         </Menu.Item>
                         <Menu.Item
                             leftSection={

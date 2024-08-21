@@ -182,26 +182,31 @@ export class Building {
 }
 
 async function loadBuildingsFromJson(jsonPath: string): Promise<Building[]> {
-    const response = await fetch(jsonPath);
-    const buildingDataList = await response.json();
-    let UID = 1
-    return buildingDataList.map((buildingData: any) => new Building(
-        UID++,
-        buildingData.name,
-        buildingData.unlocked,
-        buildingData.tags,
-        buildingData.tooltip,
-        buildingData.infrastructureCost,
-        buildingData.wealthCost,
-        buildingData.costJobs.map((cj: any) => new costJob(cj.job, cj.resource, cj.amount)),
-        new construction(
-            buildingData.construction.queued,
-            buildingData.construction.progress.map((p: any) => new progress(p.job, p.resource))
-        ),
-        buildingData.bonuseffect?.map((be: any) => new bonusEffect(be.resource, be.base)) || [],
-        buildingData.resourcemax?.map((rm: any) => new resourceMax(rm.resource, rm.base)) || [],
-        buildingData.jobmax?.map((jm: any) => new jobMax(jm.job, jm.base)) || []
-    ));
+    try {
+        const response = await fetch(jsonPath);
+        const buildingDataList = await response.json();
+        let UID = 1
+        return buildingDataList.map((buildingData: any) => new Building(
+            UID++,
+            buildingData.name,
+            buildingData.unlocked,
+            buildingData.tags,
+            buildingData.tooltip,
+            buildingData.infrastructureCost,
+            buildingData.wealthCost,
+            buildingData.costJobs.map((cj: any) => new costJob(cj.job, cj.resource, cj.amount)),
+            new construction(
+                buildingData.construction.queued,
+                buildingData.construction.progress.map((p: any) => new progress(p.job, p.resource))
+            ),
+            buildingData.bonuseffect?.map((be: any) => new bonusEffect(be.resource, be.base)) || [],
+            buildingData.resourcemax?.map((rm: any) => new resourceMax(rm.resource, rm.base)) || [],
+            buildingData.jobmax?.map((jm: any) => new jobMax(jm.job, jm.base)) || []
+        ));
+    } catch (error) {
+        console.error("Error loading building data:", error);
+        return [];
+    }
 }
 
 export const buildingListAtom = persistentAtom('buildingListAtom', []);
@@ -238,35 +243,3 @@ export const useBuildingListLoaderAdmin = (jsonPath: string) => {
         loadBuildings();
     }, [jsonPath, setBuildingList]);
 };
-
-// export const buildingListAtom = persistentAtom('buildingListAtom', [
-//     new Building(
-//         'Workshop', //Name
-//         true, //Unlocked
-//         ['infrastructure', 'population'], //Tags
-//         'Workplace for crafters.', //Tooltip
-//         1, //Infrastructure cost
-//         1, //Wealth cost
-//         [new costJob('Builder', 'Production', 10)], //CostJob
-//         new construction(0, [
-//             new progress('Builder', 'Production', 0, 0),
-//         ]),
-//         [new bonusEffect('Efficiency', 1, 0, 0, 0)], //Bonus effect
-//         [], //Resource max
-//         [new jobMax("Crafter", 5)], //Job max
-//     ), 
-    // new Building(
-    //     'Template', //Name
-    //     false, //Unlocked
-    //     ['infrastructure', 'population'], //Tags
-    //     'Provides home to your people.', //Tooltip
-    //     [
-    //         new costResource('material', 100, 0, 0, 0),
-    //         new costResource('production', 100, 0, 0, 0),
-    //     ], //Cost
-    //     [], //CostJob
-    //     [new bonusEffect('infrastructure', 1, 0, 0, 0)], //Bonus effect
-    //     [], //Resource max
-    //     [], //Job max
-    // ),
-// ]);

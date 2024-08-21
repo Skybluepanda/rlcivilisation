@@ -27,10 +27,10 @@ import QueueBox from 'components/QueueBox/QueueBox';
 import ResourceGrid from 'components/ResourceDisplay/ResourceDisplay';
 import BuildingList from 'components/BuildingContent/BuildingContent';
 import {
-    IconWorld,
+    IconMap,
     IconUsersGroup,
     IconBuildingCommunity,
-    IconAlertCircle,
+    IconWorld,
     IconApps,
     IconMasksTheater,
     IconCoins,
@@ -41,7 +41,7 @@ const tabs = [
     'World',
     'Jobs',
     'Buildings',
-    'Situation',
+    'Diplomacy',
     'Technology',
     'Tradition',
     'Economy',
@@ -51,6 +51,7 @@ const tabs = [
 import { gameStartedAtom } from 'components/WorldContent/WorldContent';
 import { useJobDictionaryLoader } from 'components/JobsContent/FoodJobData';
 import { useBuildingDictionarLoader } from 'components/BuildingContent/BuildingData';
+import TechnologyContent from 'components/TechnologyContent/TechnologyContent';
 
 export default function MainGame() {
     useJobDictionaryLoader(
@@ -88,7 +89,7 @@ export default function MainGame() {
                                                 <Tabs.Tab
                                                     value="World"
                                                     leftSection={
-                                                        <IconWorld
+                                                        <IconMap
                                                             size="1.4rem"
                                                             stroke={1.5}
                                                             color="gray"
@@ -131,18 +132,18 @@ export default function MainGame() {
                                                         : null}
                                                 </Tabs.Tab>
                                                 <Tabs.Tab
-                                                    value="Situation"
+                                                    value="Diplomacy"
                                                     leftSection={
-                                                        <IconAlertCircle
+                                                        <IconWorld
                                                             size="1.4rem"
                                                             stroke={1.5}
                                                             color="gray"
                                                         />
                                                     }
                                                 >
-                                                    {tabChosen == 'Situation' ||
+                                                    {tabChosen == 'Diplomacy' ||
                                                     width >= 2000
-                                                        ? 'Situation'
+                                                        ? 'Diplomacy'
                                                         : null}
                                                 </Tabs.Tab>
                                                 <Tabs.Tab
@@ -248,7 +249,7 @@ export default function MainGame() {
                                             </Tabs.Panel>
 
                                             <Tabs.Panel value="Technology">
-                                                Technology WIP
+                                                <TechnologyContent/>
                                             </Tabs.Panel>
 
                                             <Tabs.Panel value="Tradition">
