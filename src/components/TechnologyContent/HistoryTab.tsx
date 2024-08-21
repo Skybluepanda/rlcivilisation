@@ -6,7 +6,7 @@ import { useAtom } from 'jotai';
 //Three major slots.
 //List of researched tech
 
-export default function TechnologyContent() {
+export default function TechHistoryTab() {
   return (
     <MantineProvider>
       <div>

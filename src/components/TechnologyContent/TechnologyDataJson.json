@@ -1,0 +1,111 @@
+[
+    {
+        "name": "Agriculture",
+        "tags": ["Food", "Production"],
+        "rarity": 1,
+        "tier": 1,
+        "category": 2,
+        "description": "Unlocks the ability to cultivate crops and domesticate animals.",
+        "techrequired": [],
+        "unlockBuilding": ["Farm", "Granary"],
+        "buildingchange": [],
+        "jobchange": [],
+        "bonuseffect": []
+    },
+    {
+        "name": "Pottery",
+        "tags": ["Materials", "Production"],
+        "rarity": 1,
+        "tier": 1,
+        "category": 1,
+        "description": "Enables the extraction of minerals and ores from the earth.",
+        "techrequired": [],
+        "unlockBuilding": [],
+        "buildingchange": [
+        ],
+        "jobchange": [],
+        "bonuseffect": []
+    },
+    {
+        "name": "Sling",
+        "tags": ["Science", "Influence"],
+        "rarity": 1,
+        "tier": 1,
+        "category": 4,
+        "description": "Develops a writing system, allowing for record-keeping and communication.",
+        "techrequired": [],
+        "unlockBuilding": [],
+        "buildingchange": [
+        ],
+        "jobchange": [],
+        "bonuseffect": []
+    },
+    {
+        "name": "Bronze Working",
+        "tags": ["Military", "Production"],
+        "rarity": 4,
+        "tier": 2,
+        "category": 4,
+        "description": "Unlocks the ability to forge bronze weapons and tools.",
+        "techrequired": ["Mining"],
+        "unlockBuilding": ["Forge", "Barracks"],
+        "buildingchange": [
+            {
+                "buildingName": "Forge",
+                "jobmax": [{ "job": "Blacksmith", "base": 4 }],
+                "bonuseffect": [{ "resource": "Production", "base": 25 }],
+                "resourcemax": [{ "resource": "Production", "base": 80 }],
+                "wealthCost": 150,
+                "costJobs": [
+                    { "job": "Builder", "resource": "Materials", "amount": 60 }
+                ]
+            },
+            {
+                "buildingName": "Barracks",
+                "jobmax": [{ "job": "Soldier", "base": 8 }],
+                "bonuseffect": [{ "resource": "Military", "base": 30 }],
+                "resourcemax": [{ "resource": "Military", "base": 100 }],
+                "wealthCost": 120,
+                "costJobs": [
+                    { "job": "Builder", "resource": "Materials", "amount": 50 }
+                ]
+            }
+        ],
+        "jobchange": [],
+        "bonuseffect": []
+    },
+    {
+        "name": "Sailing",
+        "tags": ["Exploration", "Trade"],
+        "rarity": 3,
+        "tier": 2,
+        "category": 5,
+        "description": "Allows the construction of ships and exploration of the seas.",
+        "techrequired": ["Agriculture"],
+        "unlockBuilding": ["Harbor", "Shipyard"],
+        "buildingchange": [
+            {
+                "buildingName": "Harbor",
+                "jobmax": [{ "job": "Dockworker", "base": 6 }],
+                "bonuseffect": [{ "resource": "Wealth", "base": 20 }],
+                "resourcemax": [{ "resource": "Wealth", "base": 60 }],
+                "wealthCost": 150,
+                "costJobs": [
+                    { "job": "Builder", "resource": "Materials", "amount": 50 }
+                ]
+            },
+            {
+                "buildingName": "Shipyard",
+                "jobmax": [{ "job": "Shipwright", "base": 5 }],
+                "bonuseffect": [{ "resource": "Production", "base": 40 }],
+                "resourcemax": [{ "resource": "Production", "base": 90 }],
+                "wealthCost": 200,
+                "costJobs": [
+                    { "job": "Builder", "resource": "Materials", "amount": 70 }
+                ]
+            }
+        ],
+        "jobchange": [],
+        "bonuseffect": []
+    }
+]

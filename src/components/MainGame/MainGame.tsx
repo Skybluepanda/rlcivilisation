@@ -52,12 +52,14 @@ import { gameStartedAtom } from 'components/WorldContent/WorldContent';
 import { useJobDictionaryLoader } from 'components/JobsContent/FoodJobData';
 import { useBuildingDictionarLoader } from 'components/BuildingContent/BuildingData';
 import TechnologyContent from 'components/TechnologyContent/TechnologyContent';
+import { useTechDictionaryLoader } from 'components/TechnologyContent/TechnologyData';
 
 export default function MainGame() {
     useJobDictionaryLoader(
         '/rlcivilisation/src/components/JobsContent/JobDataJson.json');
     useBuildingDictionarLoader(
         '/rlcivilisation/src/components/BuildingContent/BuildingDataJson.json');
+    useTechDictionaryLoader('/rlcivilisation/src/components/TechnologyContent/TechnologyDataJson.json');
     const { height, width } = useViewportSize();
     const [gameStarted, setGameStarted] = useAtom(gameStartedAtom);
     const [tabChosen, setTabChosen] = useState('World');
