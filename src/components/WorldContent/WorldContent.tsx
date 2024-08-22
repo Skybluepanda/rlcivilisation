@@ -15,7 +15,10 @@ import {
     jobDictionaryAtom,
     jobListAtom,
     jobUnlocker,
+    useJobDictionaryLoader,
 } from 'components/JobsContent/FoodJobData';
+import { availableTechAtom, researchedTechAtom, undiscoveredTechAtom, updateTech, useTechDictionaryLoader } from 'components/TechnologyContent/TechnologyData';
+import { useBuildingDictionarLoader } from 'components/BuildingContent/BuildingData';
 
 export const territoryGridAtom = persistentAtom(
     'territoryGrid',
@@ -46,7 +49,9 @@ export default function WorldContent() {
     );
     const [jobList, setJobList] = useAtom(jobListAtom);
     const [jobDict, setJobDict] = useAtom(jobDictionaryAtom);
-
+    const [researchedTech, setResearchedTech] = useAtom(researchedTechAtom);
+    const [availableTech, setAvailableTech] = useAtom(availableTechAtom);
+    const [undiscoveredTech, setUndiscoveredTech] = useAtom(undiscoveredTechAtom);
     const handleReroll = () => {
         const newTerritoryGrid = createTerritoryGrid(gridSize);
         const newPlayer = findPlayer(newTerritoryGrid, gridSize);
@@ -56,7 +61,8 @@ export default function WorldContent() {
     };
     const handleStartGame = () => {
         setGameStarted(true);
-        setJobList(jobUnlocker(jobList, jobDict, "Forager"));
+        setJobList(jobUnlocker(jobList, jobDict, 'Forager'));
+        updateTech(researchedTech, availableTech, setAvailableTech, undiscoveredTech, setUndiscoveredTech);
     };
 
     return (

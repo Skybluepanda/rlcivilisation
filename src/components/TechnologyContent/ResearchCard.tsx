@@ -2,7 +2,7 @@ import { useState } from 'react'
 import '@mantine/core/styles.css'
 import { Button, Container, MantineProvider, Paper, Text } from '@mantine/core';
 import { useAtom } from 'jotai';
-import { researchCardsAtom } from './ResearchTab';
+// import { researchCardsAtom } from './ResearchTab';
 
 //Three major slots.
 //List of researched tech

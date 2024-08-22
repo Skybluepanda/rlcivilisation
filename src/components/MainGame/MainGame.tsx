@@ -51,18 +51,24 @@ const tabs = [
 import { gameStartedAtom } from 'components/WorldContent/WorldContent';
 import { useJobDictionaryLoader } from 'components/JobsContent/FoodJobData';
 import { useBuildingDictionarLoader } from 'components/BuildingContent/BuildingData';
-import TechnologyContent from 'components/TechnologyContent/TechnologyContent';
-import { useTechDictionaryLoader } from 'components/TechnologyContent/TechnologyData';
+import {TechnologyContent} from 'components/TechnologyContent/TechnologyContent';
+import { updateTech, useTechDictionaryLoader } from 'components/TechnologyContent/TechnologyData';
 
 export default function MainGame() {
-    useJobDictionaryLoader(
-        '/rlcivilisation/src/components/JobsContent/JobDataJson.json');
-    useBuildingDictionarLoader(
-        '/rlcivilisation/src/components/BuildingContent/BuildingDataJson.json');
-    useTechDictionaryLoader('/rlcivilisation/src/components/TechnologyContent/TechnologyDataJson.json');
-    const { height, width } = useViewportSize();
     const [gameStarted, setGameStarted] = useAtom(gameStartedAtom);
+    useJobDictionaryLoader(
+        '/rlcivilisation/src/components/JobsContent/JobDataJson.json',
+    );
+    useBuildingDictionarLoader(
+        '/rlcivilisation/src/components/BuildingContent/BuildingDataJson.json',
+    );
+    useTechDictionaryLoader(
+        '/rlcivilisation/src/components/TechnologyContent/TechnologyDataJson.json',
+    );
+    
+    const { height, width } = useViewportSize();
     const [tabChosen, setTabChosen] = useState('World');
+    
     return (
         <MantineProvider>
             <AppShell header={{height:180}} padding="sm" >

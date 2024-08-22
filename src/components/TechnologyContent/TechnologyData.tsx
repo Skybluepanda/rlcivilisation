@@ -345,37 +345,16 @@ export const useTechListLoaderAdmin = (jsonPath: string) => {
     }, [jsonPath, setTechList]);
 };
 
-// This function checks if all required technologies have been researched
-const allTechsResearched = (
-    techrequired: string[],
-    researched: technology[],
-) => {
-    return techrequired.every(req =>
-        researched.some(tech => tech.name === req),
-    );
-};
-
 // Listener atom that triggers when researchedTechAtom is updated
-const checkAndUpdateAvailableTech = atom(null, (get, set) => {
-    const researched = get(researchedTechAtom);
-    const undiscovered = get(undiscoveredTechAtom);
-    const available = get(availableTechAtom);
 
-    const newAvailable = undiscovered.filter(tech =>
-        allTechsResearched(tech.techrequired, researched),
+export const updateTech = (researchedTech, availableTech, setAvailableTech, undiscoveredTech, setUndiscoveredTech) => {
+    const researchedTechNames = researchedTech.map(tech => tech.name);
+    const newlyAvailableTech = undiscoveredTech.filter(tech => 
+        tech.techrequired.every(req => researchedTechNames.includes(req))
     );
-
-    // Update the available tech list
-    set(availableTechAtom, [...available, ...newAvailable]);
-
-    // Remove the newly available techs from undiscoveredTechAtom
-    const updatedUndiscovered = undiscovered.filter(
-        tech => !newAvailable.includes(tech),
+    setAvailableTech([...availableTech, ...newlyAvailableTech]);
+    const remainingUndiscoveredTech = undiscoveredTech.filter(tech => 
+        !newlyAvailableTech.includes(tech)
     );
-    set(undiscoveredTechAtom, updatedUndiscovered);
-});
-
-// To automatically trigger the check when researchedTechAtom changes
-researchedTechAtom.onMount = setAtom => {
-    setAtom(checkAndUpdateAvailableTech);
+    setUndiscoveredTech(remainingUndiscoveredTech);
 };
