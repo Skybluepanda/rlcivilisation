@@ -202,9 +202,9 @@ export default function EndTurn() {
                 </Menu>
                 <Divider size={'xl'}/>
                 <ScrollArea h="60vh">
-                    {logs.map(log => {
+                    {logs.map((log, key) => {
                         return (
-                            <Box>
+                            <Box key={key}>
                                 <Divider my="sm" />
                                 <Text ta={'left'}>Turn {log.turn}</Text>
                                 {log.population != 0 ? (

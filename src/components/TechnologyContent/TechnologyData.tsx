@@ -318,6 +318,10 @@ export const undiscoveredTechAtom = persistentAtom('undiscoveredTechAtom', []);
 export const techDictionaryAtom = persistentAtom('techDictionaryAtom', []);
 export const adminTechAtom = persistentAtom('adminTechAtom', []);
 
+
+export const researchSlotsAtom = persistentAtom('researchSlotsAtom', ['','','']);
+export const focusedSlotAtom = persistentAtom('focusedSlotAtom', 0);
+
 // Hooks for Loading Technology Data
 export const useTechDictionaryLoader = (jsonPath: string) => {
     const [, setTechList] = useAtom(undiscoveredTechAtom);
@@ -358,3 +362,4 @@ export const updateTech = (researchedTech, availableTech, setAvailableTech, undi
     );
     setUndiscoveredTech(remainingUndiscoveredTech);
 };
+
