@@ -35,7 +35,7 @@ export const resourceListAtom = persistentAtom(
     [
         new Resource("Inspiration", 100, 0,  "Number of turns you can play."),
         new Resource("Population", 16, 0,  "Number of people in your empire. Population growth is increased by prosperity."),
-        new Resource("Infrastructure", 8, 0,  "Amount of area available for construction. Unused infrastructure are used as home for villagers."),
+        new Resource("Infrastructure", 8, 0,  "Amount of area available for construction. Unused infrastructure are used as home for villagers.", 8),
         new Resource("Military", 0, 0,  "Military prowess of your empire. Increased by defensive buildings and military jobs."),
         new Resource("Knowledge", 0, 0,  "Collective physical resource for providing technology or advanced materials.", 100),
         new Resource("Food", 0, 0,  "Collective physical resource neccesary to sustain your empire's population.", 100),
@@ -55,3 +55,5 @@ export const resourceListAtom = persistentAtom(
         new Resource("Authority", 0, 0,  "Player metric of your control over your empire. Required for certain actions."),
     ],
 );
+
+export const sprawlAtom = persistentAtom("sprawlAtom", 0);

@@ -7,12 +7,13 @@ import { modifyJobUsed } from 'components/JobsContent/JobHelpers';
 export const resourceUpdate = resources => {
     return resources.map((resource: Resource) => {
         let newValue = resource.value + resource.income;
-        if (resources.max == undefined) {
+        if (resource.name == "Infrastructure") {
+            return { ...resource, value: resource.value + resource.income, max: resource.max + resource.income };
+        } else if (resource.max == undefined) {
             return { ...resource, value: resource.value + resource.income };
         } else {
             return { ...resource, value: Math.min(newValue, resource.max) };
         }
-        
     });
 };
 export const jobListUpdate = (jobList, populationChange) => {

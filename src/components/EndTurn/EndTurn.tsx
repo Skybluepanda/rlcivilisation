@@ -11,7 +11,7 @@ import {
     Box,
     Menu,
 } from '@mantine/core';
-import { turn, Resource, resourceListAtom, logSettingsAtom } from 'components/Gamedata/Gamedata';
+import { turn, Resource, resourceListAtom, logSettingsAtom, sprawlAtom } from 'components/Gamedata/Gamedata';
 import { useAtom } from 'jotai';
 import { jobListAtom } from 'components/JobsContent/FoodJobData';
 import { buildingListAtom } from 'components/BuildingContent/BuildingData';
@@ -58,6 +58,7 @@ export default function EndTurn() {
     const [logs, setLogs] = useState([]);
     const [turnVal, setTurn] = useAtom(turn);
     const [logSettings, setLogSettings] = useAtom(logSettingsAtom);
+    const [sprawl, setSprawl] = useAtom(sprawlAtom);
 
     function endTurn() {
         //Log handeling.
@@ -70,6 +71,7 @@ export default function EndTurn() {
 
         setResources(resourceUpdate(resources));
         const population = resources.find(j => j.name === 'Population');
+        const infrastructure = resources.find(j => j.name === 'Infrastructure');
         const change =
             Math.floor(population.value + population.income) -
             Math.floor(population.value);
@@ -107,6 +109,7 @@ export default function EndTurn() {
                 ),
             );
         }
+        setSprawl(Math.max(Math.floor(population.value + (infrastructure.max-infrastructure.value)/4), 100)-100);
         setTurn(turnVal + 1);
         setLogs([...logs, log]);
     }
