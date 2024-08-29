@@ -13,11 +13,12 @@ import {
 } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { persistentAtom } from 'hooks/persistentAtom';
-import { sprawlAtom } from 'components/Gamedata/Gamedata';
+import { sprawlAtom, resourceListAtom } from 'components/Gamedata/Gamedata';
 import {
     availableTechAtom,
     researchSlotsAtom,
     focusedSlotAtom,
+    researchedTechAtom,
 } from './TechnologyData';
 import {
     IconHourglass,
@@ -212,6 +213,14 @@ const GemIcon = [
     ],
 ];
 
+const TierCost = [
+    0, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800
+]
+
+const RarityCost = [
+    0, 10, 15, 25, 40
+]
+
 const ResearchCard = ({
     ResearchSlots,
     SetResearchSlots,
@@ -221,7 +230,9 @@ const ResearchCard = ({
 }) => {
     const theme = useMantineTheme();
     const [availableTech, setAvailableTech] = useAtom(availableTechAtom);
+    const [researchedTech, setResearchedTech] = useAtom(researchedTechAtom);
     const [sprawl, setSprawl] = useAtom(sprawlAtom);
+    const [resource, setResource] = useAtom(resourceListAtom);
     const handleRandom = () => {
         console.log(ResearchSlots);
         const newResearchSlots = [...ResearchSlots];
@@ -313,9 +324,65 @@ const ResearchCard = ({
         return 'gray';
     };
 
+    const handleIncome = () => {
+        const income = resource.find(res => res.name == "Progress").income;
+        if (focusedSlot == slot) {
+            return income
+        } else {
+            let matchPoint = 0;
+            if (focusedSlot != -1) {
+                const focusedTech = availableTech.find(
+                    tech => tech.name == ResearchSlots[focusedSlot],
+                );
+                if (SlotTechnology.category == focusedTech.category) {
+                    matchPoint += 20;
+                } else if (focusedTech.tags.includes(SlotTechnology.category)) {
+                    matchPoint += 10;
+                }
+                SlotTechnology.tags.forEach(tag => {
+                    if (focusedTech.tags.includes(tag)) {
+                        matchPoint += 5;
+                    }
+                });
+                return income*matchPoint/100
+            }
+        }
+        return 0;
+            
+    }
+
     const calculateMaxProgress = () => {
-        return 100;
-    };
+        let discountPoint = 0;
+        if (SlotTechnology) {
+            researchedTech.forEach(tech => {
+                let matchPoint = 1;
+                SlotTechnology.category == tech.category ? matchPoint++ : null;
+                SlotTechnology.type == tech.type ? matchPoint+=2 : null;
+                discountPoint += tech.tier*(RarityCost[tech.rarity]/10)*matchPoint/SlotTechnology.tier;
+            });
+        }
+        const maxProgress = Math.round(Number((Number(TierCost[SlotTechnology.tier])*Number(RarityCost[SlotTechnology.rarity])*100/(100+discountPoint)).toPrecision(3)));
+        console.log(maxProgress);
+        return maxProgress;
+    };Math.ceil((calculateMaxProgress()-SlotTechnology.progress) / handleIncome())
+
+    const handleTurnsLeft = () => {
+        if (handleIncome() > 0) {
+            const turnsLeft = Math.ceil((calculateMaxProgress()-SlotTechnology.progress) / handleIncome())
+            if (turnsLeft <= 1) {
+                return "Next Turn"
+            } else if ( turnsLeft > 10) {
+                return "10+ Turns"
+            } else {
+                return turnsLeft + " Turns"
+            }
+        }
+
+    }
+
+
+
+
     return (
         <>
             {ResearchSlots[slot] == '' ? (
@@ -343,14 +410,14 @@ const ResearchCard = ({
                             fluid
                             style={{
                                 display: 'grid',
-                                gridTemplateColumns: '5fr 1fr 1fr',
+                                gridTemplateColumns: '6fr 1fr 1fr',
 
                                 paddingBottom: '10px',
                             }}
                             p={0}
                         >
                             <Text
-                                size="xl"
+                                size="lg"
                                 fw={700}
                                 style={{ textAlign: 'left' }}
                                 c={focusedSlot == slot ? 'blue.5' : 'white'}
@@ -358,10 +425,10 @@ const ResearchCard = ({
                                 {ResearchSlots[slot]}
                             </Text>
                             <CategoryIcon
-                                size={35}
                                 color={handleCategoryColor()}
+                                
                             />
-                            <RarityIcon size={35} />
+                            <RarityIcon/>
                         </Container>
                         <Container fluid p={'sm'}>
                             <SimpleGrid cols={7}>
@@ -374,17 +441,38 @@ const ResearchCard = ({
                             </SimpleGrid>
                         </Container>
                     </Container>
-                    <RingProgress
-                    roundCaps
-                    label={
-                        "Hello"
-                    }
-                    sections={[
-                        {
-                            value: 10,
-                            color: 'blue',}
-                    ]}
-                    />
+                    <Container style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                        <RingProgress
+                            roundCaps
+                            label={
+                                Math.round(SlotTechnology.progress/calculateMaxProgress()*100) + '%'
+                            }
+                            sections={[
+                                {
+                                    value: SlotTechnology.progress/calculateMaxProgress(),
+                                    color: 'blue',
+                                    tooltip: `Current: ${SlotTechnology.progress}`
+                                },
+                                {
+                                    value: handleIncome()/calculateMaxProgress()*100,
+                                    color: 'blue.3',
+                                    tooltip: `Income: ${handleIncome()}`,
+                                },
+                                {
+                                    value: 100 - SlotTechnology.progress/calculateMaxProgress() - handleIncome()/calculateMaxProgress()*100,
+                                    color: 'gray',
+                                    tooltip: `Required: ${calculateMaxProgress()}`,
+                                }
+                            ]}
+                        />
+                        <Text
+                            style={{display: "flex", justifyContent: "center", alignItems: "center"}}
+                            
+                            >
+                            {handleTurnsLeft()}
+                        </Text>
+                    </Container>
+                    
 
                     <Button
                         variant={focusedSlot == slot ? 'outline' : 'default'}

@@ -37,6 +37,7 @@ import {
     IconCheck,
     IconX,
 } from '@tabler/icons-react';
+import { availableTechAtom, researchSlotsAtom, focusedSlotAtom, researchedTechAtom } from 'components/TechnologyContent/TechnologyData';
 
 //Endturn should change every resource by adding the income.
 //Buildings that are queued should be built.
@@ -72,6 +73,8 @@ export default function EndTurn() {
         setResources(resourceUpdate(resources));
         const population = resources.find(j => j.name === 'Population');
         const infrastructure = resources.find(j => j.name === 'Infrastructure');
+        
+
         const change =
             Math.floor(population.value + population.income) -
             Math.floor(population.value);

@@ -30,7 +30,8 @@
             { "resource": "Material", "base": 1 },
             { "resource": "Knowledge", "base": 1 },
             { "resource": "Wealth", "base": 1 },
-            { "resource": "Population", "base": 0.1 }
+            { "resource": "Population", "base": 0.1 },
+            { "resource": "Progress", "base": 1}
         ],
         "resourceEffect": []
     },

@@ -4,6 +4,20 @@ import { jobListAtom } from 'components/JobsContent/FoodJobData';
 import { useAtom, useAtomValue } from 'jotai';
 import { modifyJobUsed } from 'components/JobsContent/JobHelpers';
 
+
+export const researchUpdate = (resource, setResource, progress, researchSlot, setResearchSlot, focusSlot, setFocusSlot, researchedTech, setResearchedTech, availableTech, setAvailableTech, undiscoveredTech, setUndiscoveredTech) => {
+    if (progress > 0 ) {
+        //Find maxProgress of each slot.
+        //Find Focused slot and distribution to each slot.
+        //Check if any slots are at their max.
+        //Add the research to researchedSlot
+        //UpdateTech
+        //Discard the card from the slot.
+
+    }
+}
+
+
 export const resourceUpdate = resources => {
     return resources.map((resource: Resource) => {
         let newValue = resource.value + resource.income;

@@ -61,7 +61,8 @@ export default function WorldContent() {
     };
     const handleStartGame = () => {
         setGameStarted(true);
-        setJobList(jobUnlocker(jobList, jobDict, 'Forager'));
+        setJobList(prevJobList =>jobUnlocker(prevJobList, jobDict, 'Forager'));
+        setJobList(prevJobList =>jobUnlocker(prevJobList, jobDict, 'Villager'));
         updateTech(researchedTech, availableTech, setAvailableTech, undiscoveredTech, setUndiscoveredTech);
     };
 

@@ -227,6 +227,7 @@ export class technology {
         this.rarity = rarity;
         this.tier = tier;
         this.type = type;
+        this.progress = 0;
         this.category = category;
         this.description = description;
         this.techrequired = techrequired;
