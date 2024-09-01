@@ -30,6 +30,8 @@ export const resourceUpdate = resources => {
         }
     });
 };
+
+
 export const jobListUpdate = (jobList, populationChange) => {
     return jobList.map(job => {
         if (job.name === 'Forager') {

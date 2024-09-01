@@ -360,11 +360,13 @@ const ResearchCard = ({
                 SlotTechnology.type == tech.type ? matchPoint+=2 : null;
                 discountPoint += tech.tier*(RarityCost[tech.rarity]/10)*matchPoint/SlotTechnology.tier;
             });
+            const maxProgress = Math.round(Number((Number(TierCost[SlotTechnology.tier])*Number(RarityCost[SlotTechnology.rarity])*100/(100+discountPoint)).toPrecision(3)));
+            console.log(maxProgress);
+            return maxProgress;
         }
-        const maxProgress = Math.round(Number((Number(TierCost[SlotTechnology.tier])*Number(RarityCost[SlotTechnology.rarity])*100/(100+discountPoint)).toPrecision(3)));
-        console.log(maxProgress);
-        return maxProgress;
-    };Math.ceil((calculateMaxProgress()-SlotTechnology.progress) / handleIncome())
+        return;
+        
+    };
 
     const handleTurnsLeft = () => {
         if (handleIncome() > 0) {
@@ -377,7 +379,7 @@ const ResearchCard = ({
                 return turnsLeft + " Turns"
             }
         }
-
+        return "Never"
     }
 
 
