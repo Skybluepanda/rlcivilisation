@@ -89,6 +89,9 @@ export default function EndTurn() {
             jobList,
             setJobList,
         );
+        //When turn ends, progress needs to go into currently researched projects.
+        //ANy left over are stored and added when another research is focused, it is placed in it.
+        
 
         setBuildings(buildingsUpdate[0]);
         if (buildingsUpdate[1]['built']) {
