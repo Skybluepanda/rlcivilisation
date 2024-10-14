@@ -21,6 +21,7 @@ import {
     buildingListUpdate,
     buildingJobMaxUpdate,
     buildingResourceMaxUpdate,
+    researchUpdate
 } from 'components/EndTurn/EndTurnHelper';
 import {
     IconMap,
@@ -37,7 +38,7 @@ import {
     IconCheck,
     IconX,
 } from '@tabler/icons-react';
-import { availableTechAtom, researchSlotsAtom, focusedSlotAtom, researchedTechAtom } from 'components/TechnologyContent/TechnologyData';
+import { availableTechAtom, researchSlotsAtom, focusedSlotAtom, researchedTechAtom, undiscoveredTechAtom, updateTech } from 'components/TechnologyContent/TechnologyData';
 
 //Endturn should change every resource by adding the income.
 //Buildings that are queued should be built.
@@ -60,6 +61,11 @@ export default function EndTurn() {
     const [turnVal, setTurn] = useAtom(turn);
     const [logSettings, setLogSettings] = useAtom(logSettingsAtom);
     const [sprawl, setSprawl] = useAtom(sprawlAtom);
+    const [researchSlots, setResearchSlots] = useAtom(researchSlotsAtom);
+    const [focusedSlot, setFocusedSlot] = useAtom(focusedSlotAtom);
+    const [researchedTech, setResearchedTech] = useAtom(researchedTechAtom);
+    const [availableTech, setAvailableTech] = useAtom(availableTechAtom);
+    const [undiscoveredTech, setUndiscoveredTech] = useAtom(undiscoveredTechAtom);
 
     function endTurn() {
         //Log handeling.
@@ -69,11 +75,30 @@ export default function EndTurn() {
             turn: turnVal,
             population: 0,
         };
-
-        setResources(resourceUpdate(resources));
+        const newResource = resourceUpdate(resources); 
+        setResources(newResource);
         const population = resources.find(j => j.name === 'Population');
         const infrastructure = resources.find(j => j.name === 'Infrastructure');
-        
+        console.log(focusedSlot)
+        console.log(researchSlots)
+        console.log(researchedTech)
+        console.log(availableTech)
+
+        researchUpdate(
+            newResource,
+            setResources,
+            researchSlots,
+            setResearchSlots,
+            focusedSlot,
+            setFocusedSlot,
+            researchedTech,
+            setResearchedTech,
+            availableTech,
+            setAvailableTech,
+            undiscoveredTech,
+            setUndiscoveredTech,
+            updateTech
+        )
 
         const change =
             Math.floor(population.value + population.income) -
@@ -109,7 +134,7 @@ export default function EndTurn() {
             );
             setResources(
                 buildingResourceMaxUpdate(
-                    resources,
+                    newResource,
                     buildingsUpdate[1],
                     buildings,
                 ),

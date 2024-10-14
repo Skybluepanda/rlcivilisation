@@ -234,13 +234,13 @@ const ResearchCard = ({
     const [sprawl, setSprawl] = useAtom(sprawlAtom);
     const [resource, setResource] = useAtom(resourceListAtom);
     const handleRandom = () => {
-        console.log(ResearchSlots);
+        // console.log(ResearchSlots);
         const newResearchSlots = [...ResearchSlots];
-        console.log(availableTech);
+        // console.log(availableTech);
         const TechPool = availableTech.filter(
             tech => !ResearchSlots.includes(tech.name),
         );
-        console.log(TechPool);
+        // console.log(TechPool);
         const TechPoolSize = TechPool.length;
         if (TechPoolSize) {
             const randomIndex = Math.floor(Math.random() * TechPoolSize);
@@ -250,10 +250,10 @@ const ResearchCard = ({
     };
 
     const handleFocus = () => {
-        console.log(slot);
+        // console.log(slot);
         setFocusedSlot(slot);
-        console.log(focusedSlot);
-        console.log(slot == focusedSlot);
+        // console.log(focusedSlot);
+        // console.log(slot == focusedSlot);
     };
 
     const handleDiscard = () => {
@@ -269,13 +269,13 @@ const ResearchCard = ({
     );
     let CategoryIcon = IconCarrot;
     let RarityIcon = IconCircleNumber0;
-    console.log(SlotTechnology);
+    // console.log(SlotTechnology);
     if (SlotTechnology) {
-        console.log(SlotTechnology.tags);
-        console.log(SlotTechnology.category);
+        // console.log(SlotTechnology.tags);
+        // console.log(SlotTechnology.category);
         CategoryIcon = Icons[SlotTechnology.category];
-        console.log(SlotTechnology.rarity);
-        console.log(SlotTechnology.tier);
+        // console.log(SlotTechnology.rarity);
+        // console.log(SlotTechnology.tier);
         RarityIcon =
             GemIcon[SlotTechnology.rarity - 1][SlotTechnology.tier - 1];
     }
@@ -344,7 +344,7 @@ const ResearchCard = ({
                         matchPoint += 5;
                     }
                 });
-                return income*matchPoint/100
+                return Math.round(income*matchPoint/10)/10
             }
         }
         return 0;
@@ -361,7 +361,7 @@ const ResearchCard = ({
                 discountPoint += tech.tier*(RarityCost[tech.rarity]/10)*matchPoint/SlotTechnology.tier;
             });
             const maxProgress = Math.round(Number((Number(TierCost[SlotTechnology.tier])*Number(RarityCost[SlotTechnology.rarity])*100/(100+discountPoint)).toPrecision(3)));
-            console.log(maxProgress);
+            // console.log(maxProgress);
             return maxProgress;
         }
         return;
@@ -437,7 +437,7 @@ const ResearchCard = ({
                                 {Tags.map((tag, index) => {
                                     const TagIcon = Icons[tag];
                                     return (
-                                        <TagIcon color={handleTagColor(tag)} />
+                                        <TagIcon key={tag} color={handleTagColor(tag)} />
                                     );
                                 })}
                             </SimpleGrid>
@@ -451,19 +451,20 @@ const ResearchCard = ({
                             }
                             sections={[
                                 {
-                                    value: SlotTechnology.progress/calculateMaxProgress(),
+                                    value: SlotTechnology.progress/calculateMaxProgress()*100,
                                     color: 'blue',
-                                    tooltip: `Current: ${SlotTechnology.progress}`
+                                    tooltip: `Current: ${SlotTechnology.progress}/${calculateMaxProgress()}`,
                                 },
                                 {
                                     value: handleIncome()/calculateMaxProgress()*100,
                                     color: 'blue.3',
                                     tooltip: `Income: ${handleIncome()}`,
-                                },
+                                }
+                                ,
                                 {
-                                    value: 100 - SlotTechnology.progress/calculateMaxProgress() - handleIncome()/calculateMaxProgress()*100,
+                                    value: 100 - SlotTechnology.progress/calculateMaxProgress()*100 - handleIncome()/calculateMaxProgress()*100,
                                     color: 'gray',
-                                    tooltip: `Required: ${calculateMaxProgress()}`,
+                                    tooltip: `Required: ${calculateMaxProgress()-SlotTechnology.progress}`,
                                 }
                             ]}
                         />
