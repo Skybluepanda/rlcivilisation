@@ -79,6 +79,7 @@ export const researchUpdate = (resource, setResource, researchSlot, setResearchS
             console.log(SlotTechnology)
             if (SlotTechnology) {
                 if (slotMaxProgress[slotIndex] - (slotCurrent[slotIndex] + slotIncome[slotIndex]) <= 0) {
+                    //Tech Researched!! Apply effects.
                     setResearchedTech(prev => 
                         [...prev, SlotTechnology],
                     )
