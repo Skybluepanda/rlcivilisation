@@ -97,7 +97,9 @@ export default function EndTurn() {
             setAvailableTech,
             undiscoveredTech,
             setUndiscoveredTech,
-            updateTech
+            updateTech,
+            setBuildings,
+            setJobList
         )
 
         const change =

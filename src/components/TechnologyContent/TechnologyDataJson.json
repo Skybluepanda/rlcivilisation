@@ -10,8 +10,7 @@
         "techrequired": [],
         "unlockBuilding": ["Farm", "Granary"],
         "buildingchange": [],
-        "jobchange": [],
-        "bonuseffect": []
+        "jobchange": []
     },
     {
         "name": "Pottery",
@@ -25,8 +24,7 @@
         "unlockBuilding": [],
         "buildingchange": [
         ],
-        "jobchange": [],
-        "bonuseffect": []
+        "jobchange": []
     },
     {
         "name": "Sling",
@@ -40,8 +38,7 @@
         "unlockBuilding": [],
         "buildingchange": [
         ],
-        "jobchange": [],
-        "bonuseffect": []
+        "jobchange": []
     },
     {
         "name": "Bronze Working",
@@ -75,8 +72,7 @@
                 ]
             }
         ],
-        "jobchange": [],
-        "bonuseffect": []
+        "jobchange": []
     },
     {
         "name": "Sailing",
@@ -110,7 +106,6 @@
                 ]
             }
         ],
-        "jobchange": [],
-        "bonuseffect": []
+        "jobchange": []
     }
 ]

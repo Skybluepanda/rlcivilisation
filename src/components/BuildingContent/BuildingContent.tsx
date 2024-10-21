@@ -40,6 +40,7 @@ import {
 import {
     Building,
     buildingListAtom,
+    buildingDictionaryAtom,
     jobMax,
     resourceMax,
 } from 'components/BuildingContent/BuildingData';
@@ -83,7 +84,7 @@ import { modifyJobUsed } from 'components/JobsContent/JobHelpers';
 
 export default function BuildingList() {
     const [jobs, setJobs] = useAtom(jobListAtom);
-    const [buildings, setBuildings] = useAtom(buildingListAtom);
+    const [buildings, setBuildings] = useAtom(buildingDictionaryAtom);
     const [resources, setResources] = useAtom(resourceListAtom);
     const [fullScreen, setFullScreen] = useState(false);
     const handleToggleFullScreen = () => {

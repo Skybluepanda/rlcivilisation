@@ -205,7 +205,6 @@ export class technology {
     unlockBuilding: string[];
     buildingchange: buildingChange[];
     jobchange: jobChange[];
-    bonuseffect: bonusEffect[];
     constructor(
         UID: number,
         name: string,
@@ -219,7 +218,6 @@ export class technology {
         unlockBuilding: string[],
         buildingchange: buildingChange[],
         jobchange: jobChange[],
-        bonuseffect: bonusEffect[],
     ) {
         this.UID = UID;
         this.name = name;
@@ -234,7 +232,6 @@ export class technology {
         this.unlockBuilding = unlockBuilding;
         this.buildingchange = buildingchange;
         this.jobchange = jobchange;
-        this.bonuseffect = bonuseffect;
     }
 }
 
@@ -304,10 +301,7 @@ async function loadTechnologiesFromJson(
                                 (o: any) => new increment(o.resource, o.base),
                             ),
                         ),
-                ),
-                techData.bonuseffect.map(
-                    (be: any) => new bonusEffect(be.resource, be.base),
-                ),
+                )
             ),
     );
 }
